@@ -566,7 +566,7 @@ static void deinit(void)
 
 void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
   
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Init weather layers");
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Init weather layers...");
 
 	weather_layer->layer = layer_create(GRect(pos.x, pos.y, 144, 80));
 	

@@ -1,39 +1,34 @@
 // Set callback for the app ready event
 Pebble.addEventListener("ready",
                         function(e) {
-                          console.log("connect!" + e.ready);
+                          console.log("connect!: " + e.ready);
                           console.log(e.type);
                         });
 
 Pebble.addEventListener("appmessage",
                         function(e) {
-                          console.log(e.type);
-                          fetch_BTC();
+                        fetch_BTC();
                         });
 
 
 function fetch_BTC () 
   {
-  var response;
-
   var req = new XMLHttpRequest();
-
+    
   req.onload = function(e) 
     {
     if (req.readyState == 4) 
       {
       if(req.status == 200) 
         {
-
-        //console.log(req.responseText);
-
-        response = JSON.parse(req.responseText);
-
-        if (response.return) 
+        var response = JSON.parse(req.responseText);
+        
+        if (response.high) 
           {
-          btcH = Math.round(response.return.high.value);
-          btcL = Math.round(response.return.low.value);
-          btcV = Math.round(response.return.last.value);
+          var btcH = Math.round(response.high);
+          var btcL = Math.round(response.low);
+          var btcV = Math.round(response.last);
+
           //if (btcV > 1000) 
           //  btcV = Math.round(btcV);
           //else
@@ -41,7 +36,7 @@ function fetch_BTC ()
 
           Pebble.sendAppMessage({"0":  btcV.toString() , "1":  btcL.toString(), "2":  btcH.toString()} , function(e) {  
 
-            //console.log(btcL, btcH, btcV);
+          // console.log(btcL, btcH, btcV);
 
             req.onload = function(e) 
               {
@@ -49,7 +44,7 @@ function fetch_BTC ()
                 {
                 if(req.status == 200) 
                   {
-                  XX=req.responseText.split("\n");
+                  var XX=req.responseText.split("\n");
                   for (var i=0; i < XX.length; i++)
                     {
                     var Xline = XX[i].split("=");
@@ -145,7 +140,7 @@ function fetch_BTC ()
                       "5":  obWindDir, 
                       "6":  obWindGust, 
                       "7":  obWindSpeed,
-                      "8":  obWindChill,
+                      "8":  obWindChill
                       }, function (e) {
                         Pebble.sendAppMessage({
                           "9":  obHumidex,
@@ -177,7 +172,9 @@ function fetch_BTC ()
     }
 
 
-  req.open('GET', "https://data.mtgox.com/api/1/BTCUSD/ticker", true);
+  // req.open('GET', "https://data.mtgox.com/api/1/BTCUSD/ticker", true);
+  // req.open('GET', "http://api.bitcoincharts.com/v1/markets.json", true);
+  req.open('GET', "https://www.cavirtex.com/api/CAD/ticker.json", true);
   req.send(null);
 
   }

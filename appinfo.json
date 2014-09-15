@@ -1,279 +1,283 @@
 {
-  "uuid": "6f32143a-2bb9-4009-bc98-af2406b3c140",
-  "shortName": "CoinCan-Quebec",
-  "longName": "Bitcoin and Weather - Quebec",
-  "companyName": "Real Ouellet",
-  "versionCode": 1,
-  "versionLabel": "1.0",
-  "watchapp": {
-    "watchface": true
-  },
-  "appKeys": {},
-  "resources": {
-    "media": [
-      {
-        "type": "font",
-        "name": "FUTURA_CONDENSED_53",
-        "file": "fonts/futura_condensed_bold-webfont.ttf"
-      },
-      {
-        "type": "png",
-        "name": "I00",
-        "file": "images/00.png"
-      },
-      {
-        "type": "png",
-        "name": "I01",
-        "file": "images/01.png"
-      },
-      {
-        "type": "png",
-        "name": "I02",
-        "file": "images/02.png"
-      },
-      {
-        "type": "png",
-        "name": "I03",
-        "file": "images/03.png"
-      },
-      {
-        "type": "png",
-        "name": "I04",
-        "file": "images/04.png"
-      },
-      {
-        "type": "png",
-        "name": "I05",
-        "file": "images/05.png"
-      },
-      {
-        "type": "png",
-        "name": "I06",
-        "file": "images/06.png"
-      },
-      {
-        "type": "png",
-        "name": "I07",
-        "file": "images/07.png"
-      },
-      {
-        "type": "png",
-        "name": "I08",
-        "file": "images/08.png"
-      },
-      {
-        "type": "png",
-        "name": "I09",
-        "file": "images/09.png"
-      },
-      {
-        "type": "png",
-        "name": "I10",
-        "file": "images/10.png"
-      },
-      {
-        "type": "png",
-        "name": "I11",
-        "file": "images/11.png"
-      },
-      {
-        "type": "png",
-        "name": "I12",
-        "file": "images/12.png"
-      },
-      {
-        "type": "png",
-        "name": "I13",
-        "file": "images/13.png"
-      },
-      {
-        "type": "png",
-        "name": "I14",
-        "file": "images/14.png"
-      },
-      {
-        "type": "png",
-        "name": "I15",
-        "file": "images/15.png"
-      },
-      {
-        "type": "png",
-        "name": "I16",
-        "file": "images/16.png"
-      },
-      {
-        "type": "png",
-        "name": "I17",
-        "file": "images/17.png"
-      },
-      {
-        "type": "png",
-        "name": "I18",
-        "file": "images/18.png"
-      },
-      {
-        "type": "png",
-        "name": "I19",
-        "file": "images/19.png"
-      },
-      {
-        "type": "png",
-        "name": "I20",
-        "file": "images/20.png"
-      },
-      {
-        "type": "png",
-        "name": "I21",
-        "file": "images/21.png"
-      },
-      {
-        "type": "png",
-        "name": "I22",
-        "file": "images/22.png"
-      },
-      {
-        "type": "png",
-        "name": "I23",
-        "file": "images/23.png"
-      },
-      {
-        "type": "png",
-        "name": "I24",
-        "file": "images/24.png"
-      },
-      {
-        "type": "png",
-        "name": "I25",
-        "file": "images/25.png"
-      },
-      {
-        "type": "png",
-        "name": "I26",
-        "file": "images/26.png"
-      },
-      {
-        "type": "png",
-        "name": "I27",
-        "file": "images/27.png"
-      },
-      {
-        "type": "png",
-        "name": "I28",
-        "file": "images/28.png"
-      },
-      {
-        "type": "png",
-        "name": "I30",
-        "file": "images/30.png"
-      },
-      {
-        "type": "png",
-        "name": "I31",
-        "file": "images/31.png"
-      },
-      {
-        "type": "png",
-        "name": "I32",
-        "file": "images/32.png"
-      },
-      {
-        "type": "png",
-        "name": "I33",
-        "file": "images/33.png"
-      },
-      {
-        "type": "png",
-        "name": "I34",
-        "file": "images/34.png"
-      },
-      {
-        "type": "png",
-        "name": "I35",
-        "file": "images/35.png"
-      },
-      {
-        "type": "png",
-        "name": "I36",
-        "file": "images/36.png"
-      },
-      {
-        "type": "png",
-        "name": "I37",
-        "file": "images/37.png"
-      },
-      {
-        "type": "png",
-        "name": "I38",
-        "file": "images/38.png"
-      },
-      {
-        "type": "png",
-        "name": "I39",
-        "file": "images/39.png"
-      },
-      {
-        "type": "png",
-        "name": "I40",
-        "file": "images/40.png"
-      },
-      {
-        "type": "png",
-        "name": "I41",
-        "file": "images/41.png"
-      },
-      {
-        "type": "png",
-        "name": "I42",
-        "file": "images/42.png"
-      },
-      {
-        "type": "png",
-        "name": "I43",
-        "file": "images/43.png"
-      },
-      {
-        "type": "png",
-        "name": "I44",
-        "file": "images/44.png"
-      },
-      {
-        "type": "png",
-        "name": "I45",
-        "file": "images/45.png"
-      },
-      {
-        "type": "png",
-        "name": "ICON_ERROR",
-        "file": "images/error.png"
-      },
-      {
-        "name": "FUTURA_18",
-        "trackingAdjust": 3,
-        "characterRegex": "[0-9adeFhiMnorSTtuW: -]*",
-        "file": "fonts/futura.ttf",
-        "type": "font"
-      },
-      {
-        "name": "FUTURA_35",
-        "trackingAdjust": -4,
-        "characterRegex": "[0-9: -]",
-        "file": "fonts/futura.ttf",
-        "type": "font"
-      },
-      {
-        "name": "FUTURA_40",
-        "trackingAdjust": -4,
-        "characterRegex": "[0-9: -]",
-        "file": "fonts/futura.ttf",
-        "type": "font"
-      },
-      {
-        "name": "FUTURA_45",
-        "trackingAdjust": -4,
-        "characterRegex": "[:]",
-        "file": "fonts/futura.ttf",
-        "type": "font"
-      }
-    ]
-  }
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "Real Ouellet",
+    "longName": "Bitcoin and Weather - Quebec",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "characterRegex": "[:]",
+                "file": "fonts/futura.ttf",
+                "name": "FUTURA_45",
+                "trackingAdjust": -4,
+                "type": "font"
+            },
+            {
+                "characterRegex": "[0-9: -]",
+                "file": "fonts/futura.ttf",
+                "name": "FUTURA_40",
+                "trackingAdjust": -4,
+                "type": "font"
+            },
+            {
+                "characterRegex": "[0-9: -]",
+                "file": "fonts/futura.ttf",
+                "name": "FUTURA_35",
+                "trackingAdjust": -4,
+                "type": "font"
+            },
+            {
+                "characterRegex": "[0-9adeFhiMnorSTtuW: -]*",
+                "file": "fonts/futura.ttf",
+                "name": "FUTURA_18",
+                "trackingAdjust": 3,
+                "type": "font"
+            },
+            {
+                "file": "images/error.png",
+                "name": "ICON_ERROR",
+                "type": "png"
+            },
+            {
+                "file": "images/45.png",
+                "name": "I45",
+                "type": "png"
+            },
+            {
+                "file": "images/44.png",
+                "name": "I44",
+                "type": "png"
+            },
+            {
+                "file": "images/43.png",
+                "name": "I43",
+                "type": "png"
+            },
+            {
+                "file": "images/42.png",
+                "name": "I42",
+                "type": "png"
+            },
+            {
+                "file": "images/41.png",
+                "name": "I41",
+                "type": "png"
+            },
+            {
+                "file": "images/40.png",
+                "name": "I40",
+                "type": "png"
+            },
+            {
+                "file": "images/39.png",
+                "name": "I39",
+                "type": "png"
+            },
+            {
+                "file": "images/38.png",
+                "name": "I38",
+                "type": "png"
+            },
+            {
+                "file": "images/37.png",
+                "name": "I37",
+                "type": "png"
+            },
+            {
+                "file": "images/36.png",
+                "name": "I36",
+                "type": "png"
+            },
+            {
+                "file": "images/35.png",
+                "name": "I35",
+                "type": "png"
+            },
+            {
+                "file": "images/34.png",
+                "name": "I34",
+                "type": "png"
+            },
+            {
+                "file": "images/33.png",
+                "name": "I33",
+                "type": "png"
+            },
+            {
+                "file": "images/32.png",
+                "name": "I32",
+                "type": "png"
+            },
+            {
+                "file": "images/31.png",
+                "name": "I31",
+                "type": "png"
+            },
+            {
+                "file": "images/30.png",
+                "name": "I30",
+                "type": "png"
+            },
+            {
+                "file": "images/28.png",
+                "name": "I28",
+                "type": "png"
+            },
+            {
+                "file": "images/27.png",
+                "name": "I27",
+                "type": "png"
+            },
+            {
+                "file": "images/26.png",
+                "name": "I26",
+                "type": "png"
+            },
+            {
+                "file": "images/25.png",
+                "name": "I25",
+                "type": "png"
+            },
+            {
+                "file": "images/24.png",
+                "name": "I24",
+                "type": "png"
+            },
+            {
+                "file": "images/23.png",
+                "name": "I23",
+                "type": "png"
+            },
+            {
+                "file": "images/22.png",
+                "name": "I22",
+                "type": "png"
+            },
+            {
+                "file": "images/21.png",
+                "name": "I21",
+                "type": "png"
+            },
+            {
+                "file": "images/20.png",
+                "name": "I20",
+                "type": "png"
+            },
+            {
+                "file": "images/19.png",
+                "name": "I19",
+                "type": "png"
+            },
+            {
+                "file": "images/18.png",
+                "name": "I18",
+                "type": "png"
+            },
+            {
+                "file": "images/17.png",
+                "name": "I17",
+                "type": "png"
+            },
+            {
+                "file": "images/16.png",
+                "name": "I16",
+                "type": "png"
+            },
+            {
+                "file": "images/15.png",
+                "name": "I15",
+                "type": "png"
+            },
+            {
+                "file": "images/14.png",
+                "name": "I14",
+                "type": "png"
+            },
+            {
+                "file": "images/13.png",
+                "name": "I13",
+                "type": "png"
+            },
+            {
+                "file": "images/12.png",
+                "name": "I12",
+                "type": "png"
+            },
+            {
+                "file": "images/11.png",
+                "name": "I11",
+                "type": "png"
+            },
+            {
+                "file": "images/10.png",
+                "name": "I10",
+                "type": "png"
+            },
+            {
+                "file": "images/09.png",
+                "name": "I09",
+                "type": "png"
+            },
+            {
+                "file": "images/08.png",
+                "name": "I08",
+                "type": "png"
+            },
+            {
+                "file": "images/07.png",
+                "name": "I07",
+                "type": "png"
+            },
+            {
+                "file": "images/06.png",
+                "name": "I06",
+                "type": "png"
+            },
+            {
+                "file": "images/05.png",
+                "name": "I05",
+                "type": "png"
+            },
+            {
+                "file": "images/04.png",
+                "name": "I04",
+                "type": "png"
+            },
+            {
+                "file": "images/03.png",
+                "name": "I03",
+                "type": "png"
+            },
+            {
+                "file": "images/02.png",
+                "name": "I02",
+                "type": "png"
+            },
+            {
+                "file": "images/01.png",
+                "name": "I01",
+                "type": "png"
+            },
+            {
+                "file": "images/00.png",
+                "name": "I00",
+                "type": "png"
+            },
+            {
+                "file": "fonts/futura_condensed_bold-webfont.ttf",
+                "name": "FUTURA_CONDENSED_53",
+                "type": "font"
+            }
+        ]
+    },
+    "shortName": "CoinCan-Quebec",
+    "uuid": "6f32143a-2bb9-4009-bc98-af2406b3c140",
+    "versionCode": 1,
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": true
+    }
 }
