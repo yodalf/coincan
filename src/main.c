@@ -323,7 +323,8 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
 
       if (obWindGust[0] != '!')
         {
-        strncat(obWindDir, " -> ", 16);
+        strncat(obWindDir, "/", 16);
+        // strncat(obWindDir, " -> ", 16);
         strncat(obWindDir, obWindGust, 16);
         }
       }
@@ -334,11 +335,17 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
 
     
       strncpy(battery_text, "", 8);
-      if (battery_state.is_plugged) strncat(battery_text, "P", 8);
-      if (battery_state.is_charging) strncat(battery_text, "C", 8);
+      if (battery_state.is_plugged) 
+        	text_layer_set_font(weather_layer.battery_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD) );
+      else
+        	text_layer_set_font(weather_layer.battery_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
       strncat(battery_text, " ", 8);    
       strncat(battery_text, _itoa(battery_state.charge_percent), 8);
-      strncat(battery_text, "% ", 8);    
+      //strncat(battery_text, "% ", 8);    
+      if (battery_state.is_charging) 
+        strncat(battery_text, "*", 8);
+      else
+        strncat(battery_text, " ", 8);    
     
     
     if ((obWindChill[0] == '!') && (obHumidex[0] == '!'))
