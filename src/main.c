@@ -44,6 +44,12 @@ static BatteryChargeState battery_state;
 static char battery_text[8];
 static char bluetooth_text[8];
 
+static const uint32_t const segments[] = { 1000, 1000, 1000 };
+VibePattern myVibes = {
+  .durations = segments,
+  .num_segments = ARRAY_LENGTH(segments),
+};
+
 #define X_SIZE 36
 #define Y_SIZE 24
 
@@ -439,7 +445,7 @@ static void bluetooth_handler(bool connected)
   else
     {
     strcpy(bluetooth_text, " LOST!");
-    vibes_long_pulse();
+    vibes_enqueue_custom_pattern(myVibes);
     }
   
   layer_mark_dirty(window_get_root_layer(window));
