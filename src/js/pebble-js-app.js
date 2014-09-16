@@ -74,7 +74,7 @@ function fetch_BTC ()
                       { 
                       var obWindGust = Xline[1].substring(1,Xline[1].indexOf(";"));
                       obWindGust = obWindGust.substring(1, obWindGust.length-1);
-                      if (0 == obWindGust.length) obWindGust = "!";
+                      if (0 === obWindGust.length) obWindGust = "!";
                       //console.log("WG:"+obWindGust) 
                       } 
 
@@ -82,7 +82,7 @@ function fetch_BTC ()
                       { 
                       var obWindSpeed = Xline[1].substring(1,Xline[1].indexOf(";"));
                       obWindSpeed = obWindSpeed.substring(1, obWindSpeed.length-1);
-                      if (0 == obWindSpeed.length) obWindSpeed = "!";
+                      if (0 === obWindSpeed.length) obWindSpeed = "!";
                       //console.log("WS:"+obWindSpeed) 
                       } 
 
@@ -92,7 +92,7 @@ function fetch_BTC ()
                       { 
                       var obWindChill = Xline[1].substring(1,Xline[1].indexOf(";"));
                       obWindChill = obWindChill.substring(1, obWindChill.length-1);
-                      if (0 == obWindChill.length) obWindChill = "!";
+                      if (0 === obWindChill.length) obWindChill = "!";
                       //console.log("WC:"+obWindChill) 
                       } 
 
@@ -100,7 +100,7 @@ function fetch_BTC ()
                       { 
                       var obHumidex = Xline[1].substring(1,Xline[1].indexOf(";"));
                       obHumidex = obHumidex.substring(1, obHumidex.length-1);
-                      if (0 == obHumidex.length) obHumidex = "!";
+                      if (0 === obHumidex.length) obHumidex = "!";
                       //console.log("H:"+obHumidex) 
                       } 
 
@@ -154,7 +154,7 @@ function fetch_BTC ()
       
                   }
                 }
-              }
+              };
             req.open('GET', "http://weather.gc.ca/wxlink/site_js/s0000620_e.js", true);
             req.send(null);
 

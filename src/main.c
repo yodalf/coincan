@@ -39,6 +39,11 @@ static float btcL_value = 0.0;
 static float btcH_value = 0.0;
 static int   obIconCode_value = 0;
 
+static BatteryChargeState battery_state;
+
+static char battery_text[8];
+static char bluetooth_text[8];
+
 #define X_SIZE 36
 #define Y_SIZE 24
 
@@ -73,6 +78,8 @@ typedef struct {
 	TextLayer *temp5_layer;
 	TextLayer *wind_layer;
 	TextLayer *temp_layer_background;
+  TextLayer *bluetooth_layer;
+  TextLayer *battery_layer;
 
   BitmapLayer *icon1_layer;
   BitmapLayer *icon2_layer;
@@ -319,6 +326,15 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
       strncpy(obWindDir, "NO WIND!", 16);
       }
 
+    
+      strncpy(battery_text, "", 8);
+      if (battery_state.is_plugged) strncat(battery_text, "P", 8);
+      if (battery_state.is_charging) strncat(battery_text, "C", 8);
+      strncat(battery_text, " ", 8);    
+      strncat(battery_text, _itoa(battery_state.charge_percent), 8);
+      strncat(battery_text, "% ", 8);    
+    
+    
     if ((obWindChill[0] == '!') && (obHumidex[0] == '!'))
       {
 	    text_layer_set_text(weather_layer.temp1_layer, "");
@@ -413,7 +429,30 @@ static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed)
   }
 
 
+static void bluetooth_handler(bool connected)
+  {
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "Bluetooth event!");
+  if (connected)
+    {
+    strcpy(bluetooth_text," ok");
+    }
+  else
+    {
+    strcpy(bluetooth_text, " LOST!");
+    vibes_long_pulse();
+    }
+  
+  layer_mark_dirty(window_get_root_layer(window));
+  }
 
+static void battery_handler(BatteryChargeState charge)
+  {
+  battery_state.charge_percent  = charge.charge_percent;
+  battery_state.is_charging  = charge.is_charging;
+  battery_state.is_plugged  = charge.is_plugged;    
+
+  fetch_msg();
+  }
 
 static void init(void) 
   {
@@ -507,7 +546,9 @@ static void init(void)
   handle_minute_tick(current_time, MINUTE_UNIT);
   tick_timer_service_subscribe(MINUTE_UNIT, &handle_minute_tick);
 
-
+  bluetooth_connection_service_subscribe( &bluetooth_handler );
+  battery_state_service_subscribe( & battery_handler );
+  
 
   //gpath_init(&bgraph, &bgraph_info);
   //for (int i=0; i<X_SIZE; i++) bgraph_data[i] = (GPoint) {i,0};
@@ -516,6 +557,13 @@ static void init(void)
 
   obWindSpeed[0] = obWindGust[0] = '!';
 
+
+  battery_state = battery_state_service_peek();
+  if (bluetooth_connection_service_peek()) 
+    strcpy(bluetooth_text," ok");
+  else
+    strcpy(bluetooth_text," LOST!");
+  
   fetch_msg();
 
 
@@ -628,7 +676,25 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
 	text_layer_set_text_color(weather_layer->wind_layer, GColorBlack );
   text_layer_set_text(weather_layer->wind_layer, obWindDir);
 	layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->wind_layer));
-	
+
+  // Add Battery layer
+	weather_layer->battery_layer = text_layer_create(GRect(0, 63, 144, 80));
+	text_layer_set_background_color(weather_layer->battery_layer, GColorClear);
+	text_layer_set_text_alignment(weather_layer->battery_layer, GTextAlignmentRight);
+	text_layer_set_font(weather_layer->battery_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
+	text_layer_set_text_color(weather_layer->battery_layer, GColorBlack );
+  text_layer_set_text(weather_layer->battery_layer, battery_text);
+	layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->battery_layer));
+
+  // Add Bluetooth layer
+	weather_layer->bluetooth_layer = text_layer_create(GRect(0, 63, 144, 80));
+	text_layer_set_background_color(weather_layer->bluetooth_layer, GColorClear);
+	text_layer_set_text_alignment(weather_layer->bluetooth_layer, GTextAlignmentLeft);
+	text_layer_set_font(weather_layer->bluetooth_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
+	text_layer_set_text_color(weather_layer->bluetooth_layer, GColorBlack );
+  text_layer_set_text(weather_layer->bluetooth_layer, bluetooth_text);
+	layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->bluetooth_layer));
+
   // Init bitmapped icon layers
   weather_layer->icon1_layer = bitmap_layer_create(GRect(0, 8, 60, 60));
   weather_layer->icon2_layer = bitmap_layer_create(GRect(145 - 60, 8, 60, 60));
