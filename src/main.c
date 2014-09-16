@@ -331,22 +331,7 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
     else
       {
       strncpy(obWindDir, "NO WIND!", 16);
-      }
-
-    
-      strncpy(battery_text, "", 8);
-      if (battery_state.is_plugged) 
-        	text_layer_set_font(weather_layer.battery_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD) );
-      else
-        	text_layer_set_font(weather_layer.battery_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
-      strncat(battery_text, " ", 8);    
-      strncat(battery_text, _itoa(battery_state.charge_percent), 8);
-      //strncat(battery_text, "% ", 8);    
-      if (battery_state.is_charging) 
-        strncat(battery_text, "*", 8);
-      else
-        strncat(battery_text, " ", 8);    
-    
+      }    
     
     if ((obWindChill[0] == '!') && (obHumidex[0] == '!'))
       {
@@ -448,10 +433,16 @@ static void bluetooth_handler(bool connected)
   if (connected)
     {
     strcpy(bluetooth_text," ok");
+   	text_layer_set_font(weather_layer.bluetooth_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
+  	text_layer_set_background_color(weather_layer.bluetooth_layer, GColorClear);
+	  text_layer_set_text_color(weather_layer.bluetooth_layer, GColorBlack );
     }
   else
     {
-    strcpy(bluetooth_text, " LOST!");
+    strcpy(bluetooth_text, " ??");
+   	text_layer_set_font(weather_layer.bluetooth_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD) );
+	  text_layer_set_background_color(weather_layer.bluetooth_layer, GColorBlack);
+	  text_layer_set_text_color(weather_layer.bluetooth_layer, GColorWhite );
     vibes_enqueue_custom_pattern(myVibes);
     }
   
@@ -464,7 +455,40 @@ static void battery_handler(BatteryChargeState charge)
   battery_state.is_charging  = charge.is_charging;
   battery_state.is_plugged  = charge.is_plugged;    
 
-  fetch_msg();
+  strncpy(battery_text, "", 8);
+  if (battery_state.charge_percent <= 50)
+    {
+   	text_layer_set_background_color(weather_layer.battery_layer, GColorBlack);
+    text_layer_set_text_color(weather_layer.battery_layer, GColorWhite );    
+    }
+  else
+    {
+  	text_layer_set_background_color(weather_layer.battery_layer, GColorClear);
+	  text_layer_set_text_color(weather_layer.battery_layer, GColorBlack );    
+    }
+
+  if (battery_state.is_plugged) 
+    {
+  	text_layer_set_font(weather_layer.battery_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD) );
+    }
+  else
+    {
+   	text_layer_set_font(weather_layer.battery_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
+    }
+ 
+  strncat(battery_text, " ", 8);    
+  strncat(battery_text, _itoa(battery_state.charge_percent), 8);
+  //strncat(battery_text, "% ", 8);    
+  if (battery_state.is_charging) 
+    strncat(battery_text, "*", 8);
+  else
+    strncat(battery_text, " ", 8);    
+
+  if (battery_state.charge_percent <= 50)
+    vibes_enqueue_custom_pattern(myVibes);
+
+  layer_mark_dirty(window_get_root_layer(window));
+  //fetch_msg();
   }
 
 static void init(void) 
@@ -572,6 +596,8 @@ static void init(void)
 
 
   battery_state = battery_state_service_peek();
+  battery_handler(battery_state);
+  
   if (bluetooth_connection_service_peek()) 
     strcpy(bluetooth_text," ok");
   else
@@ -691,16 +717,16 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
 	layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->wind_layer));
 
   // Add Battery layer
-	weather_layer->battery_layer = text_layer_create(GRect(0, 63, 144, 80));
-	text_layer_set_background_color(weather_layer->battery_layer, GColorClear);
+	weather_layer->battery_layer = text_layer_create(GRect(122, 63, 22, 16));
 	text_layer_set_text_alignment(weather_layer->battery_layer, GTextAlignmentRight);
 	text_layer_set_font(weather_layer->battery_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
+	text_layer_set_background_color(weather_layer->battery_layer, GColorClear);
 	text_layer_set_text_color(weather_layer->battery_layer, GColorBlack );
   text_layer_set_text(weather_layer->battery_layer, battery_text);
 	layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->battery_layer));
 
   // Add Bluetooth layer
-	weather_layer->bluetooth_layer = text_layer_create(GRect(0, 63, 144, 80));
+	weather_layer->bluetooth_layer = text_layer_create(GRect(0, 63, 22, 16));
 	text_layer_set_background_color(weather_layer->bluetooth_layer, GColorClear);
 	text_layer_set_text_alignment(weather_layer->bluetooth_layer, GTextAlignmentLeft);
 	text_layer_set_font(weather_layer->bluetooth_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
