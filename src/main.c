@@ -44,10 +44,15 @@ static BatteryChargeState battery_state;
 static char battery_text[8];
 static char bluetooth_text[8];
 
-static const uint32_t const segments[] = { 1000, 1000, 1000 };
-VibePattern myVibes = {
-  .durations = segments,
-  .num_segments = ARRAY_LENGTH(segments),
+static const uint32_t const segments_long[] = { 1000, 1000, 1000 };
+static const uint32_t const segments_short[] = { 100, 100, 100, 100, 100, 100, 100, 100, 100, 100};
+VibePattern myLongVibes = {
+  .durations = segments_long,
+  .num_segments = ARRAY_LENGTH(segments_long),
+};
+VibePattern myShortVibes = {
+  .durations = segments_short,
+  .num_segments = ARRAY_LENGTH(segments_short),
 };
 
 #define X_SIZE 36
@@ -443,7 +448,7 @@ static void bluetooth_handler(bool connected)
    	text_layer_set_font(weather_layer.bluetooth_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD) );
 	  text_layer_set_background_color(weather_layer.bluetooth_layer, GColorBlack);
 	  text_layer_set_text_color(weather_layer.bluetooth_layer, GColorWhite );
-    vibes_enqueue_custom_pattern(myVibes);
+    vibes_enqueue_custom_pattern(myLongVibes);
     }
   
   layer_mark_dirty(window_get_root_layer(window));
@@ -485,7 +490,7 @@ static void battery_handler(BatteryChargeState charge)
     strncat(battery_text, " ", 8);    
 
   if (battery_state.charge_percent <= 50)
-    vibes_enqueue_custom_pattern(myVibes);
+    vibes_enqueue_custom_pattern(myShortVibes);
 
   layer_mark_dirty(window_get_root_layer(window));
   //fetch_msg();
