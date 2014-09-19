@@ -1,7 +1,7 @@
 {
     "appKeys": {},
     "capabilities": [
-        ""
+        "location"
     ],
     "companyName": "Real Ouellet",
     "longName": "Bitcoin and Weather - Quebec",

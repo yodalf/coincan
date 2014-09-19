@@ -456,6 +456,11 @@ static void bluetooth_handler(bool connected)
 
 static void battery_handler(BatteryChargeState charge)
   {
+  if ((charge.charge_percent <= 50) && (charge.charge_percent < battery_state.charge_percent) )
+    {
+    vibes_enqueue_custom_pattern(myShortVibes);    
+    }
+
   battery_state.charge_percent  = charge.charge_percent;
   battery_state.is_charging  = charge.is_charging;
   battery_state.is_plugged  = charge.is_plugged;    
@@ -488,9 +493,6 @@ static void battery_handler(BatteryChargeState charge)
     strncat(battery_text, "*", 8);
   else
     strncat(battery_text, " ", 8);    
-
-  if (battery_state.charge_percent <= 50)
-    vibes_enqueue_custom_pattern(myShortVibes);
 
   layer_mark_dirty(window_get_root_layer(window));
   //fetch_msg();
@@ -757,6 +759,10 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
 void weather_layer_deinit(WeatherLayer* weather_layer) 
   {
 
+  tick_timer_service_unsubscribe();
+  battery_state_service_unsubscribe();
+  bluetooth_connection_service_unsubscribe();
+  
   text_layer_destroy(weather_layer->temp_layer_background);
   text_layer_destroy(weather_layer->temp1_layer);
   text_layer_destroy(weather_layer->temp2_layer);
@@ -772,7 +778,11 @@ void weather_layer_deinit(WeatherLayer* weather_layer)
     bitmap_layer_destroy(weather_layer->icon1_layer);
     bitmap_layer_destroy(weather_layer->icon2_layer);
     }
-  }
+  
+//  window_destroy(window);
+}
+
+
 
 
 
