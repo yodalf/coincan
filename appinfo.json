@@ -1,7 +1,7 @@
 {
     "appKeys": {},
     "capabilities": [
-        "location"
+        ""
     ],
     "companyName": "Real Ouellet",
     "longName": "Bitcoin and Weather - Quebec",
@@ -276,7 +276,7 @@
     "shortName": "CoinCan-Quebec",
     "uuid": "6f32143a-2bb9-4009-bc98-af2406b3c140",
     "versionCode": 1,
-    "versionLabel": "1.0",
+    "versionLabel": "1.1",
     "watchapp": {
         "watchface": true
     }

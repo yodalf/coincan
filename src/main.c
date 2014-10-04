@@ -7,6 +7,8 @@
 #define DATE_FRAME      (GRect(0, 46, 144, 168-62))
 
 
+bool     BuzzEnable = true;
+
 Window    *window;
 
 TextLayer *time_layer;
@@ -418,14 +420,22 @@ static void app_message_init(void) {
 static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) 
   {
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "M: %s %s %d", time_text, date_text,tick_time->tm_min);
-
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "TIME: %d %d", tick_time->tm_hour,tick_time->tm_min);
+  
+  if ((tick_time->tm_hour >= 22) || (tick_time->tm_hour <= 5))
+    BuzzEnable = false;
+  else
+    BuzzEnable = true;
+  
+  //APP_LOG(APP_LOG_LEVEL_DEBUG,"Buzz: %s", BuzzEnable ? "true":"false");
+  
   strftime(time_text, sizeof(time_text), "%T", tick_time);
   strftime(date_text, sizeof(date_text), "%a %d", tick_time);
 
   layer_mark_dirty(text_layer_get_layer(time_layer));
   layer_mark_dirty(text_layer_get_layer(date_layer));
 
-  if ( 0 == (tick_time->tm_min % 5) ) 
+  if ( 0 == (tick_time->tm_min % 5) )
     {
     fetch_msg();
     }
@@ -448,7 +458,7 @@ static void bluetooth_handler(bool connected)
    	text_layer_set_font(weather_layer.bluetooth_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD) );
 	  text_layer_set_background_color(weather_layer.bluetooth_layer, GColorBlack);
 	  text_layer_set_text_color(weather_layer.bluetooth_layer, GColorWhite );
-    vibes_enqueue_custom_pattern(myLongVibes);
+    if (BuzzEnable) vibes_enqueue_custom_pattern(myLongVibes);
     }
   
   layer_mark_dirty(window_get_root_layer(window));
@@ -458,7 +468,7 @@ static void battery_handler(BatteryChargeState charge)
   {
   if ((charge.charge_percent <= 50) && (charge.charge_percent < battery_state.charge_percent) )
     {
-    vibes_enqueue_custom_pattern(myShortVibes);    
+    if (BuzzEnable) vibes_enqueue_custom_pattern(myShortVibes);    
     }
 
   battery_state.charge_percent  = charge.charge_percent;
