@@ -73,6 +73,73 @@ void graph_update_proc(struct Layer *, GContext *);
 static char time_text[] = "00:00"; // Needs to be static because it's used by the system later.
 static char date_text[] = "........";
 
+static int message_count = 0;
+
+#ifdef PBL_COLOR
+    #define cTopB
+    #define cBitcoinsB
+    #define cWeatherB
+    #define cInfoB
+
+    #define cTimeF gColorOxfordBlue
+    #define cTimeB
+    
+    #define cDateF
+    #define cDateB
+    
+    #define cBitcF
+    #define cBitcB 
+  
+    #define cInfoBlueF
+    #define cInfoBlueB
+    #define cinfoBatF
+    #define cInfoBatB
+
+#else
+    #define cWindowB    GColorBlack
+    #define cTopB
+    #define cBitcoinsB
+    #define cWeatherB   GColorWhite
+    #define cIconB      GColorClear
+
+    #define cInfoB      GColorClear
+    #define cInfoF      GColorBlack
+  
+    #define cTimeF      GColorWhite
+    #define cTimeB      GColorClear
+    
+    #define cDateF      GColorWhite
+    #define cDateB      GColorClear
+    
+    #define cBtchF      GColorWhite
+    #define cBtchB      GColorClear
+  
+    #define cBtclF      GColorWhite
+    #define cBtclB      GColorClear
+  
+    #define cBtcF       GColorWhite
+    #define cBtcB       GColorClear
+  
+    #define cGraphF     GColorWhite
+
+    #define cTempF  GColorBlack
+    #define cTempB  GColorClear
+  
+
+    #define cInfoBlueF  GColorBlack
+    #define cInfoBlueB  GColorClear
+    #define cInfoBlueAlarmB  GColorBlack
+    #define cInfoBlueAlarmF  GColorWhite
+    
+    #define cInfoBatF  GColorBlack
+    #define cInfoBatB  GColorClear
+    #define cInfoBatAlarmB  GColorBlack
+    #define cInfoBatAlarmF  GColorWhite
+
+
+  
+#endif
+  
 
 ////////////////////////////////////////////////////////////////////////////////////
 //
@@ -217,9 +284,17 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
   Tuple *forecastHigh_tuple = dict_find(iter, 11);
   Tuple *forecastLow_tuple = dict_find(iter, 12);
   Tuple *forecastPeriod_tuple = dict_find(iter, 13);
+  Tuple *ourLocation_tuple = dict_find(iter, 14);
 
-
+  APP_LOG(APP_LOG_LEVEL_DEBUG,"IN!");
+  message_count += 1;
+  
   // Default positions
+  if (ourLocation_tuple)
+    {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "OUR LOCATION: %s", ourLocation_tuple->value->cstring);  
+    }
+
   if (btcV_tuple) 
     {
     strncpy(btcV, btcV_tuple->value->cstring, 16);
@@ -393,12 +468,14 @@ static void fetch_msg(void) {
   dict_write_tuplet(iter, &symbol_tuple);
   dict_write_end(iter);
 
+  message_count = 0;
+  
   app_message_outbox_send();
 
   layer_mark_dirty(window_get_root_layer(window));
 
 
-  //APP_LOG(APP_LOG_LEVEL_DEBUG, "Message sent");
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Message sent");
 }
 
 
@@ -435,7 +512,7 @@ static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed)
   layer_mark_dirty(text_layer_get_layer(time_layer));
   layer_mark_dirty(text_layer_get_layer(date_layer));
 
-  if ( 0 == (tick_time->tm_min % 5) )
+  if ( (0 == (tick_time->tm_min % 5))  || (message_count != 3))
     {
     fetch_msg();
     }
@@ -449,15 +526,15 @@ static void bluetooth_handler(bool connected)
     {
     strcpy(bluetooth_text," ok");
    	text_layer_set_font(weather_layer.bluetooth_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
-  	text_layer_set_background_color(weather_layer.bluetooth_layer, GColorClear);
-	  text_layer_set_text_color(weather_layer.bluetooth_layer, GColorBlack );
+  	text_layer_set_background_color(weather_layer.bluetooth_layer, cInfoBlueB);
+	  text_layer_set_text_color(weather_layer.bluetooth_layer, cInfoBlueF );
     }
   else
     {
     strcpy(bluetooth_text, " ??");
    	text_layer_set_font(weather_layer.bluetooth_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD) );
-	  text_layer_set_background_color(weather_layer.bluetooth_layer, GColorBlack);
-	  text_layer_set_text_color(weather_layer.bluetooth_layer, GColorWhite );
+	  text_layer_set_background_color(weather_layer.bluetooth_layer, cInfoBlueAlarmB);
+	  text_layer_set_text_color(weather_layer.bluetooth_layer, cInfoBlueAlarmF );
     if (BuzzEnable) vibes_enqueue_custom_pattern(myLongVibes);
     }
   
@@ -478,13 +555,13 @@ static void battery_handler(BatteryChargeState charge)
   strncpy(battery_text, "", 8);
   if (battery_state.charge_percent <= 50)
     {
-   	text_layer_set_background_color(weather_layer.battery_layer, GColorBlack);
-    text_layer_set_text_color(weather_layer.battery_layer, GColorWhite );    
+   	text_layer_set_background_color(weather_layer.battery_layer, cInfoBatAlarmB);
+    text_layer_set_text_color(weather_layer.battery_layer, cInfoBatAlarmF);    
     }
   else
     {
-  	text_layer_set_background_color(weather_layer.battery_layer, GColorClear);
-	  text_layer_set_text_color(weather_layer.battery_layer, GColorBlack );    
+  	text_layer_set_background_color(weather_layer.battery_layer, cInfoBatB);
+	  text_layer_set_text_color(weather_layer.battery_layer, cInfoBatF);    
     }
 
   if (battery_state.is_plugged) 
@@ -515,12 +592,12 @@ static void init(void)
 
   window = window_create();
   window_stack_push(window, true);
-  window_set_background_color(window, GColorBlack);
+  window_set_background_color(window, cWindowB);
 
 
   time_layer = text_layer_create(TIME_FRAME);
-  text_layer_set_text_color(time_layer, GColorWhite);
-  text_layer_set_background_color(time_layer, GColorClear);
+  text_layer_set_text_color(time_layer, cTimeF);
+  text_layer_set_background_color(time_layer, cTimeB);
   text_layer_set_font(time_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FUTURA_CONDENSED_53)));
   text_layer_set_text_alignment(time_layer, GTextAlignmentCenter);
   text_layer_set_text(time_layer, time_text);
@@ -528,8 +605,8 @@ static void init(void)
 
 
   date_layer = text_layer_create(DATE_FRAME);
-  text_layer_set_text_color(date_layer, GColorWhite);
-  text_layer_set_background_color(date_layer, GColorClear);
+  text_layer_set_text_color(date_layer, cDateF);
+  text_layer_set_background_color(date_layer, cDateB);
   text_layer_set_font(date_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FUTURA_18)));
   text_layer_set_text_alignment(date_layer, GTextAlignmentCenter);
   text_layer_set_text(date_layer, date_text);
@@ -537,8 +614,8 @@ static void init(void)
 
 
   bcH_layer = text_layer_create(FULL_FRAME);
-  text_layer_set_text_color(bcH_layer, GColorWhite);
-  text_layer_set_background_color(bcH_layer, GColorClear);
+  text_layer_set_text_color(bcH_layer, cBtchF);
+  text_layer_set_background_color(bcH_layer, cBtchB);
   text_layer_set_font(bcH_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
   text_layer_set_text_alignment(bcH_layer, GTextAlignmentCenter);
   text_layer_set_text(bcH_layer, btcH);
@@ -546,8 +623,8 @@ static void init(void)
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(bcH_layer));
 
   bcL_layer = text_layer_create(FULL_FRAME);
-  text_layer_set_text_color(bcL_layer, GColorWhite);
-  text_layer_set_background_color(bcL_layer, GColorClear);
+  text_layer_set_text_color(bcL_layer, cBtclF);
+  text_layer_set_background_color(bcL_layer, cBtclB);
   text_layer_set_font(bcL_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
   text_layer_set_text_alignment(bcL_layer, GTextAlignmentCenter);
   text_layer_set_text(bcL_layer, btcL);
@@ -555,8 +632,8 @@ static void init(void)
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(bcL_layer));
 
   bc_layer = text_layer_create(FULL_FRAME);
-  text_layer_set_text_color(bc_layer, GColorWhite);
-  text_layer_set_background_color(bc_layer, GColorClear);
+  text_layer_set_text_color(bc_layer, cBtcF);
+  text_layer_set_background_color(bc_layer, cBtcB);
   text_layer_set_font(bc_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD) );
   text_layer_set_text_alignment(bc_layer, GTextAlignmentCenter);
   text_layer_set_text(bc_layer, btcV);
@@ -628,7 +705,7 @@ static void init(void)
 
 void graph_update_proc(struct Layer *layer, GContext *ctx)
   {
-  graphics_context_set_stroke_color(ctx, GColorWhite);
+  graphics_context_set_stroke_color(ctx, cGraphF);
   gpath_draw_outline(ctx, bgraph);
   }
 
@@ -676,13 +753,13 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
 	
 	// Add background layer
 	weather_layer->temp_layer_background = text_layer_create(GRect(0, 10, 144, 68));
-	text_layer_set_background_color(weather_layer->temp_layer_background, GColorWhite);
+	text_layer_set_background_color(weather_layer->temp_layer_background, cWeatherB);
 	layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp_layer_background));
 	
   // Add temperature #1 layer
 	weather_layer->temp1_layer = text_layer_create(GRect(0, 4, 144, 80));
-	text_layer_set_background_color(weather_layer->temp1_layer, GColorClear);
-	text_layer_set_text_color(weather_layer->temp1_layer, GColorBlack );
+	text_layer_set_background_color(weather_layer->temp1_layer, cTempB);
+	text_layer_set_text_color(weather_layer->temp1_layer, cTempF );
   text_layer_set_font(weather_layer->temp1_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
 	text_layer_set_text_alignment(weather_layer->temp1_layer, GTextAlignmentCenter);
   text_layer_set_text(weather_layer->temp1_layer, obTemperature);
@@ -690,8 +767,8 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
 
   // Add temperature #2 layer
 	weather_layer->temp2_layer = text_layer_create(GRect(0, 24, 144, 80));
-	text_layer_set_background_color(weather_layer->temp2_layer, GColorClear);
-	text_layer_set_text_color(weather_layer->temp2_layer, GColorBlack );
+	text_layer_set_background_color(weather_layer->temp2_layer, cTempB);
+	text_layer_set_text_color(weather_layer->temp2_layer, cTempF);
   text_layer_set_font(weather_layer->temp2_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
 	text_layer_set_text_alignment(weather_layer->temp2_layer, GTextAlignmentCenter);
   text_layer_set_text(weather_layer->temp2_layer, forecastTemp);
@@ -699,8 +776,8 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
 
   // Add temperature #3 layer
 	weather_layer->temp3_layer = text_layer_create(GRect(0, 38, 144, 80));
-	text_layer_set_background_color(weather_layer->temp3_layer, GColorClear);
-	text_layer_set_text_color(weather_layer->temp3_layer, GColorBlack );
+	text_layer_set_background_color(weather_layer->temp3_layer, cTempB);
+	text_layer_set_text_color(weather_layer->temp3_layer, cTempF);
   text_layer_set_font(weather_layer->temp3_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
 	text_layer_set_text_alignment(weather_layer->temp3_layer, GTextAlignmentCenter);
   text_layer_set_text(weather_layer->temp3_layer, "x");
@@ -708,8 +785,8 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
 
   // Add temperature #4 layer
 	weather_layer->temp4_layer = text_layer_create(GRect(0, 10, 144, 80));
-	text_layer_set_background_color(weather_layer->temp4_layer, GColorClear);
-	text_layer_set_text_color(weather_layer->temp4_layer, GColorBlack );
+	text_layer_set_background_color(weather_layer->temp4_layer, cTempB);
+	text_layer_set_text_color(weather_layer->temp4_layer, cTempF);
   text_layer_set_font(weather_layer->temp4_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
 	text_layer_set_text_alignment(weather_layer->temp4_layer, GTextAlignmentCenter);
   text_layer_set_text(weather_layer->temp4_layer, "y");
@@ -717,8 +794,8 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
 
   // Add temperature #5 layer
 	weather_layer->temp5_layer  = text_layer_create(GRect(0, 35, 144, 80));
-	text_layer_set_background_color(weather_layer->temp5_layer, GColorClear);
-	text_layer_set_text_color(weather_layer->temp5_layer, GColorBlack );
+	text_layer_set_background_color(weather_layer->temp5_layer, cTempB);
+	text_layer_set_text_color(weather_layer->temp5_layer, cTempF);
   text_layer_set_font(weather_layer->temp5_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
 	text_layer_set_text_alignment(weather_layer->temp5_layer, GTextAlignmentCenter);
   text_layer_set_text(weather_layer->temp5_layer, "z");
@@ -726,10 +803,10 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
 
   // Add wind layer
 	weather_layer->wind_layer = text_layer_create(GRect(0, 57, 144, 80));
-	text_layer_set_background_color(weather_layer->wind_layer, GColorClear);
+	text_layer_set_background_color(weather_layer->wind_layer, cInfoB);
 	text_layer_set_text_alignment(weather_layer->wind_layer, GTextAlignmentCenter);
 	text_layer_set_font(weather_layer->wind_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD) );
-	text_layer_set_text_color(weather_layer->wind_layer, GColorBlack );
+	text_layer_set_text_color(weather_layer->wind_layer, cInfoF);
   text_layer_set_text(weather_layer->wind_layer, obWindDir);
 	layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->wind_layer));
 
@@ -737,17 +814,17 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
 	weather_layer->battery_layer = text_layer_create(GRect(122, 63, 22, 16));
 	text_layer_set_text_alignment(weather_layer->battery_layer, GTextAlignmentRight);
 	text_layer_set_font(weather_layer->battery_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
-	text_layer_set_background_color(weather_layer->battery_layer, GColorClear);
-	text_layer_set_text_color(weather_layer->battery_layer, GColorBlack );
+	text_layer_set_background_color(weather_layer->battery_layer, cInfoBatB);
+	text_layer_set_text_color(weather_layer->battery_layer, cInfoBatF);
   text_layer_set_text(weather_layer->battery_layer, battery_text);
 	layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->battery_layer));
 
   // Add Bluetooth layer
 	weather_layer->bluetooth_layer = text_layer_create(GRect(0, 63, 22, 16));
-	text_layer_set_background_color(weather_layer->bluetooth_layer, GColorClear);
+	text_layer_set_background_color(weather_layer->bluetooth_layer, cInfoBlueB);
 	text_layer_set_text_alignment(weather_layer->bluetooth_layer, GTextAlignmentLeft);
 	text_layer_set_font(weather_layer->bluetooth_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
-	text_layer_set_text_color(weather_layer->bluetooth_layer, GColorBlack );
+	text_layer_set_text_color(weather_layer->bluetooth_layer, cInfoBlueF);
   text_layer_set_text(weather_layer->bluetooth_layer, bluetooth_text);
 	layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->bluetooth_layer));
 
@@ -756,8 +833,8 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
   weather_layer->icon2_layer = bitmap_layer_create(GRect(145 - 60, 8, 60, 60));
 	layer_add_child(weather_layer->layer, bitmap_layer_get_layer(weather_layer->icon1_layer));
 	layer_add_child(weather_layer->layer, bitmap_layer_get_layer(weather_layer->icon2_layer));
-  bitmap_layer_set_background_color(weather_layer->icon1_layer, GColorClear);
-  bitmap_layer_set_background_color(weather_layer->icon2_layer, GColorClear);
+  bitmap_layer_set_background_color(weather_layer->icon1_layer, cIconB);
+  bitmap_layer_set_background_color(weather_layer->icon2_layer, cIconB);
   weather_layer->icon1_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[0]);
   weather_layer->icon2_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[0]);
 

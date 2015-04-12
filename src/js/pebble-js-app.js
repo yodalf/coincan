@@ -1,13 +1,133 @@
 // Set callback for the app ready event
+
+var geoLocality=""
+var geoArea1=""
+
+var OurLocation="";
+var CanadaString=""
+
+var geoBaseArea1={
+// Simulator
+  "VA":"620",
+//Canada
+  "AB":"045",
+  "BC":"141",
+  "MB":"193",
+  "NB":"250",
+  "NL":"280",
+  "NS":"318",
+  "NT":"366",
+  "NU":"394",
+  "ON":"458",
+  "PE":"583",
+  "QC":"620",
+  "SK":"788",
+  "YT":"825"
+};
+
+function fetchWeather(latitude, longitude) {
+  var req = new XMLHttpRequest();
+//  longitude=-73.6;
+//  latitude=45.5;
+//  longitude=-79.4;
+//  latitude=43.7;
+
+//  longitude=-123.1;
+//  latitude=49.3;
+
+  //  Edmonton
+//  longitude=-113.5;
+//  latitude=53.5;
+
+  // Iqaluit  
+//  longitude=-68.5;
+//  latitude=63.7;
+
+  // Yellowknife
+//  longitude=-114.4;
+//  latitude=62.4;
+  // Regina
+//  longitude=-104.6;
+//  latitude=50.5;
+  
+  req.open('GET', "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + latitude + "," + longitude + "&sensor=true");
+  
+//  req.open('GET', "http://api.openweathermap.org/data/2.5/weather?" +
+//    "lat=" + latitude + "&lon=" + longitude + "&cnt=1", true);
+  req.onload = function(e) {
+    if (req.readyState == 4) {
+      if(req.status == 200) {
+        
+        var response = JSON.parse(req.responseText);
+        //console.log(req.responseText);
+        // Find administrative_area_level_1 (province)
+        for(var i=0; i<7; i++) {
+          if (response.results[0].address_components[i].types[0].match("locality")) {
+            geoLocality = response.results[0].address_components[i].short_name;
+          }
+          if (response.results[0].address_components[i].types[0].match("administrative_area_level_1")) {
+            geoArea1 = response.results[0].address_components[i].short_name;
+            break;
+          }
+        }
+        
+        CanadaString = geoBaseArea1[geoArea1];
+        console.log("CSTRING:"+CanadaString);
+        var address = response.results[0].formatted_address;
+        console.log("geoLocality: " + geoLocality);
+        console.log("geoArea1: " + geoArea1);
+        console.log("ADDRESS: " + address);
+
+
+        //var temperature = Math.round(response.main.temp - 273.15);
+        //var icon = iconFromWeatherId(response.weather[0].id);
+        //var city = response.name;
+        //console.log(temperature);
+        //console.log(icon);
+        //console.log(city);
+        //Pebble.sendAppMessage({
+        //  "WEATHER_ICON_KEY":icon,
+        //  "WEATHER_TEMPERATURE_KEY":temperature + "\u00B0C",
+        //  "WEATHER_CITY_KEY":city}
+        //);
+
+      } else {
+        console.log("Error");
+      }
+    }
+  };
+  req.send(null);
+}
+
+function locationSuccess(pos) {
+  var coordinates = pos.coords;
+  fetchWeather(coordinates.latitude, coordinates.longitude);
+}
+
+function locationError(err) {
+  console.warn('location error (' + err.code + '): ' + err.message);
+  Pebble.sendAppMessage({
+    "WEATHER_CITY_KEY":"Loc Unavailable",
+    "WEATHER_TEMPERATURE_KEY":"N/A"
+  });
+}
+
+var locationOptions = { "timeout": 15000, "maximumAge": 60000 }; 
+
+
+
 Pebble.addEventListener("ready",
                         function(e) {
                           console.log("connect!: " + e.ready);
                           console.log(e.type);
+                          
+                          window.navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
+                          
                         });
 
 Pebble.addEventListener("appmessage",
                         function(e) {
-                        fetch_BTC();
+                          fetch_BTC();
                         });
 
 
@@ -147,7 +267,8 @@ function fetch_BTC ()
                           "10": forecastIconCode,
                           "11": forecastHigh, 
                           "12": forecastLow,
-                          "13": forecastPeriod
+                          "13": forecastPeriod,
+                          "14": geoArea1
                           });
                         }
                       );
@@ -155,7 +276,8 @@ function fetch_BTC ()
                   }
                 }
               };
-            req.open('GET', "http://weather.gc.ca/wxlink/site_js/s0000620_e.js", true);
+//            req.open('GET', "http://weather.gc.ca/wxlink/site_js/s0000620_e.js", true);
+            req.open('GET', "http://weather.gc.ca/wxlink/site_js/s0000"+CanadaString+"_e.js", true);
             req.send(null);
 
 
@@ -169,8 +291,8 @@ function fetch_BTC ()
       {
       console.log("Error");
       }
-    }
-
+    };
+    
 
   // req.open('GET', "https://data.mtgox.com/api/1/BTCUSD/ticker", true);
   // req.open('GET', "http://api.bitcoincharts.com/v1/markets.json", true);

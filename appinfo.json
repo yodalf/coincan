@@ -1,7 +1,7 @@
 {
     "appKeys": {},
     "capabilities": [
-        ""
+        "location"
     ],
     "companyName": "Real Ouellet",
     "longName": "Bitcoin and Weather - Quebec",
@@ -10,6 +10,7 @@
         "media": [
             {
                 "characterRegex": "[:]",
+                "compatibility": "2.7",
                 "file": "fonts/futura.ttf",
                 "name": "FUTURA_45",
                 "trackingAdjust": -4,
@@ -17,6 +18,7 @@
             },
             {
                 "characterRegex": "[0-9: -]",
+                "compatibility": "2.7",
                 "file": "fonts/futura.ttf",
                 "name": "FUTURA_40",
                 "trackingAdjust": -4,
@@ -24,6 +26,7 @@
             },
             {
                 "characterRegex": "[0-9: -]",
+                "compatibility": "2.7",
                 "file": "fonts/futura.ttf",
                 "name": "FUTURA_35",
                 "trackingAdjust": -4,
@@ -31,6 +34,7 @@
             },
             {
                 "characterRegex": "[0-9adeFhiMnorSTtuW: -]*",
+                "compatibility": "2.7",
                 "file": "fonts/futura.ttf",
                 "name": "FUTURA_18",
                 "trackingAdjust": 3,
@@ -267,13 +271,18 @@
                 "type": "png"
             },
             {
+                "compatibility": "2.7",
                 "file": "fonts/futura_condensed_bold-webfont.ttf",
                 "name": "FUTURA_CONDENSED_53",
                 "type": "font"
             }
         ]
     },
+    "sdkVersion": "3",
     "shortName": "CoinCan-Quebec",
+    "targetPlatforms": [
+        "aplite"
+    ],
     "uuid": "6f32143a-2bb9-4009-bc98-af2406b3c140",
     "versionCode": 1,
     "versionLabel": "1.1",
