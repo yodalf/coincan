@@ -46,8 +46,10 @@ static BatteryChargeState battery_state;
 static char battery_text[8];
 static char bluetooth_text[8];
 
-static const uint32_t const segments_long[] = { 1000, 1000, 1000 };
-static const uint32_t const segments_short[] = { 100, 100, 100, 100, 100, 100, 100, 100, 100, 100};
+static char geoArea1[4];
+
+static const uint32_t segments_long[] = { 1000, 1000, 1000 };
+static const uint32_t segments_short[] = { 100, 100, 100, 100, 100, 100, 100, 100, 100, 100};
 VibePattern myLongVibes = {
   .durations = segments_long,
   .num_segments = ARRAY_LENGTH(segments_long),
@@ -76,24 +78,45 @@ static char date_text[] = "........";
 static int message_count = 0;
 
 #ifdef PBL_COLOR
+    #define cWindowB    GColorOxfordBlue
     #define cTopB
     #define cBitcoinsB
-    #define cWeatherB
-    #define cInfoB
+    #define cWeatherB   GColorPastelYellow
+    #define cIconB      GColorClear
 
-    #define cTimeF gColorOxfordBlue
-    #define cTimeB
-    
-    #define cDateF
-    #define cDateB
-    
-    #define cBitcF
-    #define cBitcB 
+    #define cInfoB      GColorClear
+    #define cInfoF      GColorBlack
   
-    #define cInfoBlueF
-    #define cInfoBlueB
-    #define cinfoBatF
-    #define cInfoBatB
+    #define cTimeF      GColorYellow
+    #define cTimeB      GColorClear
+    
+    #define cDateF      GColorRajah
+    #define cDateB      GColorClear
+    
+    #define cBtchF      GColorSpringBud
+    #define cBtchB      GColorClear
+  
+    #define cBtclF      GColorSpringBud
+    #define cBtclB      GColorClear
+  
+    #define cBtcF       GColorSpringBud
+    #define cBtcB       GColorClear
+  
+    #define cGraphF     GColorSpringBud
+
+    #define cTempF  GColorBlack
+    #define cTempB  GColorClear
+  
+
+    #define cInfoBlueF  GColorBlack
+    #define cInfoBlueB  GColorClear
+    #define cInfoBlueAlarmB  GColorBlack
+    #define cInfoBlueAlarmF  GColorWhite
+    
+    #define cInfoBatF  GColorBlack
+    #define cInfoBatB  GColorClear
+    #define cInfoBatAlarmB  GColorBlack
+    #define cInfoBatAlarmF  GColorWhite
 
 #else
     #define cWindowB    GColorBlack
@@ -168,11 +191,11 @@ typedef struct {
   GBitmap *icon2_bitmap;
 
 	bool has_weather_icon;
-	char temp1_str[5];
-	char temp2_str[5];
-	char temp3_str[5];
-	char temp4_str[5];
-	char temp5_str[5];
+	char temp1_str[16];
+	char temp2_str[16];
+	char temp3_str[16];
+	char temp4_str[16];
+	char temp5_str[16];
   char wind_str[16];
 } WeatherLayer;
 
@@ -235,6 +258,7 @@ void weather_layer_deinit(WeatherLayer* weather_layer);
 //void weather_layer_set_icon(WeatherLayer* weather_layer, int icon1, int icon2);
 //void weather_layer_set_temperature(WeatherLayer* weather_layer, int16_t temperature, char * wind_dir, int wind_speed, int wind_gust, int humidex, int forecast_temp);
 
+static void fetch_msg(void);
 
 
 
@@ -284,15 +308,21 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
   Tuple *forecastHigh_tuple = dict_find(iter, 11);
   Tuple *forecastLow_tuple = dict_find(iter, 12);
   Tuple *forecastPeriod_tuple = dict_find(iter, 13);
-  Tuple *ourLocation_tuple = dict_find(iter, 14);
+  Tuple *geoArea1_tuple = dict_find(iter, 14);
 
   APP_LOG(APP_LOG_LEVEL_DEBUG,"IN!");
   message_count += 1;
   
   // Default positions
-  if (ourLocation_tuple)
+  if (geoArea1_tuple)
     {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "OUR LOCATION: %s", ourLocation_tuple->value->cstring);  
+    strncpy(geoArea1, geoArea1_tuple->value->cstring, 3);
+    if (bluetooth_text[1] != '?') 
+      {
+      strcpy(bluetooth_text," ");
+      strncat(bluetooth_text, geoArea1, 3);
+      }
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "OUR LOCATION: %s", geoArea1);  
     }
 
   if (btcV_tuple) 
@@ -439,6 +469,14 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
     	text_layer_set_text(weather_layer.temp4_layer, "");
     	text_layer_set_text(weather_layer.temp5_layer, "");
       }
+    else
+      {
+    	text_layer_set_text(weather_layer.temp1_layer, "");
+    	text_layer_set_text(weather_layer.temp2_layer, "");
+      text_layer_set_text(weather_layer.temp3_layer, "");
+    	text_layer_set_text(weather_layer.temp4_layer, "");
+    	text_layer_set_text(weather_layer.temp5_layer, "");      
+      }
     }
 
   }
@@ -458,13 +496,14 @@ static void fetch_msg(void) {
 
   app_message_outbox_begin(&iter);
 
-  if (iter == NULL) {
+  if (iter == NULL)
+    {  
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Null iter!");
     return;
-  }
+    }
 
   strcat(date_text, "*");
-
+  
   dict_write_tuplet(iter, &symbol_tuple);
   dict_write_end(iter);
 
@@ -524,7 +563,9 @@ static void bluetooth_handler(bool connected)
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "Bluetooth event!");
   if (connected)
     {
-    strcpy(bluetooth_text," ok");
+    strcpy(bluetooth_text," ");
+    strcat(bluetooth_text, geoArea1);
+    
    	text_layer_set_font(weather_layer.bluetooth_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
   	text_layer_set_background_color(weather_layer.bluetooth_layer, cInfoBlueB);
 	  text_layer_set_text_color(weather_layer.bluetooth_layer, cInfoBlueF );
@@ -553,7 +594,7 @@ static void battery_handler(BatteryChargeState charge)
   battery_state.is_plugged  = charge.is_plugged;    
 
   strncpy(battery_text, "", 8);
-  if (battery_state.charge_percent <= 50)
+  if (battery_state.charge_percent <= 30)
     {
    	text_layer_set_background_color(weather_layer.battery_layer, cInfoBatAlarmB);
     text_layer_set_text_color(weather_layer.battery_layer, cInfoBatAlarmF);    
@@ -693,7 +734,9 @@ static void init(void)
   battery_handler(battery_state);
   
   if (bluetooth_connection_service_peek()) 
+   {
     strcpy(bluetooth_text," ok");
+    }
   else
     strcpy(bluetooth_text," LOST!");
   
@@ -705,7 +748,10 @@ static void init(void)
 
 void graph_update_proc(struct Layer *layer, GContext *ctx)
   {
-  graphics_context_set_stroke_color(ctx, cGraphF);
+  if (btcV_value != 0.0)
+    graphics_context_set_stroke_color(ctx, cGraphF);
+  else
+    graphics_context_set_stroke_color(ctx, cWindowB);
   gpath_draw_outline(ctx, bgraph);
   }
 
@@ -838,9 +884,16 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
   weather_layer->icon1_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[0]);
   weather_layer->icon2_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[0]);
 
-  bitmap_layer_set_bitmap(weather_layer->icon1_layer,  weather_layer->icon1_bitmap  );
-  bitmap_layer_set_bitmap(weather_layer->icon2_layer,  weather_layer->icon2_bitmap  );
-
+//  bitmap_layer_set_bitmap(weather_layer->icon1_layer,  weather_layer->icon1_bitmap  );
+//  bitmap_layer_set_bitmap(weather_layer->icon2_layer,  weather_layer->icon2_bitmap  );
+  
+  
+  // Zero out text fields
+ 	text_layer_set_text(weather_layer->temp1_layer, "");
+ 	text_layer_set_text(weather_layer->temp2_layer, "");
+  text_layer_set_text(weather_layer->temp3_layer, "");
+	text_layer_set_text(weather_layer->temp4_layer, "COINCAN 1.0");
+	text_layer_set_text(weather_layer->temp5_layer, "... initializing ...");      
 }
 
 void weather_layer_deinit(WeatherLayer* weather_layer) 

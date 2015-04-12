@@ -1,10 +1,7 @@
 // Set callback for the app ready event
 
-var geoLocality=""
-var geoArea1=""
-
-var OurLocation="";
-var CanadaString=""
+var geoLocality="";
+var geoArea1="";
 
 var geoBaseArea1={
 // Simulator
@@ -70,7 +67,7 @@ function fetchWeather(latitude, longitude) {
             break;
           }
         }
-        
+        //strcpy(geoArea1,"xx");
         CanadaString = geoBaseArea1[geoArea1];
         console.log("CSTRING:"+CanadaString);
         var address = response.results[0].formatted_address;
