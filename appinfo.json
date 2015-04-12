@@ -4,7 +4,7 @@
         "location"
     ],
     "companyName": "Real Ouellet",
-    "longName": "Bitcoin and Weather - Quebec",
+    "longName": "Bitcoin and Weather - Canada",
     "projectType": "native",
     "resources": {
         "media": [
@@ -279,14 +279,13 @@
         ]
     },
     "sdkVersion": "3",
-    "shortName": "CoinCan-Quebec",
+    "shortName": "CoinCan",
     "targetPlatforms": [
-        "aplite",
-        "basalt"
+        "aplite"
     ],
-    "uuid": "6f32143a-2bb9-4009-bc98-af2406b3c140",
+    "uuid": "6f32143a-2bb9-4009-bc98-af2406b3c1AA",
     "versionCode": 1,
-    "versionLabel": "1.1",
+    "versionLabel": "2.0",
     "watchapp": {
         "watchface": true
     }
