@@ -892,7 +892,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
  	text_layer_set_text(weather_layer->temp1_layer, "");
  	text_layer_set_text(weather_layer->temp2_layer, "");
   text_layer_set_text(weather_layer->temp3_layer, "");
-	text_layer_set_text(weather_layer->temp4_layer, "COINCAN 2.0");
+	text_layer_set_text(weather_layer->temp4_layer, "COINCAN 2.1");
 	text_layer_set_text(weather_layer->temp5_layer, "... initializing ...");      
 }
 
