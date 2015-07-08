@@ -605,7 +605,21 @@ static void battery_handler(BatteryChargeState charge)
 	  text_layer_set_text_color(weather_layer.battery_layer, cInfoBatF);    
     }
 
-  if (battery_state.is_plugged) 
+ 
+ 
+  strncat(battery_text, " ", 8);    
+
+  if (battery_state.charge_percent > 99)
+    strncat(battery_text, "FL", 8);
+  else
+    strncat(battery_text, _itoa(battery_state.charge_percent), 8);
+  
+  if (battery_state.is_charging) 
+    strncat(battery_text, "*", 8);
+  else
+    strncat(battery_text, " ", 8);    
+
+if (battery_state.is_plugged) 
     {
   	text_layer_set_font(weather_layer.battery_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD) );
     }
@@ -613,14 +627,7 @@ static void battery_handler(BatteryChargeState charge)
     {
    	text_layer_set_font(weather_layer.battery_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
     }
- 
-  strncat(battery_text, " ", 8);    
-  strncat(battery_text, _itoa(battery_state.charge_percent), 8);
-  //strncat(battery_text, "% ", 8);    
-  if (battery_state.is_charging) 
-    strncat(battery_text, "*", 8);
-  else
-    strncat(battery_text, " ", 8);    
+
 
   layer_mark_dirty(window_get_root_layer(window));
   //fetch_msg();
@@ -892,8 +899,8 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
  	text_layer_set_text(weather_layer->temp1_layer, "");
  	text_layer_set_text(weather_layer->temp2_layer, "");
   text_layer_set_text(weather_layer->temp3_layer, "");
-	text_layer_set_text(weather_layer->temp4_layer, "COINCAN 2.1");
-	text_layer_set_text(weather_layer->temp5_layer, "... initializing ...");      
+	text_layer_set_text(weather_layer->temp4_layer, "COINCAN 2.2");
+	text_layer_set_text(weather_layer->temp5_layer, "Enable your GPS!");      
 }
 
 void weather_layer_deinit(WeatherLayer* weather_layer) 

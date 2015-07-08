@@ -4,6 +4,8 @@ var geoLocality="";
 var geoArea1="";
 var geoArea2="";
 var geoString="";
+var geoLatitude=0.0;
+var geoLongitude=0.0;
 
 
 
@@ -861,7 +863,7 @@ var geoBaseArea1={
   "YT":"825"
 };
 
-function fetchWeather(latitude, longitude) {
+function fetchLocation(latitude, longitude) {
   var req = new XMLHttpRequest();
 
 //  Montreal
@@ -907,7 +909,7 @@ function fetchWeather(latitude, longitude) {
   req.onload = function(e) {
     if (req.readyState == 4) {
       if(req.status == 200) {
-        
+                
         var response = JSON.parse(req.responseText);
         //console.log(req.responseText);
         // Find administrative_area_level_1 (province)
@@ -936,6 +938,8 @@ function fetchWeather(latitude, longitude) {
         
         var address = response.results[0].formatted_address;
 
+        console.log("geoLatitude: "+geoLatitude);
+        console.log("geoLongitude: "+geoLongitude);
         console.log("geoString: "+geoString);
         console.log("geoLocality: " + geoLocality);
         console.log("geoArea1: " + geoArea1);
@@ -964,16 +968,25 @@ function fetchWeather(latitude, longitude) {
 }
 
 function locationSuccess(pos) {
-  var coordinates = pos.coords;
-  fetchWeather(coordinates.latitude, coordinates.longitude);
+  var coordinates = pos.coords;  
+  
+  geoLatitude = coordinates.latitude;
+  geoLongitude = coordinates.longitude;
+
+  console.log ("*** LOCATION SUCCESS! **");
+  
+  fetchLocation(coordinates.latitude, coordinates.longitude);
+  fetch_BTC();
 }
 
 function locationError(err) {
   console.warn('location error (' + err.code + '): ' + err.message);
+/*
   Pebble.sendAppMessage({
-    "WEATHER_CITY_KEY":"Loc Unavailable",
+    "WEATHER_CITY_KEY":".",
     "WEATHER_TEMPERATURE_KEY":"N/A"
   });
+*/
 }
 
 var locationOptions = { "timeout": 15000, "maximumAge": 60000 }; 
@@ -985,19 +998,23 @@ Pebble.addEventListener("ready",
                           console.log("connect!: " + e.ready);
                           console.log(e.type);
                           
-                          window.navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
-                          
+                          navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
+                    
                         });
 
 Pebble.addEventListener("appmessage",
                         function(e) {
-                          fetch_BTC();
+                          if (geoLatitude !== 0.0)
+                            fetch_BTC();
+                          else
+                            console.log("=> Would have done fetchBTC with a zero Latitude!");
                         });
 
 
 function fetch_BTC () 
   {
   var req = new XMLHttpRequest();
+    
     
   req.onload = function(e) 
     {
@@ -1133,6 +1150,8 @@ function fetch_BTC ()
                           "12": forecastLow,
                           "13": forecastPeriod,
                           "14": geoArea1
+//                          "15": geoLatitude,
+ //                         "16": geoLongitude
                           });
                         }
                       );
@@ -1157,9 +1176,6 @@ function fetch_BTC ()
       }
     };
     
-
-  // req.open('GET', "https://data.mtgox.com/api/1/BTCUSD/ticker", true);
-  // req.open('GET', "http://api.bitcoincharts.com/v1/markets.json", true);
   req.open('GET', "https://www.cavirtex.com/api/CAD/ticker.json", true);
   req.send(null);
 
