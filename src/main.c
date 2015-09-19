@@ -325,7 +325,7 @@ void push_point(float btc, float btcL, float btcH)
   int i,j;
 
   for (i=0; i<X_SIZE-1; i++) bgraph_data[i].y = bgraph_data[i+1].y;
-  bgraph_data[X_SIZE-1].y =  Y_SIZE - (Y_SIZE * ((btc-btcL)/(btcH-btcL)) );
+  bgraph_data[X_SIZE-1].y =  Y_SIZE - (Y_SIZE * ((btc-btcL)/(btcH-btcL)) ) - 1;
   j = 2*X_SIZE;
   for (i=X_SIZE; i<2*X_SIZE; i++) bgraph_data[i].y = bgraph_data[j-i-1].y;
   
@@ -395,7 +395,10 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
     gbitmap_destroy(weather_layer.icon1_bitmap);
     weather_layer.icon1_bitmap =  gbitmap_create_with_resource(WEATHER_ICONS[_atoi(obIconCode)]);
     bitmap_layer_set_bitmap(weather_layer.icon1_layer, weather_layer.icon1_bitmap );
-    //APP_LOG(APP_LOG_LEVEL_DEBUG, "obIconCode: %s", obIconCode_tuple->value->cstring);
+    #ifdef PBL_COLOR
+      bitmap_layer_set_compositing_mode(weather_layer.icon1_layer, GCompOpAssignInverted);
+    #endif
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "obIconCode: %s", obIconCode_tuple->value->cstring);
     }
 
   if (obTemperature_tuple) 
@@ -440,7 +443,10 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
     gbitmap_destroy(weather_layer.icon2_bitmap);
     weather_layer.icon2_bitmap =  gbitmap_create_with_resource(WEATHER_ICONS[_atoi(forecastIconCode)]);
     bitmap_layer_set_bitmap(weather_layer.icon2_layer, weather_layer.icon2_bitmap );
-    //APP_LOG(APP_LOG_LEVEL_DEBUG, "forecastIconCode: %s", forecastIconCode_tuple->value->cstring);
+    #ifdef PBL_COLOR
+      bitmap_layer_set_compositing_mode(weather_layer.icon2_layer, GCompOpAssignInverted);
+    #endif
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "forecastIconCode: %s", forecastIconCode_tuple->value->cstring);
     }
 
   if (forecastLow_tuple) 

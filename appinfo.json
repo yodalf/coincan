@@ -9,100 +9,54 @@
     "resources": {
         "media": [
             {
-                "characterRegex": "[:]",
-                "compatibility": "2.7",
-                "file": "fonts/futura.ttf",
-                "name": "FUTURA_45",
-                "trackingAdjust": -4,
-                "type": "font"
-            },
-            {
-                "characterRegex": "[0-9: -]",
-                "compatibility": "2.7",
-                "file": "fonts/futura.ttf",
-                "name": "FUTURA_40",
-                "trackingAdjust": -4,
-                "type": "font"
-            },
-            {
-                "characterRegex": "[0-9: -]",
-                "compatibility": "2.7",
-                "file": "fonts/futura.ttf",
-                "name": "FUTURA_35",
-                "trackingAdjust": -4,
-                "type": "font"
-            },
-            {
-                "characterRegex": "[0-9adeFhiMnorSTtuW: -]*",
-                "compatibility": "2.7",
-                "file": "fonts/futura.ttf",
-                "name": "FUTURA_18",
-                "trackingAdjust": 3,
-                "type": "font"
-            },
-            {
-                "file": "images/error.png",
-                "name": "ICON_ERROR",
-                "type": "pbi"
-            },
-            {
-                "file": "images/45.png",
-                "name": "I45",
-                "type": "pbi"
-            },
-            {
-                "file": "images/44.png",
-                "name": "I44",
-                "type": "pbi"
-            },
-            {
-                "file": "images/43.png",
-                "name": "I43",
-                "type": "pbi"
-            },
-            {
-                "file": "images/42.png",
-                "name": "I42",
-                "type": "pbi"
-            },
-            {
                 "file": "images/41.png",
                 "name": "I41",
                 "type": "pbi"
             },
             {
-                "file": "images/40.png",
-                "name": "I40",
+                "compatibility": "2.7",
+                "file": "fonts/futura_condensed_bold-webfont.ttf",
+                "name": "FUTURA_CONDENSED_53",
+                "type": "font"
+            },
+            {
+                "file": "images/18.png",
+                "name": "I18",
                 "type": "pbi"
             },
             {
-                "file": "images/39.png",
-                "name": "I39",
+                "file": "images/17.png",
+                "name": "I17",
                 "type": "pbi"
             },
             {
-                "file": "images/38.png",
-                "name": "I38",
+                "file": "images/02.png",
+                "name": "I02",
                 "type": "pbi"
             },
             {
-                "file": "images/37.png",
-                "name": "I37",
+                "file": "images/04.png",
+                "name": "I04",
                 "type": "pbi"
             },
             {
-                "file": "images/36.png",
-                "name": "I36",
+                "file": "images/16.png",
+                "name": "I16",
+                "type": "pbi"
+            },
+            {
+                "file": "images/22.png",
+                "name": "I22",
+                "type": "pbi"
+            },
+            {
+                "file": "images/23.png",
+                "name": "I23",
                 "type": "pbi"
             },
             {
                 "file": "images/35.png",
                 "name": "I35",
-                "type": "pbi"
-            },
-            {
-                "file": "images/34.png",
-                "name": "I34",
                 "type": "pbi"
             },
             {
@@ -116,48 +70,8 @@
                 "type": "pbi"
             },
             {
-                "file": "images/31.png",
-                "name": "I31",
-                "type": "pbi"
-            },
-            {
-                "file": "images/30.png",
-                "name": "I30",
-                "type": "pbi"
-            },
-            {
-                "file": "images/28.png",
-                "name": "I28",
-                "type": "pbi"
-            },
-            {
-                "file": "images/27.png",
-                "name": "I27",
-                "type": "pbi"
-            },
-            {
-                "file": "images/26.png",
-                "name": "I26",
-                "type": "pbi"
-            },
-            {
-                "file": "images/25.png",
-                "name": "I25",
-                "type": "pbi"
-            },
-            {
-                "file": "images/24.png",
-                "name": "I24",
-                "type": "pbi"
-            },
-            {
-                "file": "images/23.png",
-                "name": "I23",
-                "type": "pbi"
-            },
-            {
-                "file": "images/22.png",
-                "name": "I22",
+                "file": "images/45.png",
+                "name": "I45",
                 "type": "pbi"
             },
             {
@@ -166,29 +80,72 @@
                 "type": "pbi"
             },
             {
-                "file": "images/20.png",
-                "name": "I20",
+                "file": "images/24.png",
+                "name": "I24",
                 "type": "pbi"
             },
             {
-                "file": "images/19.png",
-                "name": "I19",
+                "file": "images/07.png",
+                "name": "I07",
                 "type": "pbi"
             },
             {
-                "file": "images/18.png",
-                "name": "I18",
+                "file": "images/44.png",
+                "name": "I44",
                 "type": "pbi"
             },
             {
-                "file": "images/17.png",
-                "name": "I17",
+                "file": "images/error.png",
+                "name": "ICON_ERROR",
                 "type": "pbi"
             },
             {
-                "file": "images/16.png",
-                "name": "I16",
+                "file": "images/39.png",
+                "name": "I39",
                 "type": "pbi"
+            },
+            {
+                "file": "images/27.png",
+                "name": "I27",
+                "type": "pbi"
+            },
+            {
+                "file": "images/42.png",
+                "name": "I42",
+                "type": "pbi"
+            },
+            {
+                "file": "images/43.png",
+                "name": "I43",
+                "type": "pbi"
+            },
+            {
+                "file": "images/37.png",
+                "name": "I37",
+                "type": "pbi"
+            },
+            {
+                "file": "images/25.png",
+                "name": "I25",
+                "type": "pbi"
+            },
+            {
+                "file": "images/05.png",
+                "name": "I05",
+                "type": "pbi"
+            },
+            {
+                "file": "images/28.png",
+                "name": "I28",
+                "type": "pbi"
+            },
+            {
+                "characterRegex": "[0-9adeFhiMnorSTtuW: -]*",
+                "compatibility": "2.7",
+                "file": "fonts/futura.ttf",
+                "name": "FUTURA_18",
+                "trackingAdjust": 3,
+                "type": "font"
             },
             {
                 "file": "images/15.png",
@@ -201,53 +158,18 @@
                 "type": "pbi"
             },
             {
-                "file": "images/13.png",
-                "name": "I13",
-                "type": "pbi"
-            },
-            {
-                "file": "images/12.png",
-                "name": "I12",
-                "type": "pbi"
-            },
-            {
-                "file": "images/11.png",
-                "name": "I11",
-                "type": "pbi"
-            },
-            {
-                "file": "images/10.png",
-                "name": "I10",
-                "type": "pbi"
-            },
-            {
-                "file": "images/09.png",
-                "name": "I09",
-                "type": "pbi"
-            },
-            {
-                "file": "images/08.png",
-                "name": "I08",
-                "type": "pbi"
-            },
-            {
-                "file": "images/07.png",
-                "name": "I07",
-                "type": "pbi"
-            },
-            {
                 "file": "images/06.png",
                 "name": "I06",
                 "type": "pbi"
             },
             {
-                "file": "images/05.png",
-                "name": "I05",
+                "file": "images/36.png",
+                "name": "I36",
                 "type": "pbi"
             },
             {
-                "file": "images/04.png",
-                "name": "I04",
+                "file": "images/26.png",
+                "name": "I26",
                 "type": "pbi"
             },
             {
@@ -256,8 +178,18 @@
                 "type": "pbi"
             },
             {
-                "file": "images/02.png",
-                "name": "I02",
+                "file": "images/20.png",
+                "name": "I20",
+                "type": "pbi"
+            },
+            {
+                "file": "images/34.png",
+                "name": "I34",
+                "type": "pbi"
+            },
+            {
+                "file": "images/08.png",
+                "name": "I08",
                 "type": "pbi"
             },
             {
@@ -266,15 +198,59 @@
                 "type": "pbi"
             },
             {
+                "file": "images/40.png",
+                "name": "I40",
+                "type": "pbi"
+            },
+            {
+                "file": "images/38.png",
+                "name": "I38",
+                "type": "pbi"
+            },
+            {
+                "file": "images/19.png",
+                "name": "I19",
+                "type": "pbi"
+            },
+            {
+                "file": "images/11.png",
+                "name": "I11",
+                "type": "pbi"
+            },
+            {
+                "file": "images/31.png",
+                "name": "I31",
+                "type": "pbi"
+            },
+            {
+                "file": "images/12.png",
+                "name": "I12",
+                "type": "pbi"
+            },
+            {
+                "file": "images/09.png",
+                "name": "I09",
+                "type": "pbi"
+            },
+            {
+                "file": "images/30.png",
+                "name": "I30",
+                "type": "pbi"
+            },
+            {
+                "file": "images/10.png",
+                "name": "I10",
+                "type": "pbi"
+            },
+            {
                 "file": "images/00.png",
                 "name": "I00",
                 "type": "pbi"
             },
             {
-                "compatibility": "2.7",
-                "file": "fonts/futura_condensed_bold-webfont.ttf",
-                "name": "FUTURA_CONDENSED_53",
-                "type": "font"
+                "file": "images/13.png",
+                "name": "I13",
+                "type": "pbi"
             }
         ]
     },
