@@ -147,7 +147,7 @@ static int message_count = 0;
   
     #define cGraphF     GColorYellow
 
-    #define cTempF  GColorYellow
+    #define cTempF  GColorWhite
     #define cTempB  GColorClear
   
 
@@ -903,7 +903,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
 	layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp5_layer));
 
   // Add wind layer
-	weather_layer->wind_layer = text_layer_create(GRect(0, 57, 144, 80));
+	weather_layer->wind_layer = text_layer_create(GRect(0, 60, 144, 80));
 	text_layer_set_background_color(weather_layer->wind_layer, cInfoB);
 	text_layer_set_text_alignment(weather_layer->wind_layer, GTextAlignmentCenter);
 	text_layer_set_font(weather_layer->wind_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD) );
