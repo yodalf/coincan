@@ -46,7 +46,7 @@ static BatteryChargeState battery_state;
 static char battery_text[8];
 static char bluetooth_text[8];
 
-static char geoArea1[4];
+static char geoArea1[5];
 
 static const uint32_t segments_long[] = { 1000, 1000, 1000 };
 static const uint32_t segments_short[] = { 100, 100, 100, 100, 100, 100, 100, 100, 100, 100};
@@ -77,7 +77,7 @@ static char date_text[] = "........";
 
 static int message_count = 0;
 
-#ifdef PBL_COLOR
+#ifdef ORIGINAL_COLORS
     #define cWindowB    GColorOxfordBlue
     #define cTopB
     #define cBitcoinsB
@@ -117,7 +117,49 @@ static int message_count = 0;
     #define cInfoBatB  GColorClear
     #define cInfoBatAlarmB  GColorBlack
     #define cInfoBatAlarmF  GColorWhite
+#endif
 
+
+#ifdef PBL_COLOR
+    #define cWindowB    GColorBlack
+    #define cTopB
+    #define cBitcoinsB
+    #define cWeatherB   GColorBlack
+    #define cIconB      GColorClear
+
+    #define cInfoB      GColorClear
+    #define cInfoF      GColorYellow
+  
+    #define cTimeF      GColorYellow
+    #define cTimeB      GColorClear
+    
+    #define cDateF      GColorYellow
+    #define cDateB      GColorClear
+    
+    #define cBtchF      GColorYellow
+    #define cBtchB      GColorClear
+  
+    #define cBtclF      GColorYellow
+    #define cBtclB      GColorClear
+  
+    #define cBtcF       GColorYellow
+    #define cBtcB       GColorClear
+  
+    #define cGraphF     GColorYellow
+
+    #define cTempF  GColorYellow
+    #define cTempB  GColorClear
+  
+
+    #define cInfoBlueF  GColorYellow
+    #define cInfoBlueB  GColorClear
+    #define cInfoBlueAlarmB  GColorYellow
+    #define cInfoBlueAlarmF  GColorBlack
+    
+    #define cInfoBatF  GColorYellow
+    #define cInfoBatB  GColorClear
+    #define cInfoBatAlarmB  GColorYellow
+    #define cInfoBatAlarmF  GColorBlack
 #else
     #define cWindowB    GColorBlack
     #define cTopB
@@ -316,11 +358,11 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
   // Default positions
   if (geoArea1_tuple)
     {
-    strncpy(geoArea1, geoArea1_tuple->value->cstring, 3);
+    strncpy(geoArea1, geoArea1_tuple->value->cstring, 5);
     if (bluetooth_text[1] != '?') 
       {
       strcpy(bluetooth_text," ");
-      strncat(bluetooth_text, geoArea1, 3);
+      strncat(bluetooth_text, geoArea1, 5);
       }
     APP_LOG(APP_LOG_LEVEL_DEBUG, "OUR LOCATION: %s", geoArea1);  
     }
@@ -873,7 +915,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
 	layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->battery_layer));
 
   // Add Bluetooth layer
-	weather_layer->bluetooth_layer = text_layer_create(GRect(0, 63, 22, 16));
+	weather_layer->bluetooth_layer = text_layer_create(GRect(0, 63, 30, 16));
 	text_layer_set_background_color(weather_layer->bluetooth_layer, cInfoBlueB);
 	text_layer_set_text_alignment(weather_layer->bluetooth_layer, GTextAlignmentLeft);
 	text_layer_set_font(weather_layer->bluetooth_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
@@ -899,7 +941,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
  	text_layer_set_text(weather_layer->temp1_layer, "");
  	text_layer_set_text(weather_layer->temp2_layer, "");
   text_layer_set_text(weather_layer->temp3_layer, "");
-	text_layer_set_text(weather_layer->temp4_layer, "COINCAN 2.2");
+	text_layer_set_text(weather_layer->temp4_layer, "COINCAN 2.3");
 	text_layer_set_text(weather_layer->temp5_layer, "Enable your GPS!");      
 }
 

@@ -281,10 +281,11 @@
     "sdkVersion": "3",
     "shortName": "CoinCan",
     "targetPlatforms": [
-        "aplite"
+        "aplite",
+        "basalt"
     ],
     "uuid": "6f32143a-2bb9-4009-bc98-af2406b3c1AA",
-    "versionLabel": "2.2",
+    "versionLabel": "2.3",
     "watchapp": {
         "watchface": true
     }

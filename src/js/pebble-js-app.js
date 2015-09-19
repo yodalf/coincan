@@ -6,6 +6,7 @@ var geoArea2="";
 var geoString="";
 var geoLatitude=0.0;
 var geoLongitude=0.0;
+var gpsError=0;
 
 
 
@@ -974,19 +975,23 @@ function locationSuccess(pos) {
   geoLongitude = coordinates.longitude;
 
   console.log ("*** LOCATION SUCCESS! **");
-  
+  gpsError = 0;
   fetchLocation(coordinates.latitude, coordinates.longitude);
   fetch_BTC();
 }
 
 function locationError(err) {
   console.warn('location error (' + err.code + '): ' + err.message);
-/*
-  Pebble.sendAppMessage({
-    "WEATHER_CITY_KEY":".",
-    "WEATHER_TEMPERATURE_KEY":"N/A"
-  });
-*/
+  
+  /* Use Montreal as default when GPS is off */
+  geoLongitude = -73.6;
+  geoLatitude  = 45.5;
+  console.log ("Using Montreal as default city.");
+
+  gpsError = 1;
+  
+  fetchLocation(geoLatitude, geoLongitude);
+  fetch_BTC();
 }
 
 var locationOptions = { "timeout": 15000, "maximumAge": 60000 }; 
@@ -1149,7 +1154,7 @@ function fetch_BTC ()
                           "11": forecastHigh, 
                           "12": forecastLow,
                           "13": forecastPeriod,
-                          "14": geoArea1
+                          "14": (gpsError != 1 ? geoArea1 : "GPS?")
 //                          "15": geoLatitude,
  //                         "16": geoLongitude
                           });
