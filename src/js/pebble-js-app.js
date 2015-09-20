@@ -1035,7 +1035,11 @@ function fetch_BTC ()
           var btcL = Math.round(response.low);
           var btcV = Math.round(response.last);
 
-          //if (btcV > 1000) 
+          btcH = 1888.0;
+          btcL = 1886.0;
+          btcV = 1887.0;
+            
+            //if (btcV > 1000) 
           //  btcV = Math.round(btcV);
           //else
           //  btcV = (Math.round(100.0 * btcV))/100.0;

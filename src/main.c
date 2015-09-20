@@ -3,9 +3,15 @@
 
 
 #define FULL_FRAME      (GRect(0, 0, 144, 168))
-#define TIME_FRAME      (GRect(0, -8, 144, 168-6))
-#define DATE_FRAME      (GRect(0, 46, 144, 168-62))
-
+#ifdef PBL_COLOR
+  #define TIME_FRAME      (GRect(0, 40, 144, 168-6))
+  #define DATE_FRAME      (GRect(0, -4, 144, 168-62))
+  #define BTC_OFFSET      19
+#else 
+  #define TIME_FRAME      (GRect(0, -8, 144, 168-6))
+  #define DATE_FRAME      (GRect(0, 46, 144, 168-62))
+  #define BTC_OFFSET      70
+#endif
 
 bool     BuzzEnable = true;
 
@@ -128,37 +134,37 @@ static int message_count = 0;
     #define cIconB      GColorClear
 
     #define cInfoB      GColorClear
-    #define cInfoF      GColorYellow
+    #define cInfoF      GColorWhite
   
     #define cTimeF      GColorYellow
     #define cTimeB      GColorClear
     
-    #define cDateF      GColorYellow
+    #define cDateF      GColorWhite
     #define cDateB      GColorClear
     
-    #define cBtchF      GColorYellow
+    #define cBtchF      GColorWhite
     #define cBtchB      GColorClear
   
-    #define cBtclF      GColorYellow
+    #define cBtclF      GColorWhite
     #define cBtclB      GColorClear
   
-    #define cBtcF       GColorYellow
+    #define cBtcF       GColorWhite
     #define cBtcB       GColorClear
   
-    #define cGraphF     GColorYellow
+    #define cGraphF     GColorWhite
 
     #define cTempF  GColorWhite
     #define cTempB  GColorClear
   
 
-    #define cInfoBlueF  GColorYellow
+    #define cInfoBlueF  GColorWhite
     #define cInfoBlueB  GColorClear
-    #define cInfoBlueAlarmB  GColorYellow
+    #define cInfoBlueAlarmB  GColorWhite
     #define cInfoBlueAlarmF  GColorBlack
     
-    #define cInfoBatF  GColorYellow
+    #define cInfoBatF  GColorWhite
     #define cInfoBatB  GColorClear
-    #define cInfoBatAlarmB  GColorYellow
+    #define cInfoBatAlarmB  GColorWhite
     #define cInfoBatAlarmF  GColorBlack
 #else
     #define cWindowB    GColorBlack
@@ -322,15 +328,18 @@ static void fetch_msg(void);
 */
 void push_point(float btc, float btcL, float btcH)
 {
-  int i,j;
+  int i,j,new_point;
 
+  /* Sanitize floats */
+  if (btc < btcL) btc = btcL;
+  if (btc > btcH) btc = btcH;
+  
   for (i=0; i<X_SIZE-1; i++) bgraph_data[i].y = bgraph_data[i+1].y;
-  bgraph_data[X_SIZE-1].y =  Y_SIZE - (Y_SIZE * ((btc-btcL)/(btcH-btcL)) ) - 1;
+  new_point =  (Y_SIZE-1) - ((Y_SIZE-1) * ((btc-btcL)/(btcH-btcL)) );
+  bgraph_data[X_SIZE-1].y =  new_point;
   j = 2*X_SIZE;
   for (i=X_SIZE; i<2*X_SIZE; i++) bgraph_data[i].y = bgraph_data[j-i-1].y;
-  
 }
-
 
 
 
@@ -715,7 +724,7 @@ static void init(void)
   text_layer_set_font(bcH_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
   text_layer_set_text_alignment(bcH_layer, GTextAlignmentCenter);
   text_layer_set_text(bcH_layer, btcH);
-  layer_set_frame(text_layer_get_layer(bcH_layer), GRect(-47, 65, 130, 168-62));
+  layer_set_frame(text_layer_get_layer(bcH_layer), GRect(-47, BTC_OFFSET-5, 130, 168-62));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(bcH_layer));
 
   bcL_layer = text_layer_create(FULL_FRAME);
@@ -724,7 +733,7 @@ static void init(void)
   text_layer_set_font(bcL_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
   text_layer_set_text_alignment(bcL_layer, GTextAlignmentCenter);
   text_layer_set_text(bcL_layer, btcL);
-  layer_set_frame(text_layer_get_layer(bcL_layer), GRect(-47, 80, 130, 168-62));
+  layer_set_frame(text_layer_get_layer(bcL_layer), GRect(-47, BTC_OFFSET+10, 130, 168-62));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(bcL_layer));
 
   bc_layer = text_layer_create(FULL_FRAME);
@@ -733,7 +742,7 @@ static void init(void)
   text_layer_set_font(bc_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD) );
   text_layer_set_text_alignment(bc_layer, GTextAlignmentCenter);
   text_layer_set_text(bc_layer, btcV);
-  layer_set_frame(text_layer_get_layer(bc_layer), GRect(0, 64, 130, 168-62));
+  layer_set_frame(text_layer_get_layer(bc_layer), GRect(0, BTC_OFFSET-6, 120, 168-62));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(bc_layer));
 
 
@@ -744,7 +753,7 @@ static void init(void)
 
 
   // Add graph layer	
-  graph_layer = layer_create(GRect(104, 70, 36, 24));
+  graph_layer = layer_create( GRect(104, BTC_OFFSET, 36, 24) );
   //text_layer_set_background_color(graph_layer, GColorClear);
   layer_add_child(window_get_root_layer(window), graph_layer);
   layer_set_update_proc(graph_layer, graph_update_proc);
@@ -947,7 +956,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
  	text_layer_set_text(weather_layer->temp1_layer, "");
  	text_layer_set_text(weather_layer->temp2_layer, "");
   text_layer_set_text(weather_layer->temp3_layer, "");
-	text_layer_set_text(weather_layer->temp4_layer, "COINCAN 2.3");
+	text_layer_set_text(weather_layer->temp4_layer, "COINCAN 2.4");
 	text_layer_set_text(weather_layer->temp5_layer, "Enable your GPS!");      
 }
 
