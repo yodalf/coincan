@@ -1025,19 +1025,20 @@ function fetch_BTC ()
     {
     if (req.readyState == 4) 
       {
+      console.log(req.status);
       if(req.status == 200) 
         {
         var response = JSON.parse(req.responseText);
-        
-        if (response.high) 
-          {
-          var btcH = Math.round(response.high);
-          var btcL = Math.round(response.low);
-          var btcV = Math.round(response.last);
 
-          btcH = 1888.0;
-          btcL = 1886.0;
-          btcV = 1887.0;
+        if (response.ticker.high) 
+          {
+          var btcH = Math.round(response.ticker.high);
+          var btcL = Math.round(response.ticker.low);
+          var btcV = Math.round(response.ticker.last);
+
+          //btcH = 1888.0;
+          //btcL = 1886.0;
+          //btcV = 1887.0;
             
             //if (btcV > 1000) 
           //  btcV = Math.round(btcV);
@@ -1185,7 +1186,8 @@ function fetch_BTC ()
       }
     };
     
-  req.open('GET', "https://www.cavirtex.com/api/CAD/ticker.json", true);
-  req.send(null);
+    //req.open('GET', "https://www.cavirtex.com/api/CAD/ticker.json", true);
+    req.open('GET', "https://data.btcchina.com/data/ticker?market=btccny", true);
+    req.send(null);
 
   }

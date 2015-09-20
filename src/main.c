@@ -4,9 +4,9 @@
 
 #define FULL_FRAME      (GRect(0, 0, 144, 168))
 #ifdef PBL_COLOR
-  #define TIME_FRAME      (GRect(0, 40, 144, 168-6))
+  #define TIME_FRAME      (GRect(0, 41, 144, 168-6))
   #define DATE_FRAME      (GRect(0, -4, 144, 168-62))
-  #define BTC_OFFSET      19
+  #define BTC_OFFSET      21
 #else 
   #define TIME_FRAME      (GRect(0, -8, 144, 168-6))
   #define DATE_FRAME      (GRect(0, 46, 144, 168-62))
@@ -65,7 +65,7 @@ VibePattern myShortVibes = {
   .num_segments = ARRAY_LENGTH(segments_short),
 };
 
-#define X_SIZE 36
+#define X_SIZE 60
 #define Y_SIZE 24
 
 GPath *bgraph;
@@ -742,7 +742,7 @@ static void init(void)
   text_layer_set_font(bc_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD) );
   text_layer_set_text_alignment(bc_layer, GTextAlignmentCenter);
   text_layer_set_text(bc_layer, btcV);
-  layer_set_frame(text_layer_get_layer(bc_layer), GRect(0, BTC_OFFSET-6, 120, 168-62));
+  layer_set_frame(text_layer_get_layer(bc_layer), GRect(0, BTC_OFFSET-6, 108, 168-62));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(bc_layer));
 
 
@@ -753,7 +753,7 @@ static void init(void)
 
 
   // Add graph layer	
-  graph_layer = layer_create( GRect(104, BTC_OFFSET, 36, 24) );
+  graph_layer = layer_create( GRect(140-X_SIZE, BTC_OFFSET, X_SIZE, Y_SIZE) );
   //text_layer_set_background_color(graph_layer, GColorClear);
   layer_add_child(window_get_root_layer(window), graph_layer);
   layer_set_update_proc(graph_layer, graph_update_proc);
@@ -956,7 +956,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
  	text_layer_set_text(weather_layer->temp1_layer, "");
  	text_layer_set_text(weather_layer->temp2_layer, "");
   text_layer_set_text(weather_layer->temp3_layer, "");
-	text_layer_set_text(weather_layer->temp4_layer, "COINCAN 2.4");
+	text_layer_set_text(weather_layer->temp4_layer, "COINCAN 2.5");
 	text_layer_set_text(weather_layer->temp5_layer, "Enable your GPS!");      
 }
 
