@@ -4,9 +4,9 @@
 
 #define FULL_FRAME      (GRect(0, 0, 144, 168))
 #ifdef PBL_COLOR
-  #define TIME_FRAME      (GRect(0, 41, 144, 168-6))
+  #define TIME_FRAME      (GRect(0, 38, 144, 168-6))
   #define DATE_FRAME      (GRect(0, -4, 144, 168-62))
-  #define BTC_OFFSET      21
+  #define BTC_OFFSET      18
 #else 
   #define TIME_FRAME      (GRect(0, -8, 144, 168-6))
   #define DATE_FRAME      (GRect(0, 46, 144, 168-62))
@@ -24,6 +24,9 @@ TextLayer *bcH_layer;
 TextLayer *bcL_layer;
 
 Layer *graph_layer;
+Layer *trotteuse_layer;
+Layer *trotteuse_scale_layer;
+
 
 
 static char btcV[16];
@@ -77,6 +80,12 @@ static const GPathInfo bgraph_info =
   };
 
 void graph_update_proc(struct Layer *, GContext *);
+
+void trotteuse_update_proc(struct Layer *, GContext *);
+void trotteuse_scale_update_proc(struct Layer *, GContext *);
+
+static int trotteuse = 0;
+static int trotteuse_draw_scale = 1;
 
 static char time_text[] = "00:00"; // Needs to be static because it's used by the system later.
 static char date_text[] = "........";
@@ -592,26 +601,48 @@ static void app_message_init(void) {
 
 static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) 
   {
-  //APP_LOG(APP_LOG_LEVEL_DEBUG, "M: %s %s %d", time_text, date_text,tick_time->tm_min);
-  //APP_LOG(APP_LOG_LEVEL_DEBUG, "TIME: %d %d", tick_time->tm_hour,tick_time->tm_min);
+  #ifdef PBL_COLOR
+    if (units_changed & SECOND_UNIT)
+      {
+      //APP_LOG(APP_LOG_LEVEL_DEBUG, "S: %s %s %d", time_text, date_text,tick_time->tm_min);
+      //APP_LOG(APP_LOG_LEVEL_DEBUG, "TIME: %d %d %d", tick_time->tm_hour,tick_time->tm_min, tick_time->tm_sec);
+      trotteuse = tick_time->tm_sec;
   
-  if ((tick_time->tm_hour >= 22) || (tick_time->tm_hour <= 5))
-    BuzzEnable = false;
-  else
-    BuzzEnable = true;
+      if (trotteuse_draw_scale) 
+        {
+        //trotteuse_draw_scale = 0;
+        layer_mark_dirty(trotteuse_scale_layer);
+        }
+      
+      layer_mark_dirty(trotteuse_layer);
   
-  //APP_LOG(APP_LOG_LEVEL_DEBUG,"Buzz: %s", BuzzEnable ? "true":"false");
-  
-  strftime(time_text, sizeof(time_text), "%T", tick_time);
-  strftime(date_text, sizeof(date_text), "%a %d", tick_time);
-
-  layer_mark_dirty(text_layer_get_layer(time_layer));
-  layer_mark_dirty(text_layer_get_layer(date_layer));
-
-  if ( (0 == (tick_time->tm_min % 5))  || (message_count != 3))
+      }
+  #endif
+    
+  if (units_changed & MINUTE_UNIT)
     {
-    fetch_msg();
-    }
+    //APP_LOG(APP_LOG_LEVEL_DEBUG, "M: %s %s %d", time_text, date_text,tick_time->tm_min);
+    //APP_LOG(APP_LOG_LEVEL_DEBUG, "TIME: %d %d", tick_time->tm_hour,tick_time->tm_min);
+  
+    if ((tick_time->tm_hour >= 22) || (tick_time->tm_hour <= 5))
+      BuzzEnable = false;
+    else
+      BuzzEnable = true;
+  
+    //APP_LOG(APP_LOG_LEVEL_DEBUG,"Buzz: %s", BuzzEnable ? "true":"false");
+    
+    strftime(time_text, sizeof(time_text), "%T", tick_time);
+    strftime(date_text, sizeof(date_text), "%a %d", tick_time);
+
+    layer_mark_dirty(text_layer_get_layer(time_layer));
+    layer_mark_dirty(text_layer_get_layer(date_layer));
+
+    if ( (0 == (tick_time->tm_min % 5))  || (message_count != 3))
+      {
+      fetch_msg();
+      }  
+    } 
+  
   }
 
 
@@ -752,6 +783,19 @@ static void init(void)
 	layer_add_child(window_get_root_layer(window), weather_layer.layer);
 
 
+  // Add a trotteuse scale layer
+  trotteuse_scale_layer = layer_create( FULL_FRAME );
+  layer_add_child(window_get_root_layer(window), trotteuse_scale_layer);
+  layer_set_update_proc(trotteuse_scale_layer, trotteuse_scale_update_proc);
+  //layer_insert_below_sibling(trotteuse_scale_layer, trotteuse_layer);
+
+  // Add a trotteuse layer
+  trotteuse_layer = layer_create( FULL_FRAME );
+  //layer_add_child(window_get_root_layer(window), trotteuse_layer);
+  layer_set_update_proc(trotteuse_layer, trotteuse_update_proc);
+  layer_insert_below_sibling(trotteuse_layer, trotteuse_scale_layer);
+
+
   // Add graph layer	
   graph_layer = layer_create( GRect(140-X_SIZE, BTC_OFFSET, X_SIZE, Y_SIZE) );
   //text_layer_set_background_color(graph_layer, GColorClear);
@@ -780,7 +824,7 @@ static void init(void)
   time_t now = time(NULL);
   struct tm *current_time = localtime(&now);
   handle_minute_tick(current_time, MINUTE_UNIT);
-  tick_timer_service_subscribe(MINUTE_UNIT, &handle_minute_tick);
+  tick_timer_service_subscribe(SECOND_UNIT | MINUTE_UNIT, &handle_minute_tick);
 
   bluetooth_connection_service_subscribe( &bluetooth_handler );
   battery_state_service_subscribe( & battery_handler );
@@ -819,6 +863,35 @@ void graph_update_proc(struct Layer *layer, GContext *ctx)
   gpath_draw_outline(ctx, bgraph);
   }
 
+void trotteuse_update_proc(struct Layer *layer, GContext *ctx)
+  {
+  GPoint p0 = GPoint(12, 98);
+  GPoint p1 = GPoint(12 + trotteuse*2 , 98);
+  graphics_context_set_stroke_color(ctx, cTimeF);
+  graphics_draw_line(ctx, p0, p1);
+  }
+
+void trotteuse_scale_update_proc(struct Layer *layer, GContext *ctx)
+  {
+  if (trotteuse_draw_scale)
+    {
+    //APP_LOG(APP_LOG_LEVEL_DEBUG, "SCALE!");
+    
+    graphics_context_set_stroke_color(ctx, cTimeF);
+  
+    for (int i=0; i<=60; i+=5)
+      {
+      if (0 == (i%10) ) 
+        graphics_draw_line(ctx, GPoint(12+2*i,98-2), GPoint(12+2*i,98+2));
+      else
+        graphics_draw_line(ctx, GPoint(12+2*i,98-2), GPoint(12+2*i,98));
+      }
+    }
+  }
+
+
+
+
 static void deinit(void) 
   {
   gpath_destroy(bgraph);
@@ -830,6 +903,9 @@ static void deinit(void)
   text_layer_destroy(bcL_layer);
 
   layer_destroy(graph_layer);
+
+  layer_destroy(trotteuse_layer);
+  layer_destroy(trotteuse_scale_layer);
 
   weather_layer_deinit(&weather_layer);
 
@@ -939,8 +1015,8 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
 	layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->bluetooth_layer));
 
   // Init bitmapped icon layers
-  weather_layer->icon1_layer = bitmap_layer_create(GRect(0, 8, 60, 60));
-  weather_layer->icon2_layer = bitmap_layer_create(GRect(145 - 60, 8, 60, 60));
+  weather_layer->icon1_layer = bitmap_layer_create(GRect(0, 13, 60, 60));
+  weather_layer->icon2_layer = bitmap_layer_create(GRect(145 - 60, 13, 60, 60));
 	layer_add_child(weather_layer->layer, bitmap_layer_get_layer(weather_layer->icon1_layer));
 	layer_add_child(weather_layer->layer, bitmap_layer_get_layer(weather_layer->icon2_layer));
   bitmap_layer_set_background_color(weather_layer->icon1_layer, cIconB);
@@ -956,7 +1032,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
  	text_layer_set_text(weather_layer->temp1_layer, "");
  	text_layer_set_text(weather_layer->temp2_layer, "");
   text_layer_set_text(weather_layer->temp3_layer, "");
-	text_layer_set_text(weather_layer->temp4_layer, "COINCAN 2.5");
+	text_layer_set_text(weather_layer->temp4_layer, "COINCAN 2.6");
 	text_layer_set_text(weather_layer->temp5_layer, "Enable your GPS!");      
 }
 
