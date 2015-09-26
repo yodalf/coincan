@@ -1,0 +1,8 @@
+argv = ['/usr/local/Cellar/pebble-sdk/3.4/Pebble/waf', 'configure']
+environ = {'TERM_SESSION_ID': '6FC9932E-12D5-41D3-92E9-DF1C245EC14B', 'XPC_SERVICE_NAME': '0', 'PYTHONPATH': '/usr/local/Cellar/pebble-sdk/3.4/libexec/lib/python2.7/site-packages:/usr/local/Cellar/pebble-sdk/3.4/lib/python2.7/site-packages', 'VERSIONER_PYTHON_PREFER_32_BIT': 'no', 'TERM_PROGRAM_VERSION': '343.7', 'SSH_AUTH_SOCK': '/private/tmp/com.apple.launchd.4QEucsaQrA/Listeners', 'SHELL': '/bin/bash', 'LOGNAME': 'realo', 'USER': 'realo', 'NO_GCE_CHECK': 'False', 'HOME': '/Users/realo', 'PATH': '/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/Cellar/pebble-sdk/3.4/arm-cs-tools/bin', 'TMPDIR': '/var/folders/8t/t8wkzh616lq00zm5bdxf2vn40000gn/T/', 'TERM_PROGRAM': 'Apple_Terminal', 'LANG': 'fr_CA.UTF-8', 'TERM': 'xterm-256color', 'Apple_PubSub_Socket_Render': '/private/tmp/com.apple.launchd.DiLwAsd47c/Render', 'VERSIONER_PYTHON_VERSION': '2.7', 'SHLVL': '1', 'XPC_FLAGS': '0x0', '__CF_USER_TEXT_ENCODING': '0x1F5:0x0:0x1', 'PWD': '/Users/realo/Pebble/CoinCan-Quebec', '_': '/usr/local/bin/pebble'}
+files = ['/Users/realo/Pebble/CoinCan-Quebec/wscript']
+hash = 2423177563626642261
+options = {'files': '', 'jobs': 4, 'verbose': 0, 'nocache': False, 'progress_bar': 0, 'timestamp': None, 'distcheck_args': None, 'top': '', 'destdir': '', 'keep': 0, 'zones': '', 'debug': False, 'prefix': '/usr/local/', 'download': False, 'force': False, 'targets': '', 'out': ''}
+out_dir = '/Users/realo/Pebble/CoinCan-Quebec/build'
+run_dir = '/Users/realo/Pebble/CoinCan-Quebec'
+top_dir = '/Users/realo/Pebble/CoinCan-Quebec'
