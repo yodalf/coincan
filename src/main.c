@@ -824,7 +824,9 @@ static void init(void)
   time_t now = time(NULL);
   struct tm *current_time = localtime(&now);
   handle_minute_tick(current_time, MINUTE_UNIT);
-  tick_timer_service_subscribe(SECOND_UNIT | MINUTE_UNIT, &handle_minute_tick);
+  tick_timer_service_subscribe(MINUTE_UNIT, &handle_minute_tick);
+//  tick_timer_service_subscribe(SECOND_UNIT | MINUTE_UNIT, &handle_minute_tick);
+
 
   bluetooth_connection_service_subscribe( &bluetooth_handler );
   battery_state_service_subscribe( & battery_handler );
@@ -943,7 +945,11 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
 	layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp_layer_background));
 	
   // Add temperature #1 layer
-	weather_layer->temp1_layer = text_layer_create(GRect(0, 4, 144, 80));
+  #ifdef PBL_COLOR
+  	weather_layer->temp1_layer = text_layer_create(GRect(0, 8, 144, 80));
+  #else
+  	weather_layer->temp1_layer = text_layer_create(GRect(0, 4, 144, 80));
+  #endif
 	text_layer_set_background_color(weather_layer->temp1_layer, cTempB);
 	text_layer_set_text_color(weather_layer->temp1_layer, cTempF );
   text_layer_set_font(weather_layer->temp1_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
@@ -952,7 +958,11 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
 	layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp1_layer));
 
   // Add temperature #2 layer
-	weather_layer->temp2_layer = text_layer_create(GRect(0, 24, 144, 80));
+  #ifdef PBL_COLOR
+  	weather_layer->temp2_layer = text_layer_create(GRect(0, 29, 144, 80));
+  #else
+  	weather_layer->temp2_layer = text_layer_create(GRect(0, 24, 144, 80));
+  #endif
 	text_layer_set_background_color(weather_layer->temp2_layer, cTempB);
 	text_layer_set_text_color(weather_layer->temp2_layer, cTempF);
   text_layer_set_font(weather_layer->temp2_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
@@ -961,8 +971,12 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
 	layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp2_layer));
 
   // Add temperature #3 layer
-	weather_layer->temp3_layer = text_layer_create(GRect(0, 38, 144, 80));
-	text_layer_set_background_color(weather_layer->temp3_layer, cTempB);
+  #ifdef PBL_COLOR
+  	weather_layer->temp3_layer = text_layer_create(GRect(0, 43, 144, 80));
+  #else
+  	weather_layer->temp3_layer = text_layer_create(GRect(0, 38, 144, 80));
+  #endif
+  text_layer_set_background_color(weather_layer->temp3_layer, cTempB);
 	text_layer_set_text_color(weather_layer->temp3_layer, cTempF);
   text_layer_set_font(weather_layer->temp3_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
 	text_layer_set_text_alignment(weather_layer->temp3_layer, GTextAlignmentCenter);
@@ -970,8 +984,12 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
 	layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp3_layer));
 
   // Add temperature #4 layer
-	weather_layer->temp4_layer = text_layer_create(GRect(0, 10, 144, 80));
-	text_layer_set_background_color(weather_layer->temp4_layer, cTempB);
+  #ifdef PBL_COLOR
+  	weather_layer->temp4_layer = text_layer_create(GRect(0, 14, 144, 80));
+	#else
+  	weather_layer->temp4_layer = text_layer_create(GRect(0, 10, 144, 80));    
+  #endif
+  text_layer_set_background_color(weather_layer->temp4_layer, cTempB);
 	text_layer_set_text_color(weather_layer->temp4_layer, cTempF);
   text_layer_set_font(weather_layer->temp4_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
 	text_layer_set_text_alignment(weather_layer->temp4_layer, GTextAlignmentCenter);
@@ -979,8 +997,12 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
 	layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp4_layer));
 
   // Add temperature #5 layer
-	weather_layer->temp5_layer  = text_layer_create(GRect(0, 35, 144, 80));
-	text_layer_set_background_color(weather_layer->temp5_layer, cTempB);
+  #ifdef PBL_COLOR
+    weather_layer->temp5_layer  = text_layer_create(GRect(0, 39, 144, 80));
+  #else
+    weather_layer->temp5_layer  = text_layer_create(GRect(0, 35, 144, 80));
+  #endif    
+  text_layer_set_background_color(weather_layer->temp5_layer, cTempB);
 	text_layer_set_text_color(weather_layer->temp5_layer, cTempF);
   text_layer_set_font(weather_layer->temp5_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
 	text_layer_set_text_alignment(weather_layer->temp5_layer, GTextAlignmentCenter);
