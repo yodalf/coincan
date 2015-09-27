@@ -410,16 +410,16 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
       APP_LOG(APP_LOG_LEVEL_DEBUG, "cnfExchange: %s", cnfExchange_tuple->value->cstring);
       strcpy(cnfExchange, cnfExchange_tuple->value->cstring);
       persist_write_string(KEY_CNF_EXCHANGE, cnfExchange);
-      fetch_msg();
     }
   if (cnfLocation_tuple)
     {
       APP_LOG(APP_LOG_LEVEL_DEBUG, "cnfLocation: %s", cnfLocation_tuple->value->cstring);
       strcpy(cnfLocation, cnfLocation_tuple->value->cstring);
       persist_write_string(KEY_CNF_LOCATION, cnfLocation);
-      fetch_msg();
     }
 
+    if (cnfExchange_tuple || cnfLocation_tuple)
+      fetch_msg();
 
   // Default positions
   if (geoArea1_tuple)
@@ -592,6 +592,7 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
     	text_layer_set_text(weather_layer.temp5_layer, "");
       }
     }
+
 
   }
 
@@ -1124,8 +1125,8 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
 	layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->bluetooth_layer));
 
   // Init bitmapped icon layers
-  weather_layer->icon1_layer = bitmap_layer_create(GRect(0, 13, 60, 60));
-  weather_layer->icon2_layer = bitmap_layer_create(GRect(145 - 60, 13, 60, 60));
+  weather_layer->icon1_layer = bitmap_layer_create(GRect(0, 11, 60, 60));
+  weather_layer->icon2_layer = bitmap_layer_create(GRect(145 - 60, 11, 60, 60));
 	layer_add_child(weather_layer->layer, bitmap_layer_get_layer(weather_layer->icon1_layer));
 	layer_add_child(weather_layer->layer, bitmap_layer_get_layer(weather_layer->icon2_layer));
   bitmap_layer_set_background_color(weather_layer->icon1_layer, cIconB);
