@@ -15,26 +15,39 @@ function submitHandler() {
 }
 
 function loadOptions() {
-  var $backgroundColorPicker = $('#backgroundColorPicker');
-  var $timeFormatCheckbox = $('#timeFormatCheckbox');
+  var $cnfTrotteuse = $('#cnfTrotteuse');
+  var $cnfExchange = $('#cnfExchange');
+  var $cnfLocation = $('#cnfLocation');
 
-  if (localStorage.backgroundColor) {
-    $backgroundColorPicker[0].value = localStorage.backgroundColor;
-    $timeFormatCheckbox[0].checked = localStorage.twentyFourHourFormat === 'true';
+  if (localStorage.cnfTrotteuse) {
+    $cnfTrotteuse[0].checked = localStorage.cnfTrotteuse === 'true';
+  }
+  if (localStorage.cnfExchange) {
+    $cnfExchange[0].value = localStorage.cnfExchange;
+  }
+  if (localStorage.cnfLocation) {
+    $cnfLocation[0].value = localStorage.cnfLocation;
   }
 }
 
 function getAndStoreConfigData() {
-  var $backgroundColorPicker = $('#backgroundColorPicker');
-  var $timeFormatCheckbox = $('#timeFormatCheckbox');
+  var $cnfTrotteuse = $('#cnfTrotteuse');
+  var $cnfExchange  = $('#cnfExchange');
+  var $cnfLocation  = $('#cnfLocation');
 
   var options = {
-    backgroundColor: $backgroundColorPicker.val(),
-    twentyFourHourFormat: $timeFormatCheckbox[0].checked
+    //backgroundColor: $backgroundColorPicker.val(),
+    //twentyFourHourFormat: $timeFormatCheckbox[0].checked
+    cnfTrotteuse: $cnfTrotteuse[0].checked,
+    cnfExchange: $cnfExchange.val(),
+    cnfLocation: $cnfLocation.val()
   };
 
-  localStorage.backgroundColor = options.backgroundColor;
-  localStorage.twentyFourHourFormat = options.twentyFourHourFormat;
+  //localStorage.backgroundColor = options.backgroundColor;
+  //localStorage.twentyFourHourFormat = options.twentyFourHourFormat;
+  localStorage.cnfTrotteuse = options.cnfTrotteuse;
+  localStorage.cnfExchange  = options.cnfExchange;
+  localStorage.cnfLocation  = options.cnfLocation;
 
   console.log('Got options: ' + JSON.stringify(options));
   return options;

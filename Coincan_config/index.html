@@ -8,7 +8,7 @@
 </head>
 <body>
   <div class='item-container'>
-    <h1 class='title'>Watchface<br>Configuration Page</h1>
+    <h1 class='title'>Configuration</h1>
   </div>
 
   <div class='item-container'>
@@ -21,15 +21,27 @@
   </div>
 
   <div class='item-container'>
-    <div class='item-container-header'>Customizability</div>
+    <div class='item-container-header'>Custom settings</div>
     <div class='item-container-content'>
       <label class='item'>
-        Background Color
-        <input id='backgroundColorPicker' type='text' class='item-color item-color-sunny' value='#000000'>
+        Trotteuse
+        <input type='checkbox' class='item-toggle' id='cnfTrotteuse' checked>
       </label>
       <label class='item'>
-        24-Hour Format
-        <input id='timeFormatCheckbox' type='checkbox' class='item-checkbox' checked>
+        Exchange
+        <select class='item-select' id='cnfExchange' dir='rtl'>
+          <option class="item-select-option" Selected>Cavirtex</option>
+          <option class="item-select-option">BTC-China</option>
+        </select>
+      </label>
+      <label class='item'>
+        Location
+        <select class='item-select' id='cnfLocation' dir='rtl'>
+          <option class="item-select-option" Selected>GPS automatic</option>
+          <option class="item-select-option">Quebec City</option>
+          <option class="item-select-option">Montreal</option>
+          <option class="item-select-option">Vancouver</option>
+        </select>
       </label>
     </div>
     <div class='item-container-footer'>

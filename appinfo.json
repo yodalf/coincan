@@ -1,7 +1,12 @@
 {
-    "appKeys": {},
+    "appKeys": {
+      "confTrotteuse": 0,
+      "confExchange": 0,
+      "confLocatoion": 0
+    },
     "capabilities": [
-        "location"
+        "location",
+        "configurable"
     ],
     "companyName": "Real Ouellet",
     "longName": "Bitcoin and Weather - Canada",

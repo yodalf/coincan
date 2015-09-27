@@ -1,13 +1,16 @@
 #include <pebble.h>
 #include "util.h"
 
+#define KEY_CNF_TROTTEUSE 15
+#define KEY_CNF_EXCHANGE 16
+#define KEY_CNF_LOCATION 17
 
 #define FULL_FRAME      (GRect(0, 0, 144, 168))
 #ifdef PBL_COLOR
   #define TIME_FRAME      (GRect(0, 38, 144, 168-6))
   #define DATE_FRAME      (GRect(0, -4, 144, 168-62))
   #define BTC_OFFSET      18
-#else 
+#else
   #define TIME_FRAME      (GRect(0, -8, 144, 168-6))
   #define DATE_FRAME      (GRect(0, 46, 144, 168-62))
   #define BTC_OFFSET      70
@@ -73,7 +76,7 @@ VibePattern myShortVibes = {
 
 GPath *bgraph;
 GPoint bgraph_data[2*X_SIZE];
-static const GPathInfo bgraph_info = 
+static const GPathInfo bgraph_info =
   {
   .num_points = 2*X_SIZE,
   .points = bgraph_data
@@ -101,33 +104,33 @@ static int message_count = 0;
 
     #define cInfoB      GColorClear
     #define cInfoF      GColorBlack
-  
+
     #define cTimeF      GColorYellow
     #define cTimeB      GColorClear
-    
+
     #define cDateF      GColorRajah
     #define cDateB      GColorClear
-    
+
     #define cBtchF      GColorSpringBud
     #define cBtchB      GColorClear
-  
+
     #define cBtclF      GColorSpringBud
     #define cBtclB      GColorClear
-  
+
     #define cBtcF       GColorSpringBud
     #define cBtcB       GColorClear
-  
+
     #define cGraphF     GColorSpringBud
 
     #define cTempF  GColorBlack
     #define cTempB  GColorClear
-  
+
 
     #define cInfoBlueF  GColorBlack
     #define cInfoBlueB  GColorClear
     #define cInfoBlueAlarmB  GColorBlack
     #define cInfoBlueAlarmF  GColorWhite
-    
+
     #define cInfoBatF  GColorBlack
     #define cInfoBatB  GColorClear
     #define cInfoBatAlarmB  GColorBlack
@@ -144,33 +147,33 @@ static int message_count = 0;
 
     #define cInfoB      GColorClear
     #define cInfoF      GColorWhite
-  
+
     #define cTimeF      GColorYellow
     #define cTimeB      GColorClear
-    
+
     #define cDateF      GColorWhite
     #define cDateB      GColorClear
-    
+
     #define cBtchF      GColorWhite
     #define cBtchB      GColorClear
-  
+
     #define cBtclF      GColorWhite
     #define cBtclB      GColorClear
-  
+
     #define cBtcF       GColorWhite
     #define cBtcB       GColorClear
-  
+
     #define cGraphF     GColorWhite
 
     #define cTempF  GColorWhite
     #define cTempB  GColorClear
-  
+
 
     #define cInfoBlueF  GColorWhite
     #define cInfoBlueB  GColorClear
     #define cInfoBlueAlarmB  GColorWhite
     #define cInfoBlueAlarmF  GColorBlack
-    
+
     #define cInfoBatF  GColorWhite
     #define cInfoBatB  GColorClear
     #define cInfoBatAlarmB  GColorWhite
@@ -184,46 +187,46 @@ static int message_count = 0;
 
     #define cInfoB      GColorClear
     #define cInfoF      GColorBlack
-  
+
     #define cTimeF      GColorWhite
     #define cTimeB      GColorClear
-    
+
     #define cDateF      GColorWhite
     #define cDateB      GColorClear
-    
+
     #define cBtchF      GColorWhite
     #define cBtchB      GColorClear
-  
+
     #define cBtclF      GColorWhite
     #define cBtclB      GColorClear
-  
+
     #define cBtcF       GColorWhite
     #define cBtcB       GColorClear
-  
+
     #define cGraphF     GColorWhite
 
     #define cTempF  GColorBlack
     #define cTempB  GColorClear
-  
+
 
     #define cInfoBlueF  GColorBlack
     #define cInfoBlueB  GColorClear
     #define cInfoBlueAlarmB  GColorBlack
     #define cInfoBlueAlarmF  GColorWhite
-    
+
     #define cInfoBatF  GColorBlack
     #define cInfoBatB  GColorClear
     #define cInfoBatAlarmB  GColorBlack
     #define cInfoBatAlarmF  GColorWhite
 
 
-  
+
 #endif
-  
+
 
 ////////////////////////////////////////////////////////////////////////////////////
 //
-//   WEATHER 
+//   WEATHER
 //
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -289,7 +292,7 @@ static uint8_t WEATHER_ICONS[] = {
 	RESOURCE_ID_I26,
 	RESOURCE_ID_I27,
 	RESOURCE_ID_I28,
-	RESOURCE_ID_I28,  
+	RESOURCE_ID_I28,
 	RESOURCE_ID_I30,
 	RESOURCE_ID_I31,
 	RESOURCE_ID_I32,
@@ -317,8 +320,11 @@ void weather_layer_deinit(WeatherLayer* weather_layer);
 
 static void fetch_msg(void);
 
+static bool cnfTrotteuse = true;
+static char cnfExchange[20];
+static char cnfLocation[32];
 
-
+static void handle_minute_tick(struct tm*, TimeUnits);
 
 
 
@@ -333,7 +339,7 @@ static void fetch_msg(void);
 
 
 
-/* Push a new btc value on the graph stack 
+/* Push a new btc value on the graph stack
 */
 void push_point(float btc, float btcL, float btcH)
 {
@@ -342,7 +348,7 @@ void push_point(float btc, float btcL, float btcH)
   /* Sanitize floats */
   if (btc < btcL) btc = btcL;
   if (btc > btcH) btc = btcH;
-  
+
   for (i=0; i<X_SIZE-1; i++) bgraph_data[i].y = bgraph_data[i+1].y;
   new_point =  (Y_SIZE-1) - ((Y_SIZE-1) * ((btc-btcL)/(btcH-btcL)) );
   bgraph_data[X_SIZE-1].y =  new_point;
@@ -352,7 +358,7 @@ void push_point(float btc, float btcL, float btcH)
 
 
 
-static void in_received_handler(DictionaryIterator *iter, void *context) 
+static void in_received_handler(DictionaryIterator *iter, void *context)
   {
   Tuple *btcV_tuple = dict_find(iter, 0);
   Tuple *btcL_tuple = dict_find(iter, 1);
@@ -370,43 +376,85 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
   Tuple *forecastPeriod_tuple = dict_find(iter, 13);
   Tuple *geoArea1_tuple = dict_find(iter, 14);
 
+  // Configuration Tuplets
+  Tuple *cnfTrotteuse_tuple = dict_find(iter, KEY_CNF_TROTTEUSE);
+  Tuple *cnfExchange_tuple = dict_find(iter, KEY_CNF_EXCHANGE);
+  Tuple *cnfLocation_tuple = dict_find(iter, KEY_CNF_LOCATION);
+
   APP_LOG(APP_LOG_LEVEL_DEBUG,"IN!");
   message_count += 1;
-  
+
+  // Configurations
+  if (cnfTrotteuse_tuple)
+    {
+      cnfTrotteuse = strcmp(cnfTrotteuse_tuple->value->cstring,"0");
+      if (cnfTrotteuse)
+        {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "ON cnfTrotteuse: %d", cnfTrotteuse ? 1:0);
+        tick_timer_service_subscribe(SECOND_UNIT | MINUTE_UNIT, &handle_minute_tick);
+        }
+      else
+        {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "OFF cnfTrotteuse: %d", cnfTrotteuse ? 1:0);
+        tick_timer_service_subscribe(MINUTE_UNIT, &handle_minute_tick);
+        }
+
+      persist_write_bool(KEY_CNF_TROTTEUSE, cnfTrotteuse);
+
+      layer_mark_dirty(trotteuse_scale_layer);
+      layer_mark_dirty(trotteuse_layer);
+    }
+  if (cnfExchange_tuple)
+    {
+      //APP_LOG(APP_LOG_LEVEL_DEBUG, "TOTO!");
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "cnfExchange: %s", cnfExchange_tuple->value->cstring);
+      strcpy(cnfExchange, cnfExchange_tuple->value->cstring);
+      persist_write_string(KEY_CNF_EXCHANGE, cnfExchange);
+      fetch_msg();
+    }
+  if (cnfLocation_tuple)
+    {
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "cnfLocation: %s", cnfLocation_tuple->value->cstring);
+      strcpy(cnfLocation, cnfLocation_tuple->value->cstring);
+      persist_write_string(KEY_CNF_LOCATION, cnfLocation);
+      fetch_msg();
+    }
+
+
   // Default positions
   if (geoArea1_tuple)
     {
     strncpy(geoArea1, geoArea1_tuple->value->cstring, 5);
-    if (bluetooth_text[1] != '?') 
+    if (bluetooth_text[1] != '?')
       {
       strcpy(bluetooth_text," ");
       strncat(bluetooth_text, geoArea1, 5);
       }
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "OUR LOCATION: %s", geoArea1);  
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "OUR LOCATION: %s", geoArea1);
     }
 
-  if (btcV_tuple) 
+  if (btcV_tuple)
     {
     strncpy(btcV, btcV_tuple->value->cstring, 16);
     btcV_value = _string2float(btcV);
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "Res: %s", btcV);
     }
 
-  if (btcL_tuple) 
+  if (btcL_tuple)
     {
     strncpy(btcL, btcL_tuple->value->cstring, 16);
     btcL_value = _string2float(btcL);
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "ResL: %s", btcL);
     }
 
-  if (btcH_tuple) 
+  if (btcH_tuple)
     {
     strncpy(btcH, btcH_tuple->value->cstring, 16);
     btcH_value = _string2float(btcH);
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "ResH: %s", btcH);
     }
 
-  if (obIconCode_tuple) 
+  if (obIconCode_tuple)
     {
     strncpy(obIconCode, obIconCode_tuple->value->cstring, 16);
     obIconCode_value = _atoi(obIconCode);
@@ -419,43 +467,43 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "obIconCode: %s", obIconCode_tuple->value->cstring);
     }
 
-  if (obTemperature_tuple) 
+  if (obTemperature_tuple)
     {
     strncpy(obTemperature, obTemperature_tuple->value->cstring, 16);
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "obTemperature: %s", obTemperature_tuple->value->cstring);
     }
 
-  if (obWindDir_tuple) 
+  if (obWindDir_tuple)
     {
-    strncpy(obWindDir, obWindDir_tuple->value->cstring, 16);    
+    strncpy(obWindDir, obWindDir_tuple->value->cstring, 16);
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "obWindDir: %s", obWindDir_tuple->value->cstring);
     }
 
-  if (obWindGust_tuple) 
+  if (obWindGust_tuple)
     {
     strncpy(obWindGust, obWindGust_tuple->value->cstring, 16);
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "obWindGust: %s", obWindGust_tuple->value->cstring);
     }
 
-  if (obWindSpeed_tuple) 
+  if (obWindSpeed_tuple)
     {
     strncpy(obWindSpeed, obWindSpeed_tuple->value->cstring, 16);
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "obWindSpeed: %s", obWindSpeed_tuple->value->cstring);
     }
 
-  if (obWindChill_tuple) 
+  if (obWindChill_tuple)
     {
     strncpy(obWindChill, obWindChill_tuple->value->cstring, 16);
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "obWindChill: %s", obWindChill_tuple->value->cstring);
     }
 
-  if (obHumidex_tuple) 
+  if (obHumidex_tuple)
     {
     strncpy(obHumidex, obHumidex_tuple->value->cstring, 16);
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "obHumidex: %s", obHumidex_tuple->value->cstring);
     }
 
-  if (forecastIconCode_tuple) 
+  if (forecastIconCode_tuple)
     {
     strncpy(forecastIconCode, forecastIconCode_tuple->value->cstring, 16);
     gbitmap_destroy(weather_layer.icon2_bitmap);
@@ -467,31 +515,31 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "forecastIconCode: %s", forecastIconCode_tuple->value->cstring);
     }
 
-  if (forecastLow_tuple) 
+  if (forecastLow_tuple)
     {
     strncpy(forecastLow, forecastLow_tuple->value->cstring, 16);
     strncpy(forecastTemp, forecastLow_tuple->value->cstring, 16);
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "forecastLow: %s", forecastLow_tuple->value->cstring);
     }
 
-  if (forecastPeriod_tuple) 
+  if (forecastPeriod_tuple)
     {
     strncpy(forecastPeriod, forecastPeriod_tuple->value->cstring, 16);
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "forecastPeriod: %s", forecastPeriod_tuple->value->cstring);
     }
 
-  if (forecastHigh_tuple) 
+  if (forecastHigh_tuple)
     {
     strncpy(forecastHigh, forecastHigh_tuple->value->cstring, 16);
     strncpy(forecastTemp, forecastHigh_tuple->value->cstring, 16);
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "forecastHigh: %s", forecastHigh_tuple->value->cstring);
 
     //
-    // Execute this at the END of the tuple message chain 
+    // Execute this at the END of the tuple message chain
     //
 
     if (date_text[strlen(date_text)-1] == '*') date_text[strlen(date_text)-1] = '\0';
-  
+
     push_point(btcV_value, btcL_value, btcH_value);
 
     if (obWindSpeed[0] != '!')
@@ -509,8 +557,8 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
     else
       {
       strncpy(obWindDir, "NO WIND!", 16);
-      }    
-    
+      }
+
     if ((obWindChill[0] == '!') && (obHumidex[0] == '!'))
       {
 	    text_layer_set_text(weather_layer.temp1_layer, "");
@@ -526,7 +574,7 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
     	text_layer_set_text(weather_layer.temp3_layer, obWindChill);
     	text_layer_set_text(weather_layer.temp4_layer, "");
     	text_layer_set_text(weather_layer.temp5_layer, "");
-      } 
+      }
     else if (obHumidex[0] != '!')
       {
     	text_layer_set_text(weather_layer.temp1_layer, obTemperature);
@@ -541,12 +589,12 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
     	text_layer_set_text(weather_layer.temp2_layer, "");
       text_layer_set_text(weather_layer.temp3_layer, "");
     	text_layer_set_text(weather_layer.temp4_layer, "");
-    	text_layer_set_text(weather_layer.temp5_layer, "");      
+    	text_layer_set_text(weather_layer.temp5_layer, "");
       }
     }
 
   }
-  
+
 static void in_dropped_handler(AppMessageResult reason, void *context) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Dropped!");
 }
@@ -558,23 +606,28 @@ static void out_failed_handler(DictionaryIterator *failed, AppMessageResult reas
 static void fetch_msg(void) {
   DictionaryIterator *iter;
 
-  Tuplet symbol_tuple = TupletCString(0, "HELLO!");
+  //Tuplet symbol_tuple = TupletCString(0, "HELLO!");
 
   app_message_outbox_begin(&iter);
 
   if (iter == NULL)
-    {  
+    {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Null iter!");
     return;
     }
 
   strcat(date_text, "*");
-  
-  dict_write_tuplet(iter, &symbol_tuple);
+
+  //dict_write_tuplet(iter, &symbol_tuple);
+
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "***** LOCATION: %s", cnfLocation);
+  dict_write_cstring(iter, KEY_CNF_LOCATION, cnfLocation);
+  dict_write_cstring(iter, KEY_CNF_EXCHANGE, cnfExchange);
+
   dict_write_end(iter);
 
   message_count = 0;
-  
+
   app_message_outbox_send();
 
   layer_mark_dirty(window_get_root_layer(window));
@@ -592,14 +645,14 @@ static void app_message_init(void) {
   app_message_register_outbox_failed(out_failed_handler);
 
   // Init buffers
-  app_message_open(104, 24);
+  app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
 }
 
 
 
 
 
-static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) 
+static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed)
   {
   #ifdef PBL_COLOR
     if (units_changed & SECOND_UNIT)
@@ -607,30 +660,29 @@ static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed)
       //APP_LOG(APP_LOG_LEVEL_DEBUG, "S: %s %s %d", time_text, date_text,tick_time->tm_min);
       //APP_LOG(APP_LOG_LEVEL_DEBUG, "TIME: %d %d %d", tick_time->tm_hour,tick_time->tm_min, tick_time->tm_sec);
       trotteuse = tick_time->tm_sec;
-  
-      if (trotteuse_draw_scale) 
+
+      if (trotteuse_draw_scale)
         {
         //trotteuse_draw_scale = 0;
         layer_mark_dirty(trotteuse_scale_layer);
         }
-      
+
       layer_mark_dirty(trotteuse_layer);
-  
       }
   #endif
-    
+
   if (units_changed & MINUTE_UNIT)
     {
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "M: %s %s %d", time_text, date_text,tick_time->tm_min);
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "TIME: %d %d", tick_time->tm_hour,tick_time->tm_min);
-  
+
     if ((tick_time->tm_hour >= 22) || (tick_time->tm_hour <= 5))
       BuzzEnable = false;
     else
       BuzzEnable = true;
-  
+
     //APP_LOG(APP_LOG_LEVEL_DEBUG,"Buzz: %s", BuzzEnable ? "true":"false");
-    
+
     strftime(time_text, sizeof(time_text), "%T", tick_time);
     strftime(date_text, sizeof(date_text), "%a %d", tick_time);
 
@@ -640,9 +692,9 @@ static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed)
     if ( (0 == (tick_time->tm_min % 5))  || (message_count != 3))
       {
       fetch_msg();
-      }  
-    } 
-  
+      }
+    }
+
   }
 
 
@@ -653,7 +705,7 @@ static void bluetooth_handler(bool connected)
     {
     strcpy(bluetooth_text," ");
     strcat(bluetooth_text, geoArea1);
-    
+
    	text_layer_set_font(weather_layer.bluetooth_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
   	text_layer_set_background_color(weather_layer.bluetooth_layer, cInfoBlueB);
 	  text_layer_set_text_color(weather_layer.bluetooth_layer, cInfoBlueF );
@@ -666,7 +718,7 @@ static void bluetooth_handler(bool connected)
 	  text_layer_set_text_color(weather_layer.bluetooth_layer, cInfoBlueAlarmF );
     if (BuzzEnable) vibes_enqueue_custom_pattern(myLongVibes);
     }
-  
+
   layer_mark_dirty(window_get_root_layer(window));
   }
 
@@ -674,40 +726,40 @@ static void battery_handler(BatteryChargeState charge)
   {
   if ((charge.charge_percent <= 50) && (charge.charge_percent < battery_state.charge_percent) )
     {
-    if (BuzzEnable) vibes_enqueue_custom_pattern(myShortVibes);    
+    if (BuzzEnable) vibes_enqueue_custom_pattern(myShortVibes);
     }
 
   battery_state.charge_percent  = charge.charge_percent;
   battery_state.is_charging  = charge.is_charging;
-  battery_state.is_plugged  = charge.is_plugged;    
+  battery_state.is_plugged  = charge.is_plugged;
 
   strncpy(battery_text, "", 8);
   if (battery_state.charge_percent <= 30)
     {
    	text_layer_set_background_color(weather_layer.battery_layer, cInfoBatAlarmB);
-    text_layer_set_text_color(weather_layer.battery_layer, cInfoBatAlarmF);    
+    text_layer_set_text_color(weather_layer.battery_layer, cInfoBatAlarmF);
     }
   else
     {
   	text_layer_set_background_color(weather_layer.battery_layer, cInfoBatB);
-	  text_layer_set_text_color(weather_layer.battery_layer, cInfoBatF);    
+	  text_layer_set_text_color(weather_layer.battery_layer, cInfoBatF);
     }
 
- 
- 
-  strncat(battery_text, " ", 8);    
+
+
+  strncat(battery_text, " ", 8);
 
   if (battery_state.charge_percent > 99)
     strncat(battery_text, "FL", 8);
   else
     strncat(battery_text, _itoa(battery_state.charge_percent), 8);
-  
-  if (battery_state.is_charging) 
+
+  if (battery_state.is_charging)
     strncat(battery_text, "*", 8);
   else
-    strncat(battery_text, " ", 8);    
+    strncat(battery_text, " ", 8);
 
-if (battery_state.is_plugged) 
+if (battery_state.is_plugged)
     {
   	text_layer_set_font(weather_layer.battery_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD) );
     }
@@ -721,7 +773,7 @@ if (battery_state.is_plugged)
   //fetch_msg();
   }
 
-static void init(void) 
+static void init(void)
   {
 
   app_message_init();
@@ -796,7 +848,7 @@ static void init(void)
   layer_insert_below_sibling(trotteuse_layer, trotteuse_scale_layer);
 
 
-  // Add graph layer	
+  // Add graph layer
   graph_layer = layer_create( GRect(140-X_SIZE, BTC_OFFSET, X_SIZE, Y_SIZE) );
   //text_layer_set_background_color(graph_layer, GColorClear);
   layer_add_child(window_get_root_layer(window), graph_layer);
@@ -811,7 +863,7 @@ static void init(void)
     int dsize = sizeof(bgraph_data);
     APP_LOG(APP_LOG_LEVEL_DEBUG, "** Read Persist size: %d", dsize);
     persist_read_data(0, bgraph_data, 200);
-    persist_read_data(1, ((char *) bgraph_data) + 200, dsize-200);    
+    persist_read_data(1, ((char *) bgraph_data) + 200, dsize-200);
     }
   else
     {
@@ -819,18 +871,47 @@ static void init(void)
     for (int i=X_SIZE; i<2*X_SIZE; i++) bgraph_data[i] = (GPoint) {(2*X_SIZE)-i-1,0};
     }
 
+    if (persist_exists(KEY_CNF_TROTTEUSE))
+        cnfTrotteuse = persist_read_bool(KEY_CNF_TROTTEUSE);
+    else
+        cnfTrotteuse = true;
+
+    if (persist_exists(KEY_CNF_EXCHANGE))
+        {
+        persist_read_string(KEY_CNF_EXCHANGE, cnfExchange, 20);
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "** Read back Exchange: %s", cnfExchange);
+        }
+    else
+        strcpy(cnfExchange, "Cavirtex");
+
+    if (persist_exists(KEY_CNF_LOCATION))
+        {
+        persist_read_string(KEY_CNF_LOCATION, cnfLocation, 32);
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "** Read back Location: %s", cnfLocation);
+        }
+    else
+      strcpy(cnfLocation, "GPS automatic");
+
   // Ensures time is displayed immediately (will break if NULL tick event accessed).
   // (This is why it's a good idea to have a separate routine to do the update itself.)
   time_t now = time(NULL);
   struct tm *current_time = localtime(&now);
   handle_minute_tick(current_time, MINUTE_UNIT);
-  tick_timer_service_subscribe(MINUTE_UNIT, &handle_minute_tick);
-//  tick_timer_service_subscribe(SECOND_UNIT | MINUTE_UNIT, &handle_minute_tick);
 
+  if (cnfTrotteuse)
+    {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "ON cnfTrotteuse: %d", cnfTrotteuse ? 1:0);
+    tick_timer_service_subscribe(SECOND_UNIT | MINUTE_UNIT, &handle_minute_tick);
+    }
+  else
+    {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "OFF cnfTrotteuse: %d", cnfTrotteuse ? 1:0);
+    tick_timer_service_subscribe(MINUTE_UNIT, &handle_minute_tick);
+    }
 
   bluetooth_connection_service_subscribe( &bluetooth_handler );
   battery_state_service_subscribe( & battery_handler );
-  
+
 
   //gpath_init(&bgraph, &bgraph_info);
   //for (int i=0; i<X_SIZE; i++) bgraph_data[i] = (GPoint) {i,0};
@@ -842,14 +923,14 @@ static void init(void)
 
   battery_state = battery_state_service_peek();
   battery_handler(battery_state);
-  
-  if (bluetooth_connection_service_peek()) 
+
+  if (bluetooth_connection_service_peek())
    {
     strcpy(bluetooth_text," ok");
     }
   else
     strcpy(bluetooth_text," LOST!");
-  
+
   fetch_msg();
 
 
@@ -869,7 +950,10 @@ void trotteuse_update_proc(struct Layer *layer, GContext *ctx)
   {
   GPoint p0 = GPoint(12, 98);
   GPoint p1 = GPoint(12 + trotteuse*2 , 98);
-  graphics_context_set_stroke_color(ctx, cTimeF);
+  if (cnfTrotteuse)
+    graphics_context_set_stroke_color(ctx, cTimeF);
+  else
+    graphics_context_set_stroke_color(ctx, cTimeB);
   graphics_draw_line(ctx, p0, p1);
   }
 
@@ -878,12 +962,15 @@ void trotteuse_scale_update_proc(struct Layer *layer, GContext *ctx)
   if (trotteuse_draw_scale)
     {
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "SCALE!");
-    
-    graphics_context_set_stroke_color(ctx, cTimeF);
-  
+
+    if (cnfTrotteuse)
+      graphics_context_set_stroke_color(ctx, cTimeF);
+    else
+      graphics_context_set_stroke_color(ctx, cTimeB);
+
     for (int i=0; i<=60; i+=5)
       {
-      if (0 == (i%10) ) 
+      if (0 == (i%10) )
         graphics_draw_line(ctx, GPoint(12+2*i,98-2), GPoint(12+2*i,98+2));
       else
         graphics_draw_line(ctx, GPoint(12+2*i,98-2), GPoint(12+2*i,98));
@@ -894,7 +981,7 @@ void trotteuse_scale_update_proc(struct Layer *layer, GContext *ctx)
 
 
 
-static void deinit(void) 
+static void deinit(void)
   {
   gpath_destroy(bgraph);
 
@@ -927,23 +1014,23 @@ static void deinit(void)
 
 ////////////////////////////////////////////////////////////////////////////////////
 //
-//   WEATHER 
+//   WEATHER
 //
 ////////////////////////////////////////////////////////////////////////////////////
 
 
 
 void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
-  
+
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Init weather layers...");
 
 	weather_layer->layer = layer_create(GRect(pos.x, pos.y, 144, 80));
-	
+
 	// Add background layer
 	weather_layer->temp_layer_background = text_layer_create(GRect(0, 10, 144, 68));
 	text_layer_set_background_color(weather_layer->temp_layer_background, cWeatherB);
 	layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp_layer_background));
-	
+
   // Add temperature #1 layer
   #ifdef PBL_COLOR
   	weather_layer->temp1_layer = text_layer_create(GRect(0, 8, 144, 80));
@@ -987,7 +1074,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
   #ifdef PBL_COLOR
   	weather_layer->temp4_layer = text_layer_create(GRect(0, 14, 144, 80));
 	#else
-  	weather_layer->temp4_layer = text_layer_create(GRect(0, 10, 144, 80));    
+  	weather_layer->temp4_layer = text_layer_create(GRect(0, 10, 144, 80));
   #endif
   text_layer_set_background_color(weather_layer->temp4_layer, cTempB);
 	text_layer_set_text_color(weather_layer->temp4_layer, cTempF);
@@ -1001,7 +1088,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
     weather_layer->temp5_layer  = text_layer_create(GRect(0, 39, 144, 80));
   #else
     weather_layer->temp5_layer  = text_layer_create(GRect(0, 35, 144, 80));
-  #endif    
+  #endif
   text_layer_set_background_color(weather_layer->temp5_layer, cTempB);
 	text_layer_set_text_color(weather_layer->temp5_layer, cTempF);
   text_layer_set_font(weather_layer->temp5_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
@@ -1048,23 +1135,23 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
 
 //  bitmap_layer_set_bitmap(weather_layer->icon1_layer,  weather_layer->icon1_bitmap  );
 //  bitmap_layer_set_bitmap(weather_layer->icon2_layer,  weather_layer->icon2_bitmap  );
-  
-  
+
+
   // Zero out text fields
  	text_layer_set_text(weather_layer->temp1_layer, "");
  	text_layer_set_text(weather_layer->temp2_layer, "");
   text_layer_set_text(weather_layer->temp3_layer, "");
 	text_layer_set_text(weather_layer->temp4_layer, "COINCAN 2.6");
-	text_layer_set_text(weather_layer->temp5_layer, "Enable your GPS!");      
+	text_layer_set_text(weather_layer->temp5_layer, "Enable your GPS!");
 }
 
-void weather_layer_deinit(WeatherLayer* weather_layer) 
+void weather_layer_deinit(WeatherLayer* weather_layer)
   {
 
   tick_timer_service_unsubscribe();
   battery_state_service_unsubscribe();
   bluetooth_connection_service_unsubscribe();
-  
+
   text_layer_destroy(weather_layer->temp_layer_background);
   text_layer_destroy(weather_layer->temp1_layer);
   text_layer_destroy(weather_layer->temp2_layer);
@@ -1080,7 +1167,7 @@ void weather_layer_deinit(WeatherLayer* weather_layer)
     bitmap_layer_destroy(weather_layer->icon1_layer);
     bitmap_layer_destroy(weather_layer->icon2_layer);
     }
-  
+
 //  window_destroy(window);
 }
 
@@ -1105,5 +1192,3 @@ int main(void)
   app_event_loop();
   deinit();
   }
-
-
