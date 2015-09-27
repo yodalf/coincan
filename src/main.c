@@ -949,6 +949,7 @@ void graph_update_proc(struct Layer *layer, GContext *ctx)
 
 void trotteuse_update_proc(struct Layer *layer, GContext *ctx)
   {
+  #ifdef PBL_COLOR
   GPoint p0 = GPoint(12, 98);
   GPoint p1 = GPoint(12 + trotteuse*2 , 98);
   if (cnfTrotteuse)
@@ -956,10 +957,12 @@ void trotteuse_update_proc(struct Layer *layer, GContext *ctx)
   else
     graphics_context_set_stroke_color(ctx, cTimeB);
   graphics_draw_line(ctx, p0, p1);
+  #endif
   }
 
 void trotteuse_scale_update_proc(struct Layer *layer, GContext *ctx)
   {
+  #ifdef PBL_COLOR
   if (trotteuse_draw_scale)
     {
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "SCALE!");
@@ -977,6 +980,7 @@ void trotteuse_scale_update_proc(struct Layer *layer, GContext *ctx)
         graphics_draw_line(ctx, GPoint(12+2*i,98-2), GPoint(12+2*i,98));
       }
     }
+  #endif
   }
 
 
@@ -1142,7 +1146,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) {
  	text_layer_set_text(weather_layer->temp1_layer, "");
  	text_layer_set_text(weather_layer->temp2_layer, "");
   text_layer_set_text(weather_layer->temp3_layer, "");
-	text_layer_set_text(weather_layer->temp4_layer, "COINCAN 2.6");
+	text_layer_set_text(weather_layer->temp4_layer, "COINCAN 2.7");
 	text_layer_set_text(weather_layer->temp5_layer, "Enable your GPS!");
 }
 
