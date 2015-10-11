@@ -10,6 +10,9 @@ var gpsError=0;
 
 var cnfExchange = "Cavirtex";
 var cnfLocation = "GPS automatic";
+var cnfGPS = "No";
+var cnfOWM = "Yes";
+var cnfLocationOWM = "Quebec, CA"
 
 var geoBase = {
 "Athabasca":"001",
@@ -1128,14 +1131,17 @@ function fetch_BTC ()
           {
             var btcH = Math.round(response.ticker.high);
             var btcL = Math.round(response.ticker.low);
-            var btcV = Math.round(response.ticker.last);
+            var btcV = Math.round(100.0 * response.ticker.last);
           }
 
         if (typeof response.high != 'undefined')
           {
             var btcH = Math.round(response.high);
             var btcL = Math.round(response.low);
-            var btcV = Math.round(response.last);
+            if (typeof response.last != 'undefined')
+              var btcV = Math.round(100.0 * response.last);
+            else
+              var btcV = Math.round(100.0 * response.ask);
           }
 
         if (btcH != -1)
@@ -1295,8 +1301,14 @@ function fetch_BTC ()
       case "Cavirtex":
         req.open('GET', "https://www.cavirtex.com/api/CAD/ticker.json", true);
         break;
-      case "BTC-China":
+      case "BTCC":
         req.open('GET', "https://data.btcchina.com/data/ticker?market=btccny", true);
+        break;
+      case "BTC-e":
+        req.open('GET', "https://btc-e.com/api/2/btc_usd/ticker", true);
+        break;
+      case "Bitstamp":
+        req.open('GET', "https://www.bitstamp.net/api/ticker/", true);
         break;
       default:
         req.open('GET', "https://www.cavirtex.com/api/CAD/ticker.json", true);
