@@ -1,13 +1,18 @@
+
 //{{{  Includes
 #include <pebble.h>
-#include "util.h"
 //}}}
-
 //{{{  Defines
+
+#define INT_DIGITS 5 /* enough for 64 bit integer */
+
+//{{{  Keys
 #define KEY_CNF_TROTTEUSE 15
 #define KEY_CNF_EXCHANGE 16
 #define KEY_CNF_LOCATION 17
+//}}}
 
+//{{{  Geometries
 #define FULL_FRAME      (GRect(0, 0, 144, 168))
 #ifdef PBL_COLOR
 #define TIME_FRAME      (GRect(0, 38, 144, 168-6))
@@ -21,51 +26,11 @@
 
 #define X_SIZE 60
 #define Y_SIZE 24
+//}}}
 
-#ifdef ORIGINAL_COLORS
-#define cWindowB    GColorOxfordBlue
-#define cTopB
-#define cBitcoinsB
-#define cWeatherB   GColorPastelYellow
-#define cIconB      GColorClear
-
-#define cInfoB      GColorClear
-#define cInfoF      GColorBlack
-
-#define cTimeF      GColorYellow
-#define cTimeB      GColorClear
-
-#define cDateF      GColorRajah
-#define cDateB      GColorClear
-
-#define cBtchF      GColorSpringBud
-#define cBtchB      GColorClear
-
-#define cBtclF      GColorSpringBud
-#define cBtclB      GColorClear
-
-#define cBtcF       GColorSpringBud
-#define cBtcB       GColorClear
-
-#define cGraphF     GColorSpringBud
-
-#define cTempF  GColorBlack
-#define cTempB  GColorClear
-
-
-#define cInfoBlueF  GColorBlack
-#define cInfoBlueB  GColorClear
-#define cInfoBlueAlarmB  GColorBlack
-#define cInfoBlueAlarmF  GColorWhite
-
-#define cInfoBatF  GColorBlack
-#define cInfoBatB  GColorClear
-#define cInfoBatAlarmB  GColorBlack
-#define cInfoBatAlarmF  GColorWhite
-#endif
-
-
+//{{{  Colors
 #ifdef PBL_COLOR
+//{{{  
 #define cWindowB    GColorBlack
 #define cTopB
 #define cBitcoinsB
@@ -105,7 +70,9 @@
 #define cInfoBatB  GColorClear
 #define cInfoBatAlarmB  GColorWhite
 #define cInfoBatAlarmF  GColorBlack
+//}}}
 #else
+//{{{  
 #define cWindowB    GColorBlack
 #define cTopB
 #define cBitcoinsB
@@ -145,19 +112,16 @@
 #define cInfoBatB  GColorClear
 #define cInfoBatAlarmB  GColorBlack
 #define cInfoBatAlarmF  GColorWhite
-
-
-
+//}}}
 #endif
-
-
 //}}}
 
+//}}}
 //{{{  Globals
-bool     BuzzEnable = true;
 
 Window    *window;
 
+//{{{  Layers
 TextLayer *time_layer;
 TextLayer *date_layer;
 TextLayer *bc_layer;
@@ -168,79 +132,7 @@ Layer *graph_layer;
 Layer *trotteuse_layer;
 Layer *trotteuse_scale_layer;
 
-
-
-static char btcV[16];
-static char btcL[16];
-static char btcH[16];
-static char obIconCode[16];
-static char obTemperature[16];
-static char obWindDir[16];
-static char obWindGust[16];
-static char obWindSpeed[16];
-static char obWindChill[16];
-static char obHumidex[16];
-static char forecastIconCode[16];
-static char forecastLow[16];
-static char forecastHigh[16];
-static char forecastTemp[16];
-static char forecastPeriod[16];
-
-static float btcV_value = 0.0;
-static float btcL_value = 0.0;
-static float btcH_value = 0.0;
-static int   obIconCode_value = 0;
-
-static BatteryChargeState battery_state;
-
-static char battery_text[8];
-static char bluetooth_text[8];
-
-static char geoArea1[5];
-
-static const uint32_t segments_long[] = { 1000, 1000, 1000 };
-static const uint32_t segments_short[] = { 100, 100, 100, 100, 100, 100, 100, 100, 100, 100};
-VibePattern myLongVibes =
-{
-    .durations = segments_long,
-    .num_segments = ARRAY_LENGTH(segments_long),
-};
-VibePattern myShortVibes =
-{
-    .durations = segments_short,
-    .num_segments = ARRAY_LENGTH(segments_short),
-};
-
-
-GPath *bgraph;
-GPoint bgraph_data[2*X_SIZE];
-static const GPathInfo bgraph_info =
-{
-    .num_points = 2*X_SIZE,
-    .points = bgraph_data
-};
-
-void graph_update_proc(struct Layer *, GContext *);
-
-void trotteuse_update_proc(struct Layer *, GContext *);
-void trotteuse_scale_update_proc(struct Layer *, GContext *);
-
-static int trotteuse = 0;
-static int trotteuse_draw_scale = 1;
-
-static char time_text[] = "00:00"; // Needs to be static because it's used by the system later.
-static char date_text[] = "........";
-
-static int message_count = 0;
-
-
-
-////////////////////////////////////////////////////////////////////////////////////
-//
-//   WEATHER
-//
-////////////////////////////////////////////////////////////////////////////////////
-
+//{{{  WeatherLayer struct
 typedef struct
 {
     Layer *layer;
@@ -270,11 +162,54 @@ typedef struct
     char temp5_str[16];
     char wind_str[16];
 } WeatherLayer;
+//}}}
 
 WeatherLayer weather_layer;
+//}}}
 
+//{{{  Variables
+char btcV[16];
+char btcL[16];
+char btcH[16];
+char obIconCode[16];
+char obTemperature[16];
+char obWindDir[16];
+char obWindGust[16];
+char obWindSpeed[16];
+char obWindChill[16];
+char obHumidex[16];
+char forecastIconCode[16];
+char forecastLow[16];
+char forecastHigh[16];
+char forecastTemp[16];
+char forecastPeriod[16];
 
-static uint8_t WEATHER_ICONS[] =
+float btcV_value = 0.0;
+float btcL_value = 0.0;
+float btcH_value = 0.0;
+int   obIconCode_value = 0;
+
+BatteryChargeState battery_state;
+
+char battery_text[8];
+char bluetooth_text[8];
+
+bool BuzzEnable = true;
+
+char geoArea1[5];
+
+int trotteuse = 0;
+int trotteuse_draw_scale = 1;
+bool cnfTrotteuse = true;
+char cnfExchange[20];
+char cnfLocation[32];
+
+char time_text[] = "00:00"; // Needs to be static because it's used by the system later.
+char date_text[] = "........";
+
+int message_count = 0;
+
+uint8_t WEATHER_ICONS[] = //{{{
 {
     RESOURCE_ID_I00,
     RESOURCE_ID_I01,
@@ -324,25 +259,171 @@ static uint8_t WEATHER_ICONS[] =
     RESOURCE_ID_I45,
     RESOURCE_ID_ICON_ERROR,
 };
+//}}}
 
+//{{{  Vibrations
+const uint32_t segments_long[] = { 1000, 1000, 1000 };
+const uint32_t segments_short[] = { 100, 100, 100, 100, 100, 100, 100, 100, 100, 100};
+VibePattern myLongVibes =
+{
+    .durations = segments_long,
+    .num_segments = ARRAY_LENGTH(segments_long),
+};
+VibePattern myShortVibes =
+{
+    .durations = segments_short,
+    .num_segments = ARRAY_LENGTH(segments_short),
+};
+//}}}
 
+//{{{  Graphic
+GPath *bgraph;
+GPoint bgraph_data[2*X_SIZE];
+const GPathInfo bgraph_info =
+{
+    .num_points = 2*X_SIZE,
+    .points = bgraph_data
+};
+//}}}
+//}}}
+
+//{{{  Prototypes
+char* _itoa(int i);
+int _atoi(const char *);
+float _string2float(char *);
+void init(void);
+void deinit(void);
+void graph_update_proc(struct Layer *, GContext *);
+void trotteuse_update_proc(struct Layer *, GContext *);
+void trotteuse_scale_update_proc(struct Layer *, GContext *);
 void weather_layer_init(WeatherLayer* weather_layer, GPoint pos);
 void weather_layer_deinit(WeatherLayer* weather_layer);
 //void weather_layer_set_icon(WeatherLayer* weather_layer, int icon1, int icon2);
 //void weather_layer_set_temperature(WeatherLayer* weather_layer, int16_t temperature, char * wind_dir, int wind_speed, int wind_gust, int humidex, int forecast_temp);
-
-static void fetch_msg(void);
-
-static bool cnfTrotteuse = true;
-static char cnfExchange[20];
-static char cnfLocation[32];
-
-static void handle_minute_tick(struct tm*, TimeUnits);
+void fetch_msg(void);
+void handle_minute_tick(struct tm*, TimeUnits);
+//}}}
 
 //}}}
 
-//{{{  push_point
-void push_point(float btc, float btcL, float btcH)
+//{{{  Utilities
+float _string2float(char *input) //{{{
+{
+    int intValue=0, divisionDecimal=1;
+    float result=0;
+    while(*input!='.'&&*input!='\0'){
+        intValue = (intValue*10+*input-'0');
+        input++;
+    }
+    if(*input=='\0')
+        return (float)intValue;
+    else
+        input++;
+    while(*input!='\0'){
+        divisionDecimal*=10;
+        result=(result*10+*input-'0');
+        input++;
+    }
+    return result=result/divisionDecimal+intValue;
+}
+//}}}
+int _atoi(const char *s) //{{{
+{
+         const char digits[] = "0123456789";  /* legal digits in order */
+        unsigned val=0;         /* value we're accumulating */
+        int neg=0;              /* set to true if we see a minus sign */
+
+        /* skip whitespace */
+        while (*s==' ' || *s=='\t') {
+                s++;
+        }
+
+        /* check for sign */
+        if (*s=='-') {
+                neg=1;
+                s++;
+        }
+        else if (*s=='+') {
+                s++;
+        }
+
+        /* process each digit */
+        while (*s) {
+                const char *where;
+                unsigned digit;
+                
+                /* look for the digit in the list of digits */
+                where = strchr(digits, *s);
+                if (where==NULL) {
+                        /* not found; not a digit, so stop */
+                        break;
+                }
+
+                /* get the index into the digit list, which is the value */
+                digit = (where - digits);
+
+                /* could (should?) check for overflow here */
+
+                /* shift the number over and add in the new digit */
+                val = val*10 + digit;
+ 
+                /* look at the next character */
+                s++;
+        }
+        
+        /* handle negative numbers */
+        if (neg) {
+                return -val;
+        }
+        
+        /* done */
+        return val;
+}
+//}}}
+char *_itoa(int i) //{{{
+{
+  /* Room for INT_DIGITS digits, - and '\0' */
+   char buf[INT_DIGITS + 2];
+  char *p = buf + INT_DIGITS + 1;	/* points to terminating '\0' */
+  if (i >= 0) {
+    do {
+      *--p = '0' + (i % 10);
+      i /= 10;
+    } while (i != 0);
+    return p;
+  }
+  else {			/* i < 0 */
+    do {
+      *--p = '0' - (i % 10);
+      i /= 10;
+    } while (i != 0);
+    *--p = '-';
+  }
+  return p;
+}
+//}}}
+char *strchr(const char *s, int ch) //{{{
+{
+        /* scan from left to right */
+        while (*s) {
+                /* if we hit it, return it */
+                if (*s==ch) {
+                        return (char *)s;
+                }
+                s++;
+        }
+
+        /* if we were looking for the 0, return that */
+        if (*s==ch) {
+                return (char *)s;
+        }
+
+        /* didn't find it */
+        return NULL;
+}
+//}}}
+
+void push_point(float btc, float btcL, float btcH) //{{{
 {
     /* Push a new btc value on the graph stack*/
 
@@ -359,8 +440,7 @@ void push_point(float btc, float btcL, float btcH)
     for (i=X_SIZE; i<2*X_SIZE; i++) bgraph_data[i].y = bgraph_data[j-i-1].y;
 }
 //}}}
-//{{{  fetch_msg
-static void fetch_msg(void)
+void fetch_msg(void) //{{{
 {
     DictionaryIterator *iter;
 
@@ -393,12 +473,10 @@ static void fetch_msg(void)
 
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Message sent");
 }
-
 //}}}
-
+//}}}
 //{{{  Handlers
-//{{{  handle_minute_tick
-static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed)
+void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) //{{{
 {
     #ifdef PBL_COLOR
     if (units_changed & SECOND_UNIT)
@@ -446,8 +524,7 @@ static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed)
         //}}}
 }
 //}}}
-//{{{  in_received_handler
-static void in_received_handler(DictionaryIterator *iter, void *context)
+void in_received_handler(DictionaryIterator *iter, void *context) //{{{
 {
     //{{{  Tuples
     Tuple *btcV_tuple = dict_find(iter, 0);
@@ -475,8 +552,7 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
     APP_LOG(APP_LOG_LEVEL_DEBUG,"IN!");
     message_count += 1;
 
-    // Configurations
-    if (cnfTrotteuse_tuple)
+    if (cnfTrotteuse_tuple) //{{{
         {
         cnfTrotteuse = strcmp(cnfTrotteuse_tuple->value->cstring,"0");
         if (cnfTrotteuse)
@@ -495,25 +571,27 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
         layer_mark_dirty(trotteuse_scale_layer);
         layer_mark_dirty(trotteuse_layer);
         }
-    if (cnfExchange_tuple)
+    //}}}
+    if (cnfExchange_tuple) //{{{
         {
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "TOTO!");
         APP_LOG(APP_LOG_LEVEL_DEBUG, "cnfExchange: %s", cnfExchange_tuple->value->cstring);
         strcpy(cnfExchange, cnfExchange_tuple->value->cstring);
         persist_write_string(KEY_CNF_EXCHANGE, cnfExchange);
         }
-    if (cnfLocation_tuple)
+    //}}}
+    if (cnfLocation_tuple) //{{{
         {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "cnfLocation: %s", cnfLocation_tuple->value->cstring);
         strcpy(cnfLocation, cnfLocation_tuple->value->cstring);
         persist_write_string(KEY_CNF_LOCATION, cnfLocation);
         }
-
-    if (cnfExchange_tuple || cnfLocation_tuple)
+    //}}}
+    if (cnfExchange_tuple || cnfLocation_tuple) //{{{
         fetch_msg();
+    //}}}
 
-    // Default positions
-    if (geoArea1_tuple)
+    if (geoArea1_tuple) //{{{
         {
         strncpy(geoArea1, geoArea1_tuple->value->cstring, 5);
         if (bluetooth_text[1] != '?')
@@ -523,104 +601,107 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
             }
         APP_LOG(APP_LOG_LEVEL_DEBUG, "OUR LOCATION: %s", geoArea1);
         }
+    //}}}
 
-    if (btcV_tuple)
+    if (btcV_tuple) //{{{
         {
         strncpy(btcV, btcV_tuple->value->cstring, 16);
         btcV_value = _string2float(btcV)/100.0;
         btcV[strlen(btcV)-2]='\0';
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "Res: %s", btcV);
         }
-
-    if (btcL_tuple)
+    //}}}
+    if (btcL_tuple) //{{{
         {
         strncpy(btcL, btcL_tuple->value->cstring, 16);
         btcL_value = _string2float(btcL);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "ResL: %s", btcL);
         }
-
-    if (btcH_tuple)
+    //}}}
+    if (btcH_tuple) //{{{
         {
         strncpy(btcH, btcH_tuple->value->cstring, 16);
         btcH_value = _string2float(btcH);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "ResH: %s", btcH);
         }
+    //}}}
 
-    if (obIconCode_tuple)
+    if (obIconCode_tuple) //{{{
         {
         strncpy(obIconCode, obIconCode_tuple->value->cstring, 16);
         obIconCode_value = _atoi(obIconCode);
         gbitmap_destroy(weather_layer.icon1_bitmap);
         weather_layer.icon1_bitmap =  gbitmap_create_with_resource(WEATHER_ICONS[_atoi(obIconCode)]);
         bitmap_layer_set_bitmap(weather_layer.icon1_layer, weather_layer.icon1_bitmap );
-#ifdef PBL_COLOR
+        #ifdef PBL_COLOR
         bitmap_layer_set_compositing_mode(weather_layer.icon1_layer, GCompOpAssignInverted);
-#endif
+        #endif
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "obIconCode: %s", obIconCode_tuple->value->cstring);
         }
-
-    if (obTemperature_tuple)
+    //}}}
+    if (obTemperature_tuple) //{{{
         {
         strncpy(obTemperature, obTemperature_tuple->value->cstring, 16);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "obTemperature: %s", obTemperature_tuple->value->cstring);
         }
-
-    if (obWindDir_tuple)
+    //}}}
+    if (obWindDir_tuple) //{{{
         {
         strncpy(obWindDir, obWindDir_tuple->value->cstring, 16);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "obWindDir: %s", obWindDir_tuple->value->cstring);
         }
-
-    if (obWindGust_tuple)
+    //}}}
+    if (obWindGust_tuple) //{{{
         {
         strncpy(obWindGust, obWindGust_tuple->value->cstring, 16);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "obWindGust: %s", obWindGust_tuple->value->cstring);
         }
-
-    if (obWindSpeed_tuple)
+    //}}}
+    if (obWindSpeed_tuple) //{{{
         {
         strncpy(obWindSpeed, obWindSpeed_tuple->value->cstring, 16);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "obWindSpeed: %s", obWindSpeed_tuple->value->cstring);
         }
-
-    if (obWindChill_tuple)
+    //}}}
+    if (obWindChill_tuple) //{{{
         {
         strncpy(obWindChill, obWindChill_tuple->value->cstring, 16);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "obWindChill: %s", obWindChill_tuple->value->cstring);
         }
-
-    if (obHumidex_tuple)
+    //}}}
+    if (obHumidex_tuple) //{{{
         {
         strncpy(obHumidex, obHumidex_tuple->value->cstring, 16);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "obHumidex: %s", obHumidex_tuple->value->cstring);
         }
+    //}}}
 
-    if (forecastIconCode_tuple)
+    if (forecastIconCode_tuple) //{{{
         {
         strncpy(forecastIconCode, forecastIconCode_tuple->value->cstring, 16);
         gbitmap_destroy(weather_layer.icon2_bitmap);
         weather_layer.icon2_bitmap =  gbitmap_create_with_resource(WEATHER_ICONS[_atoi(forecastIconCode)]);
         bitmap_layer_set_bitmap(weather_layer.icon2_layer, weather_layer.icon2_bitmap );
-#ifdef PBL_COLOR
+        #ifdef PBL_COLOR
         bitmap_layer_set_compositing_mode(weather_layer.icon2_layer, GCompOpAssignInverted);
-#endif
+        #endif
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "forecastIconCode: %s", forecastIconCode_tuple->value->cstring);
         }
-
-    if (forecastLow_tuple)
+    //}}}
+    if (forecastLow_tuple) //{{{
         {
         strncpy(forecastLow, forecastLow_tuple->value->cstring, 16);
         strncpy(forecastTemp, forecastLow_tuple->value->cstring, 16);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "forecastLow: %s", forecastLow_tuple->value->cstring);
         }
-
-    if (forecastPeriod_tuple)
+    //}}}
+    if (forecastPeriod_tuple) //{{{
         {
         strncpy(forecastPeriod, forecastPeriod_tuple->value->cstring, 16);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "forecastPeriod: %s", forecastPeriod_tuple->value->cstring);
         }
-
-    if (forecastHigh_tuple)
+    //}}}
+    if (forecastHigh_tuple) //{{{
         {
         strncpy(forecastHigh, forecastHigh_tuple->value->cstring, 16);
         strncpy(forecastTemp, forecastHigh_tuple->value->cstring, 16);
@@ -684,27 +765,20 @@ static void in_received_handler(DictionaryIterator *iter, void *context)
             text_layer_set_text(weather_layer.temp5_layer, "");
             }
         }
-
-
+    //}}}
 }
-
 //}}}
-//{{{  in_dropped_handler
-static void in_dropped_handler(AppMessageResult reason, void *context)
+void in_dropped_handler(AppMessageResult reason, void *context) //{{{
 {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Dropped!");
 }
-
 //}}}
-//{{{  out_failed_handler
-static void out_failed_handler(DictionaryIterator *failed, AppMessageResult reason, void *context)
+void out_failed_handler(DictionaryIterator *failed, AppMessageResult reason, void *context) //{{{
 {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Failed to Send!");
 }
-
 //}}}
-//{{{  bluetooth_handler
-static void bluetooth_handler(bool connected)
+void bluetooth_handler(bool connected) //{{{
 {
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "Bluetooth event!");
     if (connected)
@@ -727,10 +801,8 @@ static void bluetooth_handler(bool connected)
 
     layer_mark_dirty(window_get_root_layer(window));
 }
-
 //}}}
-//{{{  battery_handler
-static void battery_handler(BatteryChargeState charge)
+void battery_handler(BatteryChargeState charge) //{{{
 {
     if ((charge.charge_percent <= 50) && (charge.charge_percent < battery_state.charge_percent) )
         {
@@ -780,13 +852,11 @@ static void battery_handler(BatteryChargeState charge)
     layer_mark_dirty(window_get_root_layer(window));
     //fetch_msg();
 }
-
 //}}}
 //}}}
 
 //{{{  Graphics update procs
-//{{{  graph_update_proc
-void graph_update_proc(struct Layer *layer, GContext *ctx)
+void graph_update_proc(struct Layer *layer, GContext *ctx) //{{{
 {
     if (btcV_value != 0.0)
         graphics_context_set_stroke_color(ctx, cGraphF);
@@ -795,8 +865,7 @@ void graph_update_proc(struct Layer *layer, GContext *ctx)
     gpath_draw_outline(ctx, bgraph);
 }
 //}}}
-//{{{  trotteuse_update_proc
-void trotteuse_update_proc(struct Layer *layer, GContext *ctx)
+void trotteuse_update_proc(struct Layer *layer, GContext *ctx) //{{{
 {
 #ifdef PBL_COLOR
     GPoint p0 = GPoint(12, 98);
@@ -809,10 +878,9 @@ void trotteuse_update_proc(struct Layer *layer, GContext *ctx)
 #endif
 }
 //}}}
-//{{{  trotteuse_scale_update_pro
-void trotteuse_scale_update_proc(struct Layer *layer, GContext *ctx)
+void trotteuse_scale_update_proc(struct Layer *layer, GContext *ctx) //{{{
 {
-#ifdef PBL_COLOR
+    #ifdef PBL_COLOR
     if (trotteuse_draw_scale)
         {
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "SCALE!");
@@ -830,14 +898,13 @@ void trotteuse_scale_update_proc(struct Layer *layer, GContext *ctx)
                 graphics_draw_line(ctx, GPoint(12+2*i,98-2), GPoint(12+2*i,98));
             }
         }
-#endif
+    #endif
 }
 //}}}
 //}}}
 
 //{{{  Init and Deinit
-//{{{  app_message_init
-static void app_message_init(void)
+void app_message_init(void) //{{{
 {
     // Register message handlers
     app_message_register_inbox_received(in_received_handler);
@@ -847,10 +914,9 @@ static void app_message_init(void)
     // Init buffers
     app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
 }
-
 //}}}
-//{{{  weather_layer_init
-void weather_layer_init(WeatherLayer* weather_layer, GPoint pos)
+
+void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
 {
 
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Init weather layers...");
@@ -863,11 +929,11 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos)
     layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp_layer_background));
 
     // Add temperature #1 layer
-#ifdef PBL_COLOR
+    #ifdef PBL_COLOR
     weather_layer->temp1_layer = text_layer_create(GRect(0, 8, 144, 80));
-#else
+    #else
     weather_layer->temp1_layer = text_layer_create(GRect(0, 4, 144, 80));
-#endif
+    #endif
     text_layer_set_background_color(weather_layer->temp1_layer, cTempB);
     text_layer_set_text_color(weather_layer->temp1_layer, cTempF );
     text_layer_set_font(weather_layer->temp1_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
@@ -876,11 +942,11 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos)
     layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp1_layer));
 
     // Add temperature #2 layer
-#ifdef PBL_COLOR
+    #ifdef PBL_COLOR
     weather_layer->temp2_layer = text_layer_create(GRect(0, 29, 144, 80));
-#else
+    #else
     weather_layer->temp2_layer = text_layer_create(GRect(0, 24, 144, 80));
-#endif
+    #endif
     text_layer_set_background_color(weather_layer->temp2_layer, cTempB);
     text_layer_set_text_color(weather_layer->temp2_layer, cTempF);
     text_layer_set_font(weather_layer->temp2_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
@@ -889,11 +955,12 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos)
     layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp2_layer));
 
     // Add temperature #3 layer
-#ifdef PBL_COLOR
+    #ifdef PBL_COLOR
     weather_layer->temp3_layer = text_layer_create(GRect(0, 43, 144, 80));
-#else
+    #else
     weather_layer->temp3_layer = text_layer_create(GRect(0, 38, 144, 80));
-#endif
+    #endif
+
     text_layer_set_background_color(weather_layer->temp3_layer, cTempB);
     text_layer_set_text_color(weather_layer->temp3_layer, cTempF);
     text_layer_set_font(weather_layer->temp3_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
@@ -902,11 +969,12 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos)
     layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp3_layer));
 
     // Add temperature #4 layer
-#ifdef PBL_COLOR
+    #ifdef PBL_COLOR
     weather_layer->temp4_layer = text_layer_create(GRect(0, 14, 144, 80));
-#else
+    #else
     weather_layer->temp4_layer = text_layer_create(GRect(0, 10, 144, 80));
-#endif
+    #endif
+
     text_layer_set_background_color(weather_layer->temp4_layer, cTempB);
     text_layer_set_text_color(weather_layer->temp4_layer, cTempF);
     text_layer_set_font(weather_layer->temp4_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
@@ -915,11 +983,12 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos)
     layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp4_layer));
 
     // Add temperature #5 layer
-#ifdef PBL_COLOR
+    #ifdef PBL_COLOR
     weather_layer->temp5_layer  = text_layer_create(GRect(0, 39, 144, 80));
-#else
+    #else
     weather_layer->temp5_layer  = text_layer_create(GRect(0, 35, 144, 80));
-#endif
+    #endif
+
     text_layer_set_background_color(weather_layer->temp5_layer, cTempB);
     text_layer_set_text_color(weather_layer->temp5_layer, cTempF);
     text_layer_set_font(weather_layer->temp5_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
@@ -964,8 +1033,8 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos)
     weather_layer->icon1_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[0]);
     weather_layer->icon2_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[0]);
 
-//  bitmap_layer_set_bitmap(weather_layer->icon1_layer,  weather_layer->icon1_bitmap  );
-//  bitmap_layer_set_bitmap(weather_layer->icon2_layer,  weather_layer->icon2_bitmap  );
+    //  bitmap_layer_set_bitmap(weather_layer->icon1_layer,  weather_layer->icon1_bitmap  );
+    //  bitmap_layer_set_bitmap(weather_layer->icon2_layer,  weather_layer->icon2_bitmap  );
 
 
     // Zero out text fields
@@ -976,8 +1045,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos)
     text_layer_set_text(weather_layer->temp5_layer, "configurable");
 }
 //}}}
-//{{{  weather_layer_deinit
-void weather_layer_deinit(WeatherLayer* weather_layer)
+void weather_layer_deinit(WeatherLayer* weather_layer) //{{{
 {
 
     tick_timer_service_unsubscribe();
@@ -1000,12 +1068,11 @@ void weather_layer_deinit(WeatherLayer* weather_layer)
         bitmap_layer_destroy(weather_layer->icon2_layer);
         }
 
-//  window_destroy(window);
+    //  window_destroy(window);
 }
 //}}}
 
-//{{{  init
-static void init(void)
+void init(void) //{{{
 {
     app_message_init();
 
@@ -1172,10 +1239,8 @@ static void init(void)
 
 
 }
-
 //}}}
-//{{{  deinit
-static void deinit(void)
+void deinit(void) //{{{
 {
     gpath_destroy(bgraph);
 
@@ -1205,11 +1270,11 @@ static void deinit(void)
 //}}}
 //}}}
 
-//{{{  main
-int main(void)
+int main(void) //{{{
 {
     init();
     app_event_loop();
     deinit();
 }
 //}}}
+
