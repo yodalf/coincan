@@ -174,6 +174,7 @@ char btcH[16];
 char obIconCode[16];
 char obTemperature[16];
 char obWindDir[16];
+char obWindDir_bkp[16];
 char obWindGust[16];
 char obWindSpeed[16];
 char obWindChill[16];
@@ -649,6 +650,7 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
     if (obWindDir_tuple) //{{{
         {
         strncpy(obWindDir, obWindDir_tuple->value->cstring, 16);
+        strncpy(obWindDir_bkp, obWindDir_tuple->value->cstring, 16);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "obWindDir: %s", obWindDir_tuple->value->cstring);
         }
     //}}}
@@ -716,8 +718,7 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
 
         push_point(btcV_value, btcL_value, btcH_value);
 
-//        strncpy(obWindDir, obWindDir_tuple->value->cstring, 16);
-
+        strncpy(obWindDir, obWindDir_bkp, 16);
         if (obWindSpeed[0] != '!')
             {
             strncat(obWindDir, " ", 16);
@@ -734,7 +735,6 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
             {
             strncpy(obWindDir, "NO WIND!", 16);
             }
-        strncat(obWindDir, "\0", 16);
 
         if ((obWindChill[0] == '!') && (obHumidex[0] == '!'))
             {
