@@ -716,6 +716,8 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
 
         push_point(btcV_value, btcL_value, btcH_value);
 
+//        strncpy(obWindDir, obWindDir_tuple->value->cstring, 16);
+
         if (obWindSpeed[0] != '!')
             {
             strncat(obWindDir, " ", 16);
@@ -732,6 +734,7 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
             {
             strncpy(obWindDir, "NO WIND!", 16);
             }
+        strncat(obWindDir, "\0", 16);
 
         if ((obWindChill[0] == '!') && (obHumidex[0] == '!'))
             {
