@@ -288,7 +288,7 @@ const GPathInfo bgraph_info =
 //}}}
 
 //{{{  Prototypes
-char* _itoa(int i);
+char* _itoa(int i, char *);
 int _atoi(const char *);
 float _string2float(char *);
 void init(void);
@@ -380,11 +380,12 @@ int _atoi(const char *s) //{{{
         return val;
 }
 //}}}
-char *_itoa(int i) //{{{
+char *_itoa(int i, char *buf) //{{{
 {
   /* Room for INT_DIGITS digits, - and '\0' */
-   char buf[INT_DIGITS + 2];
+ // char buf[INT_DIGITS + 2];
   char *p = buf + INT_DIGITS + 1;	/* points to terminating '\0' */
+  *p = '\0';
   if (i >= 0) {
     do {
       *--p = '0' + (i % 10);
@@ -804,6 +805,8 @@ void bluetooth_handler(bool connected) //{{{
 //}}}
 void battery_handler(BatteryChargeState charge) //{{{
 {
+    char Buffer[INT_DIGITS+2];
+
     if ((charge.charge_percent <= 50) && (charge.charge_percent < battery_state.charge_percent) )
         {
         if (BuzzEnable) vibes_enqueue_custom_pattern(myShortVibes);
@@ -814,6 +817,7 @@ void battery_handler(BatteryChargeState charge) //{{{
     battery_state.is_plugged  = charge.is_plugged;
 
     strncpy(battery_text, "", 8);
+
     if (battery_state.charge_percent <= 30)
         {
         text_layer_set_background_color(weather_layer.battery_layer, cInfoBatAlarmB);
@@ -832,7 +836,7 @@ void battery_handler(BatteryChargeState charge) //{{{
     if (battery_state.charge_percent > 99)
         strncat(battery_text, "FL", 8);
     else
-        strncat(battery_text, _itoa(battery_state.charge_percent), 8);
+        strncat(battery_text,  _itoa(battery_state.charge_percent, Buffer), 8);
 
     if (battery_state.is_charging)
         strncat(battery_text, "*", 8);
@@ -847,7 +851,6 @@ void battery_handler(BatteryChargeState charge) //{{{
         {
         text_layer_set_font(weather_layer.battery_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
         }
-
 
     layer_mark_dirty(window_get_root_layer(window));
     //fetch_msg();
@@ -1041,7 +1044,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     text_layer_set_text(weather_layer->temp1_layer, "");
     text_layer_set_text(weather_layer->temp2_layer, "");
     text_layer_set_text(weather_layer->temp3_layer, "");
-    text_layer_set_text(weather_layer->temp4_layer, "COINCAN 2.8");
+    text_layer_set_text(weather_layer->temp4_layer, "COINCAN 2.9");
     text_layer_set_text(weather_layer->temp5_layer, "configurable");
 }
 //}}}
