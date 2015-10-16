@@ -15,14 +15,20 @@
 
 //{{{  Geometries
 #define FULL_FRAME      (GRect(0, 0, 144, 168))
+
 #ifdef PBL_COLOR
 #define TIME_FRAME      (GRect(0, 38, 144, 168-6))
 #define DATE_FRAME      (GRect(0, -4, 144, 168-62))
 #define BTC_OFFSET      18
 #else
+#define TIME_FRAME      (GRect(0, 38, 144, 168-6))
+#define DATE_FRAME      (GRect(0, -4, 144, 168-62))
+#define BTC_OFFSET      18
+/*
 #define TIME_FRAME      (GRect(0, -8, 144, 168-6))
 #define DATE_FRAME      (GRect(0, 46, 144, 168-62))
 #define BTC_OFFSET      70
+*/
 #endif
 
 #define X_SIZE 60
@@ -77,6 +83,46 @@
 #define cWindowB    GColorBlack
 #define cTopB
 #define cBitcoinsB
+#define cWeatherB   GColorBlack
+#define cIconB      GColorClear
+
+#define cInfoB      GColorClear
+#define cInfoF      GColorWhite
+
+#define cTimeF      GColorWhite
+#define cTimeB      GColorClear
+
+#define cDateF      GColorWhite
+#define cDateB      GColorClear
+
+#define cBtchF      GColorWhite
+#define cBtchB      GColorClear
+
+#define cBtclF      GColorWhite
+#define cBtclB      GColorClear
+
+#define cBtcF       GColorWhite
+#define cBtcB       GColorClear
+
+#define cGraphF     GColorWhite
+
+#define cTempF  GColorWhite
+#define cTempB  GColorClear
+
+
+#define cInfoBlueF  GColorWhite
+#define cInfoBlueB  GColorClear
+#define cInfoBlueAlarmB  GColorWhite
+#define cInfoBlueAlarmF  GColorBlack
+
+#define cInfoBatF  GColorWhite
+#define cInfoBatB  GColorClear
+#define cInfoBatAlarmB  GColorWhite
+#define cInfoBatAlarmF  GColorBlack
+/*
+#define cWindowB    GColorBlack
+#define cTopB
+#define cBitcoinsB
 #define cWeatherB   GColorWhite
 #define cIconB      GColorClear
 
@@ -113,6 +159,7 @@
 #define cInfoBatB  GColorClear
 #define cInfoBatAlarmB  GColorBlack
 #define cInfoBatAlarmF  GColorWhite
+*/
 //}}}
 #endif
 //}}}
@@ -448,6 +495,7 @@ void fetch_msg(void) //{{{
     DictionaryIterator *iter;
 
     //Tuplet symbol_tuple = TupletCString(0, "HELLO!");
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "==> Fetch");
 
     app_message_outbox_begin(&iter);
 
@@ -481,7 +529,7 @@ void fetch_msg(void) //{{{
 //{{{  Handlers
 void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) //{{{
 {
-    #ifdef PBL_COLOR
+    //#ifdef PBL_COLOR
     if (units_changed & SECOND_UNIT)
         //{{{  
         {
@@ -498,7 +546,7 @@ void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) //{{{
         layer_mark_dirty(trotteuse_layer);
         }
         //}}}
-    #endif
+    //#endif
 
     if (units_changed & MINUTE_UNIT)
         //{{{  
@@ -642,9 +690,9 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
         gbitmap_destroy(weather_layer.icon1_bitmap);
         weather_layer.icon1_bitmap =  gbitmap_create_with_resource(WEATHER_ICONS[_atoi(obIconCode)]);
         bitmap_layer_set_bitmap(weather_layer.icon1_layer, weather_layer.icon1_bitmap );
-        #ifdef PBL_COLOR
+        //#ifdef PBL_COLOR
         bitmap_layer_set_compositing_mode(weather_layer.icon1_layer, GCompOpAssignInverted);
-        #endif
+        //#endif
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "obIconCode: %s", obIconCode_tuple->value->cstring);
         }
     //}}}
@@ -699,9 +747,9 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
         gbitmap_destroy(weather_layer.icon2_bitmap);
         weather_layer.icon2_bitmap =  gbitmap_create_with_resource(WEATHER_ICONS[_atoi(forecastIconCode)]);
         bitmap_layer_set_bitmap(weather_layer.icon2_layer, weather_layer.icon2_bitmap );
-        #ifdef PBL_COLOR
+        //#ifdef PBL_COLOR
         bitmap_layer_set_compositing_mode(weather_layer.icon2_layer, GCompOpAssignInverted);
-        #endif
+        //#endif
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "forecastIconCode: %s", forecastIconCode_tuple->value->cstring);
         }
     //}}}
@@ -909,7 +957,7 @@ void graph_update_proc(struct Layer *layer, GContext *ctx) //{{{
 //}}}
 void trotteuse_update_proc(struct Layer *layer, GContext *ctx) //{{{
 {
-#ifdef PBL_COLOR
+//#ifdef PBL_COLOR
     GPoint p0 = GPoint(12, 98);
     GPoint p1 = GPoint(12 + trotteuse*2 , 98);
     if (cnfTrotteuse)
@@ -917,12 +965,12 @@ void trotteuse_update_proc(struct Layer *layer, GContext *ctx) //{{{
     else
         graphics_context_set_stroke_color(ctx, cTimeB);
     graphics_draw_line(ctx, p0, p1);
-#endif
+//#endif
 }
 //}}}
 void trotteuse_scale_update_proc(struct Layer *layer, GContext *ctx) //{{{
 {
-    #ifdef PBL_COLOR
+    //#ifdef PBL_COLOR
     if (trotteuse_draw_scale)
         {
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "SCALE!");
@@ -940,7 +988,7 @@ void trotteuse_scale_update_proc(struct Layer *layer, GContext *ctx) //{{{
                 graphics_draw_line(ctx, GPoint(12+2*i,98-2), GPoint(12+2*i,98));
             }
         }
-    #endif
+    //#endif
 }
 //}}}
 //}}}
@@ -971,11 +1019,11 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp_layer_background));
 
     // Add temperature #1 layer
-    #ifdef PBL_COLOR
+    //#ifdef PBL_COLOR
     weather_layer->temp1_layer = text_layer_create(GRect(0, 8, 144, 80));
-    #else
-    weather_layer->temp1_layer = text_layer_create(GRect(0, 4, 144, 80));
-    #endif
+    //#else
+    //weather_layer->temp1_layer = text_layer_create(GRect(0, 4, 144, 80));
+    //#endif
     text_layer_set_background_color(weather_layer->temp1_layer, cTempB);
     text_layer_set_text_color(weather_layer->temp1_layer, cTempF );
     text_layer_set_font(weather_layer->temp1_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
@@ -984,11 +1032,11 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp1_layer));
 
     // Add temperature #2 layer
-    #ifdef PBL_COLOR
+    //#ifdef PBL_COLOR
     weather_layer->temp2_layer = text_layer_create(GRect(0, 29, 144, 80));
-    #else
-    weather_layer->temp2_layer = text_layer_create(GRect(0, 24, 144, 80));
-    #endif
+    //#else
+    //weather_layer->temp2_layer = text_layer_create(GRect(0, 24, 144, 80));
+    //#endif
     text_layer_set_background_color(weather_layer->temp2_layer, cTempB);
     text_layer_set_text_color(weather_layer->temp2_layer, cTempF);
     text_layer_set_font(weather_layer->temp2_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
@@ -997,11 +1045,11 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp2_layer));
 
     // Add temperature #3 layer
-    #ifdef PBL_COLOR
+    //#ifdef PBL_COLOR
     weather_layer->temp3_layer = text_layer_create(GRect(0, 43, 144, 80));
-    #else
-    weather_layer->temp3_layer = text_layer_create(GRect(0, 38, 144, 80));
-    #endif
+    //#else
+    //weather_layer->temp3_layer = text_layer_create(GRect(0, 38, 144, 80));
+    //#endif
 
     text_layer_set_background_color(weather_layer->temp3_layer, cTempB);
     text_layer_set_text_color(weather_layer->temp3_layer, cTempF);
@@ -1011,11 +1059,11 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp3_layer));
 
     // Add temperature #4 layer
-    #ifdef PBL_COLOR
+    //#ifdef PBL_COLOR
     weather_layer->temp4_layer = text_layer_create(GRect(0, 14, 144, 80));
-    #else
-    weather_layer->temp4_layer = text_layer_create(GRect(0, 10, 144, 80));
-    #endif
+    //#else
+    //weather_layer->temp4_layer = text_layer_create(GRect(0, 10, 144, 80));
+    //#endif
 
     text_layer_set_background_color(weather_layer->temp4_layer, cTempB);
     text_layer_set_text_color(weather_layer->temp4_layer, cTempF);
@@ -1025,11 +1073,11 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp4_layer));
 
     // Add temperature #5 layer
-    #ifdef PBL_COLOR
+    //#ifdef PBL_COLOR
     weather_layer->temp5_layer  = text_layer_create(GRect(0, 39, 144, 80));
-    #else
-    weather_layer->temp5_layer  = text_layer_create(GRect(0, 35, 144, 80));
-    #endif
+    //#else
+    //weather_layer->temp5_layer  = text_layer_create(GRect(0, 35, 144, 80));
+    //#endif
 
     text_layer_set_background_color(weather_layer->temp5_layer, cTempB);
     text_layer_set_text_color(weather_layer->temp5_layer, cTempF);
@@ -1083,7 +1131,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     text_layer_set_text(weather_layer->temp1_layer, "");
     text_layer_set_text(weather_layer->temp2_layer, "");
     text_layer_set_text(weather_layer->temp3_layer, "");
-    text_layer_set_text(weather_layer->temp4_layer, "COINCAN 2.11");
+    text_layer_set_text(weather_layer->temp4_layer, "COINCAN 2.13");
     text_layer_set_text(weather_layer->temp5_layer, "configurable");
 }
 //}}}
@@ -1147,7 +1195,11 @@ void init(void) //{{{
     text_layer_set_font(bcH_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
     text_layer_set_text_alignment(bcH_layer, GTextAlignmentCenter);
     text_layer_set_text(bcH_layer, btcH);
-    layer_set_frame(text_layer_get_layer(bcH_layer), GRect(-47, BTC_OFFSET-5, 130, 168-62));
+    #ifdef PBL_COLOR
+        layer_set_frame(text_layer_get_layer(bcH_layer), GRect(-47, BTC_OFFSET-5, 130, 168-62));
+    #else
+        layer_set_frame(text_layer_get_layer(bcH_layer), GRect(-56, BTC_OFFSET-5, 130, 168-62));
+    #endif
     layer_add_child(window_get_root_layer(window), text_layer_get_layer(bcH_layer));
 
     bcL_layer = text_layer_create(FULL_FRAME);
@@ -1156,7 +1208,11 @@ void init(void) //{{{
     text_layer_set_font(bcL_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
     text_layer_set_text_alignment(bcL_layer, GTextAlignmentCenter);
     text_layer_set_text(bcL_layer, btcL);
-    layer_set_frame(text_layer_get_layer(bcL_layer), GRect(-47, BTC_OFFSET+10, 130, 168-62));
+    #ifdef PBL_COLOR
+        layer_set_frame(text_layer_get_layer(bcL_layer), GRect(-47, BTC_OFFSET+10, 130, 168-62));
+    #else
+        layer_set_frame(text_layer_get_layer(bcL_layer), GRect(-56, BTC_OFFSET+10, 130, 168-62));
+    #endif
     layer_add_child(window_get_root_layer(window), text_layer_get_layer(bcL_layer));
 
     bc_layer = text_layer_create(FULL_FRAME);
@@ -1165,7 +1221,11 @@ void init(void) //{{{
     text_layer_set_font(bc_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD) );
     text_layer_set_text_alignment(bc_layer, GTextAlignmentCenter);
     text_layer_set_text(bc_layer, btcV);
-    layer_set_frame(text_layer_get_layer(bc_layer), GRect(0, BTC_OFFSET-6, 108, 168-62));
+    #ifdef PBL_COLOR
+        layer_set_frame(text_layer_get_layer(bc_layer), GRect(0, BTC_OFFSET-6, 108, 168-62));
+    #else
+        layer_set_frame(text_layer_get_layer(bc_layer), GRect(-20, BTC_OFFSET-6, 108, 168-92));
+    #endif
     layer_add_child(window_get_root_layer(window), text_layer_get_layer(bc_layer));
 
 
@@ -1189,7 +1249,11 @@ void init(void) //{{{
 
 
     // Add graph layer
-    graph_layer = layer_create( GRect(140-X_SIZE, BTC_OFFSET, X_SIZE, Y_SIZE) );
+    #ifdef PBL_COLOR
+        graph_layer = layer_create( GRect(140-X_SIZE, BTC_OFFSET, X_SIZE, Y_SIZE) );
+    #else
+        graph_layer = layer_create( GRect(135-X_SIZE, BTC_OFFSET, X_SIZE, Y_SIZE) );
+    #endif
     //text_layer_set_background_color(graph_layer, GColorClear);
     layer_add_child(window_get_root_layer(window), graph_layer);
     layer_set_update_proc(graph_layer, graph_update_proc);
