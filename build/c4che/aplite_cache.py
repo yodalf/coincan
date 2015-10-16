@@ -1,4 +1,4 @@
-AR = 'arm-none-eabi-ar'
+AR = 'arm-none-eabi-gcc-ar'
 ARFLAGS = 'rcs'
 AS = 'arm-none-eabi-gcc'
 BINDIR = '/usr/local/bin'
@@ -14,7 +14,7 @@ CFLAGS = ['-std=c99', '-mcpu=cortex-m3', '-mthumb', '-ffunction-sections', '-fda
 CFLAGS_MACBUNDLE = ['-fPIC']
 CFLAGS_cshlib = ['-fPIC']
 CPPPATH_ST = '-I%s'
-DEFINES = ['RELEASE', 'PBL_PLATFORM_APLITE', 'PBL_BW', 'PBL_SDK_2']
+DEFINES = ['RELEASE', 'PBL_PLATFORM_APLITE', 'PBL_BW', 'PBL_RECT', 'PBL_SDK_2']
 DEFINES_ST = '-D%s'
 DEST_BINFMT = 'elf'
 DEST_CPU = 'arm'
@@ -30,9 +30,9 @@ LINKFLAGS_cshlib = ['-shared']
 LINKFLAGS_cstlib = ['-Wl,-Bstatic']
 LINK_CC = ['arm-none-eabi-gcc']
 PBW_BIN_DIR = ''
-PEBBLE_SDK = '/usr/local/Cellar/pebble-sdk/3.4/Pebble/aplite'
-PEBBLE_SDK_COMMON = '/usr/local/Cellar/pebble-sdk/3.4/Pebble/common'
-PLATFORM = {'PBW_BIN_DIR': '', 'TAGS': ['aplite', 'bw'], 'ADDITIONAL_TEXT_LINES_FOR_PEBBLE_H': [], 'MAX_APP_BINARY_SIZE': 65536, 'MAX_RESOURCES_SIZE': 524288, 'MAX_APP_MEMORY_SIZE': 24576, 'MAX_WORKER_MEMORY_SIZE': 10240, 'NAME': 'aplite', 'BUILD_DIR': 'aplite', 'MAX_RESOURCES_SIZE_APPSTORE_2_X': 98304, 'MAX_RESOURCES_SIZE_APPSTORE': 128000, 'DEFINES': ['PBL_PLATFORM_APLITE', 'PBL_BW']}
+PEBBLE_SDK = '/usr/local/Cellar/pebble-sdk/3.6/Pebble/aplite'
+PEBBLE_SDK_COMMON = '/usr/local/Cellar/pebble-sdk/3.6/Pebble/common'
+PLATFORM = {'PBW_BIN_DIR': '', 'TAGS': ['aplite', 'bw', 'rect'], 'ADDITIONAL_TEXT_LINES_FOR_PEBBLE_H': [], 'MAX_APP_BINARY_SIZE': 65536, 'MAX_RESOURCES_SIZE': 524288, 'MAX_APP_MEMORY_SIZE': 24576, 'MAX_WORKER_MEMORY_SIZE': 10240, 'NAME': 'aplite', 'BUILD_DIR': 'aplite', 'MAX_RESOURCES_SIZE_APPSTORE_2_X': 98304, 'MAX_RESOURCES_SIZE_APPSTORE': 128000, 'DEFINES': ['PBL_PLATFORM_APLITE', 'PBL_BW', 'PBL_RECT']}
 PLATFORM_NAME = 'aplite'
 PREFIX = '/usr/local'
 RPATH_ST = '-Wl,-rpath,%s'

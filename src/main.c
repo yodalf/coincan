@@ -10,6 +10,7 @@
 #define KEY_CNF_TROTTEUSE 15
 #define KEY_CNF_EXCHANGE 16
 #define KEY_CNF_LOCATION 17
+#define KEY_JS_EVENT 18
 //}}}
 
 //{{{  Geometries
@@ -456,7 +457,7 @@ void fetch_msg(void) //{{{
         return;
         }
 
-    strcat(date_text, "*");
+    if (date_text[strlen(date_text)-1] != '*') strcat(date_text, "*");
 
     //dict_write_tuplet(iter, &symbol_tuple);
 
@@ -528,7 +529,7 @@ void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) //{{{
 //}}}
 void in_received_handler(DictionaryIterator *iter, void *context) //{{{
 {
-    //{{{  Tuples
+    //{{{  Extract tuples
     Tuple *btcV_tuple = dict_find(iter, 0);
     Tuple *btcL_tuple = dict_find(iter, 1);
     Tuple *btcH_tuple = dict_find(iter, 2);
@@ -549,6 +550,8 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
     Tuple *cnfTrotteuse_tuple = dict_find(iter, KEY_CNF_TROTTEUSE);
     Tuple *cnfExchange_tuple = dict_find(iter, KEY_CNF_EXCHANGE);
     Tuple *cnfLocation_tuple = dict_find(iter, KEY_CNF_LOCATION);
+
+    Tuple *jsEvent_tuple = dict_find(iter, KEY_JS_EVENT);
     //}}}
 
     APP_LOG(APP_LOG_LEVEL_DEBUG,"IN!");
@@ -556,6 +559,7 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
 
     if (cnfTrotteuse_tuple) //{{{
         {
+        APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN Trotteuse");
         cnfTrotteuse = strcmp(cnfTrotteuse_tuple->value->cstring,"0");
         if (cnfTrotteuse)
             {
@@ -576,15 +580,14 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
     //}}}
     if (cnfExchange_tuple) //{{{
         {
-        //APP_LOG(APP_LOG_LEVEL_DEBUG, "TOTO!");
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "cnfExchange: %s", cnfExchange_tuple->value->cstring);
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "* IN Exchange: %s", cnfExchange_tuple->value->cstring);
         strcpy(cnfExchange, cnfExchange_tuple->value->cstring);
         persist_write_string(KEY_CNF_EXCHANGE, cnfExchange);
         }
     //}}}
     if (cnfLocation_tuple) //{{{
         {
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "cnfLocation: %s", cnfLocation_tuple->value->cstring);
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "* IN Location: %s", cnfLocation_tuple->value->cstring);
         strcpy(cnfLocation, cnfLocation_tuple->value->cstring);
         persist_write_string(KEY_CNF_LOCATION, cnfLocation);
         }
@@ -595,18 +598,19 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
 
     if (geoArea1_tuple) //{{{
         {
+        APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN geoArea1");
         strncpy(geoArea1, geoArea1_tuple->value->cstring, 5);
         if (bluetooth_text[1] != '?')
             {
             strcpy(bluetooth_text," ");
             strncat(bluetooth_text, geoArea1, 5);
             }
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "OUR LOCATION: %s", geoArea1);
         }
     //}}}
 
     if (btcV_tuple) //{{{
         {
+        APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN btcV");
         strncpy(btcV, btcV_tuple->value->cstring, 16);
         btcV_value = _string2float(btcV)/100.0;
         btcV[strlen(btcV)-2]='\0';
@@ -615,6 +619,7 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
     //}}}
     if (btcL_tuple) //{{{
         {
+        APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN btcL");
         strncpy(btcL, btcL_tuple->value->cstring, 16);
         btcL_value = _string2float(btcL);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "ResL: %s", btcL);
@@ -622,6 +627,7 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
     //}}}
     if (btcH_tuple) //{{{
         {
+        APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN btcH");
         strncpy(btcH, btcH_tuple->value->cstring, 16);
         btcH_value = _string2float(btcH);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "ResH: %s", btcH);
@@ -630,6 +636,7 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
 
     if (obIconCode_tuple) //{{{
         {
+        APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN obIconCode");
         strncpy(obIconCode, obIconCode_tuple->value->cstring, 16);
         obIconCode_value = _atoi(obIconCode);
         gbitmap_destroy(weather_layer.icon1_bitmap);
@@ -643,12 +650,14 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
     //}}}
     if (obTemperature_tuple) //{{{
         {
+        APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN obTemperature");
         strncpy(obTemperature, obTemperature_tuple->value->cstring, 16);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "obTemperature: %s", obTemperature_tuple->value->cstring);
         }
     //}}}
     if (obWindDir_tuple) //{{{
         {
+        APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN obWindDir");
         strncpy(obWindDir, obWindDir_tuple->value->cstring, 16);
         strncpy(obWindDir_bkp, obWindDir_tuple->value->cstring, 16);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "obWindDir: %s", obWindDir_tuple->value->cstring);
@@ -656,24 +665,28 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
     //}}}
     if (obWindGust_tuple) //{{{
         {
+        APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN obWindGust");
         strncpy(obWindGust, obWindGust_tuple->value->cstring, 16);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "obWindGust: %s", obWindGust_tuple->value->cstring);
         }
     //}}}
     if (obWindSpeed_tuple) //{{{
         {
+        APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN obWindSpeed");
         strncpy(obWindSpeed, obWindSpeed_tuple->value->cstring, 16);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "obWindSpeed: %s", obWindSpeed_tuple->value->cstring);
         }
     //}}}
     if (obWindChill_tuple) //{{{
         {
+        APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN obWindChill");
         strncpy(obWindChill, obWindChill_tuple->value->cstring, 16);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "obWindChill: %s", obWindChill_tuple->value->cstring);
         }
     //}}}
     if (obHumidex_tuple) //{{{
         {
+        APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN obHumidex");
         strncpy(obHumidex, obHumidex_tuple->value->cstring, 16);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "obHumidex: %s", obHumidex_tuple->value->cstring);
         }
@@ -681,6 +694,7 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
 
     if (forecastIconCode_tuple) //{{{
         {
+        APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN forecastIconCode");
         strncpy(forecastIconCode, forecastIconCode_tuple->value->cstring, 16);
         gbitmap_destroy(weather_layer.icon2_bitmap);
         weather_layer.icon2_bitmap =  gbitmap_create_with_resource(WEATHER_ICONS[_atoi(forecastIconCode)]);
@@ -693,6 +707,7 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
     //}}}
     if (forecastLow_tuple) //{{{
         {
+        APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN forecastLow");
         strncpy(forecastLow, forecastLow_tuple->value->cstring, 16);
         strncpy(forecastTemp, forecastLow_tuple->value->cstring, 16);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "forecastLow: %s", forecastLow_tuple->value->cstring);
@@ -700,12 +715,14 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
     //}}}
     if (forecastPeriod_tuple) //{{{
         {
+        APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN forecastPeriod");
         strncpy(forecastPeriod, forecastPeriod_tuple->value->cstring, 16);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "forecastPeriod: %s", forecastPeriod_tuple->value->cstring);
         }
     //}}}
     if (forecastHigh_tuple) //{{{
         {
+        APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN forecastHigh");
         strncpy(forecastHigh, forecastHigh_tuple->value->cstring, 16);
         strncpy(forecastTemp, forecastHigh_tuple->value->cstring, 16);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "forecastHigh: %s", forecastHigh_tuple->value->cstring);
@@ -767,6 +784,25 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
             text_layer_set_text(weather_layer.temp3_layer, "");
             text_layer_set_text(weather_layer.temp4_layer, "");
             text_layer_set_text(weather_layer.temp5_layer, "");
+            }
+        }
+    //}}}
+
+    if (jsEvent_tuple) //{{{
+        {
+        APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN jsEVENT %s", jsEvent_tuple->value->cstring);
+        switch (jsEvent_tuple->value->cstring[0])
+            {
+            case '1':
+                APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN jsEVENT fetch_msg");
+                fetch_msg();
+                break;
+            case '2':
+                APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN jsEVENT TIMEOUT!");
+                fetch_msg();
+                break;
+            default:
+                break;
             }
         }
     //}}}
@@ -1047,7 +1083,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     text_layer_set_text(weather_layer->temp1_layer, "");
     text_layer_set_text(weather_layer->temp2_layer, "");
     text_layer_set_text(weather_layer->temp3_layer, "");
-    text_layer_set_text(weather_layer->temp4_layer, "COINCAN 2.9");
+    text_layer_set_text(weather_layer->temp4_layer, "COINCAN 2.11");
     text_layer_set_text(weather_layer->temp5_layer, "configurable");
 }
 //}}}
@@ -1241,9 +1277,7 @@ void init(void) //{{{
     else
         strcpy(bluetooth_text," LOST!");
 
-    fetch_msg();
-
-
+//    fetch_msg();
 }
 //}}}
 void deinit(void) //{{{
