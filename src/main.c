@@ -11,6 +11,10 @@
 #define KEY_CNF_EXCHANGE 16
 #define KEY_CNF_LOCATION 17
 #define KEY_JS_EVENT 18
+#define KEY_CNF_SERVICE 19
+#define KEY_CNF_OWM_ID 20
+#define KEY_CNF_OWM_KEY 21
+#define KEY_CNF_OWM_LOC 22
 //}}}
 
 //{{{  Geometries
@@ -252,11 +256,18 @@ int trotteuse_draw_scale = 1;
 bool cnfTrotteuse = true;
 char cnfExchange[20];
 char cnfLocation[32];
+char cnfService[32];
+char cnfOWMid[32];
+char cnfOWMkey[64];
+char cnfOWMloc[64];
+
+int errorInWeather = 0;
 
 char time_text[] = "00:00"; // Needs to be static because it's used by the system later.
 char date_text[] = "........";
 
 int message_count = 0;
+
 
 uint8_t WEATHER_ICONS[] = //{{{
 {
@@ -512,6 +523,10 @@ void fetch_msg(void) //{{{
     APP_LOG(APP_LOG_LEVEL_DEBUG, "***** LOCATION: %s", cnfLocation);
     dict_write_cstring(iter, KEY_CNF_LOCATION, cnfLocation);
     dict_write_cstring(iter, KEY_CNF_EXCHANGE, cnfExchange);
+    dict_write_cstring(iter, KEY_CNF_SERVICE, cnfService);
+    dict_write_cstring(iter, KEY_CNF_OWM_ID, cnfOWMid);
+    dict_write_cstring(iter, KEY_CNF_OWM_KEY, cnfOWMkey);
+    dict_write_cstring(iter, KEY_CNF_OWM_LOC, cnfOWMloc);
 
     dict_write_end(iter);
 
@@ -598,6 +613,10 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
     Tuple *cnfTrotteuse_tuple = dict_find(iter, KEY_CNF_TROTTEUSE);
     Tuple *cnfExchange_tuple = dict_find(iter, KEY_CNF_EXCHANGE);
     Tuple *cnfLocation_tuple = dict_find(iter, KEY_CNF_LOCATION);
+    Tuple *cnfService_tuple  = dict_find(iter, KEY_CNF_SERVICE);
+    Tuple *cnfOWMid_tuple    = dict_find(iter, KEY_CNF_OWM_ID);
+    Tuple *cnfOWMkey_tuple   = dict_find(iter, KEY_CNF_OWM_KEY);
+    Tuple *cnfOWMloc_tuple   = dict_find(iter, KEY_CNF_OWM_LOC);
 
     Tuple *jsEvent_tuple = dict_find(iter, KEY_JS_EVENT);
     //}}}
@@ -638,6 +657,34 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
         APP_LOG(APP_LOG_LEVEL_DEBUG, "* IN Location: %s", cnfLocation_tuple->value->cstring);
         strcpy(cnfLocation, cnfLocation_tuple->value->cstring);
         persist_write_string(KEY_CNF_LOCATION, cnfLocation);
+        }
+    //}}}
+    if (cnfService_tuple) //{{{
+        {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "* IN cnfService: %s", cnfService_tuple->value->cstring);
+        strcpy(cnfService, cnfService_tuple->value->cstring);
+        persist_write_string(KEY_CNF_SERVICE, cnfService);
+        }
+    //}}}
+    if (cnfOWMid_tuple) //{{{
+        {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "* IN cnfOWMid: %s", cnfOWMid_tuple->value->cstring);
+        strcpy(cnfOWMid, cnfOWMid_tuple->value->cstring);
+        persist_write_string(KEY_CNF_OWM_ID, cnfOWMid);
+        }
+    //}}}
+    if (cnfOWMkey_tuple) //{{{
+        {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "* IN cnfOWMkey: %s", cnfOWMkey_tuple->value->cstring);
+        strcpy(cnfOWMkey, cnfOWMkey_tuple->value->cstring);
+        persist_write_string(KEY_CNF_OWM_KEY, cnfOWMkey);
+        }
+    //}}}
+    if (cnfOWMloc_tuple) //{{{
+        {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "* IN cnfOWMloc: %s", cnfOWMloc_tuple->value->cstring);
+        strcpy(cnfOWMloc, cnfOWMloc_tuple->value->cstring);
+        persist_write_string(KEY_CNF_OWM_LOC, cnfOWMloc);
         }
     //}}}
     if (cnfExchange_tuple || cnfLocation_tuple) //{{{
@@ -771,6 +818,9 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
     if (forecastHigh_tuple) //{{{
         {
         APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN forecastHigh");
+
+        errorInWeather = 0;
+
         strncpy(forecastHigh, forecastHigh_tuple->value->cstring, 16);
         strncpy(forecastTemp, forecastHigh_tuple->value->cstring, 16);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "forecastHigh: %s", forecastHigh_tuple->value->cstring);
@@ -848,6 +898,40 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
             case '2':
                 APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN jsEVENT TIMEOUT!");
                 fetch_msg();
+                break;
+            case '3':
+                APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN jsEVENT Bad ID!");
+                errorInWeather = 1;
+                if (date_text[strlen(date_text)-1] == '*') date_text[strlen(date_text)-1] = '\0';
+                bitmap_layer_set_compositing_mode(weather_layer.icon1_layer, GCompOpClear);
+                bitmap_layer_set_compositing_mode(weather_layer.icon2_layer, GCompOpClear);
+                strncpy(obWindDir, "bad ID", 16);
+                text_layer_set_text(weather_layer.temp1_layer, "");
+                text_layer_set_text(weather_layer.temp2_layer, "?");
+                text_layer_set_text(weather_layer.temp3_layer, "");
+                text_layer_set_text(weather_layer.temp4_layer, "");
+                text_layer_set_text(weather_layer.temp5_layer, "");
+                if (bluetooth_text[1] != '?')
+                    {
+                    strcpy(bluetooth_text," **");
+                    }
+                break;
+            case '4':
+                APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN jsEVENT Bad city name!");
+                errorInWeather = 1;
+                if (date_text[strlen(date_text)-1] == '*') date_text[strlen(date_text)-1] = '\0';
+                bitmap_layer_set_compositing_mode(weather_layer.icon1_layer, GCompOpClear);
+                bitmap_layer_set_compositing_mode(weather_layer.icon2_layer, GCompOpClear);
+                strncpy(obWindDir, "bad location", 16);
+                text_layer_set_text(weather_layer.temp1_layer, "");
+                text_layer_set_text(weather_layer.temp2_layer, "?");
+                text_layer_set_text(weather_layer.temp3_layer, "");
+                text_layer_set_text(weather_layer.temp4_layer, "");
+                text_layer_set_text(weather_layer.temp5_layer, "");
+                if (bluetooth_text[1] != '?')
+                    {
+                    strcpy(bluetooth_text," **");
+                    }
                 break;
             default:
                 break;
@@ -1131,8 +1215,8 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     text_layer_set_text(weather_layer->temp1_layer, "");
     text_layer_set_text(weather_layer->temp2_layer, "");
     text_layer_set_text(weather_layer->temp3_layer, "");
-    text_layer_set_text(weather_layer->temp4_layer, "COINCAN 2.13");
-    text_layer_set_text(weather_layer->temp5_layer, "configurable");
+    text_layer_set_text(weather_layer->temp4_layer, "COINCAN 3.0");
+    text_layer_set_text(weather_layer->temp5_layer, "world");
 }
 //}}}
 void weather_layer_deinit(WeatherLayer* weather_layer) //{{{
@@ -1301,6 +1385,40 @@ void init(void) //{{{
         }
     else
         strcpy(cnfLocation, "GPS automatic");
+
+
+
+    if (persist_exists(KEY_CNF_SERVICE))
+        {
+        persist_read_string(KEY_CNF_SERVICE, cnfService, 32);
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "** Read back Service: %s", cnfService);
+        }
+    else
+        strcpy(cnfService, "Environnement Canada");
+    if (persist_exists(KEY_CNF_OWM_ID))
+        {
+        persist_read_string(KEY_CNF_OWM_ID, cnfOWMid, 32);
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "** Read back OWM id: %s", cnfOWMid);
+        }
+    else
+        strcpy(cnfOWMid, "");
+    if (persist_exists(KEY_CNF_OWM_KEY))
+        {
+        persist_read_string(KEY_CNF_OWM_KEY, cnfOWMkey, 64);
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "** Read back OWM key: %s", cnfOWMkey);
+        }
+    else
+        strcpy(cnfOWMkey, "");
+    if (persist_exists(KEY_CNF_OWM_LOC))
+        {
+        persist_read_string(KEY_CNF_OWM_LOC, cnfOWMloc, 64);
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "** Read back OWM location: %s", cnfOWMloc);
+        }
+    else
+        strcpy(cnfOWMloc, "");
+
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "** KEY is: %s", cnfOWMkey);
+
 
     // Ensures time is displayed immediately (will break if NULL tick event accessed).
     // (This is why it's a good idea to have a separate routine to do the update itself.)

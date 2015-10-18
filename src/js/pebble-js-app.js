@@ -10,8 +10,11 @@ var gpsError=0;
 var cnfExchange = "Cavirtex";
 var cnfLocation = "GPS automatic";
 var cnfGPS = "No";
-var cnfOWM = "Yes";
-var cnfLocationOWM = "Quebec, CA"
+var cnfService = "";
+var cnfOWMid = "";
+var cnfOWMkey = "";
+var cnfOWMloc = "";
+
 
 var locationOptions = { "timeout": 15000, "maximumAge": 60000 };
 
@@ -944,9 +947,6 @@ function fetch_Location(latitude, longitude) //{{{
 
     req.open('GET', "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + latitude + "," + longitude + "&sensor=true");
 
-//  req.open('GET', "http://api.openweathermap.org/data/2.5/weather?" +
-//    "lat=" + latitude + "&lon=" + longitude + "&cnt=1", true);
-    
     req.timeout = 5000;
     req.send(null);
 }
@@ -963,6 +963,7 @@ function fetch_BTC () //{{{
         Pebble.sendAppMessage( { "18":  "2" } );
         };
     //}}}
+
     req.onload = function(e) //{{{
         {
         if (req.readyState == 4)
@@ -1000,126 +1001,236 @@ function fetch_BTC () //{{{
                         {
                         if(req.status == 200)
                             {
-                            var XX=req.responseText.split("\n");
-                            for (var i=0; i < XX.length; i++) //{{{
+                            if (cnfService[0] !== 'O')
                                 {
-                                var Xline = XX[i].split("=");
-
-                                if (Xline[0].match("var obIconCode"))
+                                var XX=req.responseText.split("\n");
+                                for (var i=0; i < XX.length; i++) //{{{
                                     {
-                                    var obIconCode = Xline[1].substring(1,Xline[1].indexOf(";"));
-                                    obIconCode = obIconCode.substring(1, obIconCode.length-1);
-                                    //console.log("IC:"+obIconCode)
-                                    }
+                                    var Xline = XX[i].split("=");
 
-                                if (Xline[0].match("var obTemperature"))
+                                    if (Xline[0].match("var obIconCode"))
+                                        {
+                                        var obIconCode = Xline[1].substring(1,Xline[1].indexOf(";"));
+                                        obIconCode = obIconCode.substring(1, obIconCode.length-1);
+                                        //console.log("IC:"+obIconCode)
+                                        }
+
+                                    if (Xline[0].match("var obTemperature"))
+                                        {
+                                        var obTemperature = Xline[1].substring(1,Xline[1].indexOf(";"));
+                                        obTemperature = obTemperature.substring(1, obTemperature.length-1);
+                                        //console.log("T:"+obTemperature)
+                                        }
+
+                                    if (Xline[0].match("var obWindDir"))
+                                        {
+                                        var obWindDir = Xline[1].substring(1,Xline[1].indexOf(";"));
+                                        obWindDir = obWindDir.substring(1, obWindDir.length-1);
+                                        //console.log("D:"+obWindDir);
+                                        }
+
+                                    if (Xline[0].match("var obWindGust"))
+                                        {
+                                        var obWindGust = Xline[1].substring(1,Xline[1].indexOf(";"));
+                                        obWindGust = obWindGust.substring(1, obWindGust.length-1);
+                                        if (0 === obWindGust.length) obWindGust = "!";
+                                        //console.log("WG:"+obWindGust)
+                                        }
+
+                                    if (Xline[0].match("var obWindSpeed"))
+                                        {
+                                        var obWindSpeed = Xline[1].substring(1,Xline[1].indexOf(";"));
+                                        obWindSpeed = obWindSpeed.substring(1, obWindSpeed.length-1);
+                                        if (0 === obWindSpeed.length) obWindSpeed = "!";
+                                        //console.log("WS:"+obWindSpeed)
+                                        }
+
+
+
+                                    if (Xline[0].match("var obWindChill"))
+                                        {
+                                        var obWindChill = Xline[1].substring(1,Xline[1].indexOf(";"));
+                                        obWindChill = obWindChill.substring(1, obWindChill.length-1);
+                                        if (0 === obWindChill.length) obWindChill = "!";
+                                        //console.log("WC:"+obWindChill)
+                                        }
+
+                                    if (Xline[0].match("var obHumidex"))
+                                        {
+                                        var obHumidex = Xline[1].substring(1,Xline[1].indexOf(";"));
+                                        obHumidex = obHumidex.substring(1, obHumidex.length-1);
+                                        if (0 === obHumidex.length) obHumidex = "!";
+                                        //console.log("H:"+obHumidex)
+                                        }
+
+                                    if (Xline[0].match("var forecastIconCodes"))
+                                        {
+                                        var forecastIconCode = Xline[1].substring(2,Xline[1].indexOf(","));
+                                        forecastIconCode = forecastIconCode.substring(1, forecastIconCode.length-1);
+                                        //console.log("fIC:"+forecastIconCode)
+                                        }
+
+                                    if (Xline[0].match("var forecastHighs"))
+                                        {
+                                        var forecastHigh = Xline[1].substring(2,Xline[1].indexOf(","));
+                                        forecastHigh = forecastHigh.substring(1, forecastHigh.length-1);
+                                        //console.log("fH:"+forecastHigh)
+                                        }
+
+                                    if (Xline[0].match("var forecastPeriods"))
+                                        {
+                                        var forecastPeriod = Xline[1].substring(2,Xline[1].indexOf(","));
+                                        forecastPeriod = forecastPeriod.substring(1, forecastPeriod.length-1);
+                                        //console.log("fL:"+forecastLow)
+                                        }
+
+                                    if (Xline[0].match("var forecastLows"))
+                                        {
+                                        var forecastLow = Xline[1].substring(2,Xline[1].indexOf(","));
+                                        forecastLow = forecastLow.substring(1, forecastLow.length-1);
+                                        //console.log("fL:"+forecastLow)
+                                        }
+
+                                    }
+                                //}}}
+                                Pebble.sendAppMessage( //{{{
                                     {
-                                    var obTemperature = Xline[1].substring(1,Xline[1].indexOf(";"));
-                                    obTemperature = obTemperature.substring(1, obTemperature.length-1);
-                                    //console.log("T:"+obTemperature)
-                                    }
-
-                                if (Xline[0].match("var obWindDir"))
-                                    {
-                                    var obWindDir = Xline[1].substring(1,Xline[1].indexOf(";"));
-                                    obWindDir = obWindDir.substring(1, obWindDir.length-1);
-                                    //console.log("D:"+obWindDir);
-                                    }
-
-                                if (Xline[0].match("var obWindGust"))
-                                    {
-                                    var obWindGust = Xline[1].substring(1,Xline[1].indexOf(";"));
-                                    obWindGust = obWindGust.substring(1, obWindGust.length-1);
-                                    if (0 === obWindGust.length) obWindGust = "!";
-                                    //console.log("WG:"+obWindGust)
-                                    }
-
-                                if (Xline[0].match("var obWindSpeed"))
-                                    {
-                                    var obWindSpeed = Xline[1].substring(1,Xline[1].indexOf(";"));
-                                    obWindSpeed = obWindSpeed.substring(1, obWindSpeed.length-1);
-                                    if (0 === obWindSpeed.length) obWindSpeed = "!";
-                                    //console.log("WS:"+obWindSpeed)
-                                    }
-
-
-
-                                if (Xline[0].match("var obWindChill"))
-                                    {
-                                    var obWindChill = Xline[1].substring(1,Xline[1].indexOf(";"));
-                                    obWindChill = obWindChill.substring(1, obWindChill.length-1);
-                                    if (0 === obWindChill.length) obWindChill = "!";
-                                    //console.log("WC:"+obWindChill)
-                                    }
-
-                                if (Xline[0].match("var obHumidex"))
-                                    {
-                                    var obHumidex = Xline[1].substring(1,Xline[1].indexOf(";"));
-                                    obHumidex = obHumidex.substring(1, obHumidex.length-1);
-                                    if (0 === obHumidex.length) obHumidex = "!";
-                                    //console.log("H:"+obHumidex)
-                                    }
-
-                                if (Xline[0].match("var forecastIconCodes"))
-                                    {
-                                    var forecastIconCode = Xline[1].substring(2,Xline[1].indexOf(","));
-                                    forecastIconCode = forecastIconCode.substring(1, forecastIconCode.length-1);
-                                    //console.log("fIC:"+forecastIconCode)
-                                    }
-
-                                if (Xline[0].match("var forecastHighs"))
-                                    {
-                                    var forecastHigh = Xline[1].substring(2,Xline[1].indexOf(","));
-                                    forecastHigh = forecastHigh.substring(1, forecastHigh.length-1);
-                                    //console.log("fH:"+forecastHigh)
-                                    }
-
-                                if (Xline[0].match("var forecastPeriods"))
-                                    {
-                                    var forecastPeriod = Xline[1].substring(2,Xline[1].indexOf(","));
-                                    forecastPeriod = forecastPeriod.substring(1, forecastPeriod.length-1);
-                                    //console.log("fL:"+forecastLow)
-                                    }
-
-                                if (Xline[0].match("var forecastLows"))
-                                    {
-                                    var forecastLow = Xline[1].substring(2,Xline[1].indexOf(","));
-                                    forecastLow = forecastLow.substring(1, forecastLow.length-1);
-                                    //console.log("fL:"+forecastLow)
-                                    }
-
+                                    "0":  btcV.toString(),
+                                    "1":  btcL.toString(),
+                                    "2":  btcH.toString(),
+                                    "3":  obIconCode,
+                                    "4":  obTemperature,
+                                    "5":  obWindDir,
+                                    "6":  obWindGust,
+                                    "7":  obWindSpeed,
+                                    "8":  obWindChill,
+                                    "9":  obHumidex,
+                                    "10": forecastIconCode,
+                                    "11": forecastHigh,
+                                    "12": forecastLow,
+                                    "13": forecastPeriod,
+                                    "14": (gpsError != 1 ? geoArea1 : "Mtl")
+                                    });
+                                //}}}
                                 }
-                            //}}}
-                            Pebble.sendAppMessage( //{{{
+                            else
                                 {
-                                "0":  btcV.toString(),
-                                "1":  btcL.toString(),
-                                "2":  btcH.toString(),
-                                "3":  obIconCode,
-                                "4":  obTemperature,
-                                "5":  obWindDir,
-                                "6":  obWindGust,
-                                "7":  obWindSpeed,
-                                "8":  obWindChill,
-                                "9":  obHumidex,
-                                "10": forecastIconCode,
-                                "11": forecastHigh,
-                                "12": forecastLow,
-                                "13": forecastPeriod,
-                                "14": (gpsError != 1 ? geoArea1 : "Mtl")
-                                });
-                            //}}}
+                                console.log(" -> OWM!");
+                                console.log(req.responseText);
+                                var res = JSON.parse(req.responseText);
+
+                                if (res["cod"] === "404")
+                                    {
+                                    console.log("** Unknown city");
+                                    Pebble.sendAppMessage( { "18":  "4" } );
+                                    }
+                                else
+                                    {
+                                    if (res["main"]["temp"] !== undefined)
+                                        obTemperature = res["main"]["temp"].toFixed(0);
+                                    else 
+                                        obTemperature = "?";
+
+                                    obWindSpeed = (res["wind"]["speed"] * 3.6).toFixed(0);
+                                    if (res["wind"]["gust"] !== undefined)
+                                        obWindGust = (res["wind"]["gust"] * 3.6).toFixed(0);
+                                    obWindDir = degToCard(res["wind"]["deg"]);
+                                    obWindChill = "!";
+                                    obHumidex = "!";
+                                    obIconCode = owmToEC(res["weather"][0]["icon"]);
+                                    forecastPeriod = res["weather"][0]["icon"];
+
+                                    req.onload = function(e) //{{{
+                                        {
+                                        if (req.readyState == 4)
+                                            {
+                                            if(req.status == 200)
+                                                {
+                                                    console.log(req.responseText);
+                                                    var res = JSON.parse(req.responseText);
+                                                    //forecastLow = res["list"][0]["temp"]["night"].toFixed(0);
+                                                    //forecastHigh = res["list"][0]["temp"]["day"].toFixed(0);
+                                                    forecastIconCode = owmToEC(res["list"][0]["weather"][0]["icon"]);
+
+                                                    req.onload = function(e) //{{{
+                                                        {
+                                                        if (req.readyState == 4)
+                                                            {
+                                                            if(req.status == 200)
+                                                                {
+                                                                console.log(req.responseText);
+                                                                var res = JSON.parse(req.responseText);
+                                                                forecastLow = res["list"][0]["temp"]["night"].toFixed(0);
+                                                                forecastHigh = res["list"][0]["temp"]["day"].toFixed(0);
+
+                                                                Pebble.sendAppMessage( //{{{
+                                                                    {
+                                                                    "0":  btcV.toString(),
+                                                                    "1":  btcL.toString(),
+                                                                    "2":  btcH.toString(),
+                                                                    "3":  obIconCode,
+                                                                    "4":  obTemperature,
+                                                                    "5":  obWindDir,
+                                                                    "6":  obWindGust,
+                                                                    "7":  obWindSpeed,
+                                                                    "8":  obWindChill,
+                                                                    "9":  obHumidex,
+                                                                    "10": forecastIconCode,
+                                                                    "11": forecastHigh,
+                                                                    "12": forecastLow,
+                                                                    "13": forecastPeriod,
+                                                                    "14": res["city"]["country"]
+                                                                    });
+                                                                //}}}
+                                                                }
+                                                            else
+                                                                {
+                                                                console.log("** ERROR in weather");
+                                                                Pebble.sendAppMessage( { "18":  "3" } );
+                                                                }
+                                                            }
+                                                        }
+
+                                                    //}}}
+
+                                                    req.open('GET', "http://api.openweathermap.org/data/2.5/forecast/daily?appid=" + encodeURIComponent(cnfOWMkey) + "&q=%7B" + encodeURIComponent(cnfOWMloc) + "%7D&cnt=1&units=metric&mode=json", true);
+
+                                                    req.timeout = 5000;
+                                                    req.send(null);
+                                                }
+                                            else
+                                                {
+                                                console.log("** ERROR in weather");
+                                                Pebble.sendAppMessage( { "18":  "3" } );
+                                                }
+                                            }
+                                        }
+                                    //}}}
+
+                                    req.open('GET', "http://api.openweathermap.org/data/2.5/forecast/hourly?appid=" + encodeURIComponent(cnfOWMkey) + "&q=%7B" + encodeURIComponent(cnfOWMloc) + "%7D&cnt=1&units=metric&mode=json", true);
+
+                                    req.timeout = 5000;
+                                    req.send(null);
+                                    }
+                                }
                             }
                         else
                             {
                             console.log("** ERROR in weather");
-                            Pebble.sendAppMessage( { "18":  "2" } );
+                            Pebble.sendAppMessage( { "18":  "3" } );
                             }
                         }
                     };
                 //}}}
                 
-                req.open('GET', "http://weather.gc.ca/wxlink/site_js/s0000"+geoString+"_e.js", true);
+                if (cnfService[0] === 'O') 
+                    {
+                    req.open('GET', "http://api.openweathermap.org/data/2.5/weather?appid=" + encodeURIComponent(cnfOWMkey) + "&q=%7B" + encodeURIComponent(cnfOWMloc) + "%7D&cnt=2&units=metric&mode=json", true);
+                    }
+                else
+                    {
+                    req.open('GET', "http://weather.gc.ca/wxlink/site_js/s0000"+geoString+"_e.js", true);
+                    }
                 req.timeout = 5000;
                 req.send(null);
                 }
@@ -1159,6 +1270,108 @@ function fetch_BTC () //{{{
     
     req.timeout = 5000;
     req.send(null);
+}
+//}}}
+function degToCard (deg) //{{{
+{
+  if (deg>11.25 && deg<33.75){
+    return "NNE";
+  }else if (deg>33.75 && deg<56.25){
+    return "ENE";
+  }else if (deg>56.25 && deg<78.75){
+    return "E";
+  }else if (deg>78.75 && deg<101.25){
+    return "ESE";
+  }else if (deg>101.25 && deg<123.75){
+    return "ESE";
+  }else if (deg>123.75 && deg<146.25){
+    return "SE";
+  }else if (deg>146.25 && deg<168.75){
+    return "SSE";
+  }else if (deg>168.75 && deg<191.25){
+    return "S";
+  }else if (deg>191.25 && deg<213.75){
+    return "SSW";
+  }else if (deg>213.75 && deg<236.25){
+    return "SW";
+  }else if (deg>236.25 && deg<258.75){
+    return "WSW";
+  }else if (deg>258.75 && deg<281.25){
+    return "W";
+  }else if (deg>281.25 && deg<303.75){
+    return "WNW";
+  }else if (deg>303.75 && deg<326.25){
+    return "NW";
+  }else if (deg>326.25 && deg<348.75){
+    return "NNW";
+  }else{
+    return "N"; 
+  }
+}
+//}}}
+function owmToEC (obIconCode) //{{{
+{
+    switch (obIconCode)
+        {
+        case "01d":
+            obIconCode = "0";
+            break;
+        case "02d":
+            obIconCode = "2";
+            break;
+        case "03d":
+            obIconCode = "3";
+            break;
+        case "04d":
+            obIconCode = "10";
+            break;
+        case "09d":
+            obIconCode = "11";
+            break;
+        case "10d":
+            obIconCode = "6";
+            break;
+        case "11d":
+            obIconCode = "19";
+            break;
+        case "13d":
+            obIconCode = "16";
+            break;
+        case "50d":
+            obIconCode = "24";
+            break;
+        case "01n":
+            obIconCode = "30";
+            break;
+        case "02n":
+            obIconCode = "31";
+            break;
+        case "03n":
+            obIconCode = "32";
+            break;
+        case "04n":
+            obIconCode = "33";
+            break;
+        case "09n":
+            obIconCode = "36";
+            break;
+        case "10n":
+            obIconCode = "36";
+            break;
+        case "11n":
+            obIconCode = "39";
+            break;
+        case "13n":
+            obIconCode = "38";
+            break;
+        case "50n":
+            obIconCode = "24";
+            break;
+        default:
+            obIconCode = "0";
+            break;
+        }
+    return(obIconCode);
 }
 //}}}
 
@@ -1203,9 +1416,17 @@ Pebble.addEventListener("appmessage", function(e) //{{{
     console.log('vvvvvvvvvvvvv');
     console.log(e.payload['16']);
     console.log(e.payload['17']);
+    console.log(e.payload['19']);
+    console.log(e.payload['20']);
+    console.log(e.payload['21']);
+    console.log(e.payload['22']);
     console.log('^^^^^^^^^^^^^');
     cnfExchange = e.payload['16'];
     cnfLocation = e.payload['17'];
+    cnfService  = e.payload['19'];
+    cnfOWMid    = e.payload['20'];
+    cnfOWMkey   = e.payload['21'];
+    cnfOWMloc   = e.payload['22'];
 
     if ("GPS automatic" === cnfLocation)
         {
@@ -1283,9 +1504,13 @@ Pebble.addEventListener('webviewclosed', function(e) //{{{
 
     Pebble.sendAppMessage(
         {
-"15": configData.cnfTrotteuse ? "1":"0",
+        "15": configData.cnfTrotteuse ? "1":"0",
         "16": configData.cnfExchange,
-        "17": configData.cnfLocation
+        "17": configData.cnfLocation,
+        "19": configData.cnfService,
+        "20": configData.cnfOWMid,
+        "21": configData.cnfOWMkey,
+        "22": configData.cnfOWMloc
         }, function()
         {
         console.log('Send successful!');

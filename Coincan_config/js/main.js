@@ -18,6 +18,10 @@ function loadOptions() {
   var $cnfTrotteuse = $('#cnfTrotteuse');
   var $cnfExchange = $('#cnfExchange');
   var $cnfLocation = $('#cnfLocation');
+  //var $cnfOWMid = $('#cnfOWMid');
+  var $cnfOWMkey = $('#cnfOWMkey');
+  var $cnfOWMloc = $('#cnfOWMloc');
+  var $cnfService = $('#cnfWeatherSvc');
 
   if (localStorage.cnfTrotteuse) {
     $cnfTrotteuse[0].checked = localStorage.cnfTrotteuse === 'true';
@@ -28,19 +32,39 @@ function loadOptions() {
   if (localStorage.cnfLocation) {
     $cnfLocation[0].value = localStorage.cnfLocation;
   }
+  //if (localStorage.cnfOWMid) {
+  //  $cnfOWMid[0].value = localStorage.cnfOWMid;
+  //}
+  if (localStorage.cnfOWMkey) {
+    $cnfOWMkey[0].value = localStorage.cnfOWMkey;
+  }
+  if (localStorage.cnfOWMloc) {
+    $cnfOWMloc[0].value = localStorage.cnfOWMloc;
+  }
+  if (localStorage.cnfService) {
+    $cnfService[0].value = localStorage.cnfService;
+  }
 }
 
 function getAndStoreConfigData() {
-  var $cnfTrotteuse = $('#cnfTrotteuse');
-  var $cnfExchange  = $('#cnfExchange');
-  var $cnfLocation  = $('#cnfLocation');
+  var $cnfTrotteuse   = $('#cnfTrotteuse');
+  var $cnfExchange    = $('#cnfExchange');
+  var $cnfLocation    = $('#cnfLocation');
+  //var $cnfOWMid       = $('#cnfOWMid');
+  var $cnfOWMkey      = $('#cnfOWMkey');
+  var $cnfOWMloc      = $('#cnfOWMloc');
+  var $cnfService     = $('#cnfWeatherSvc');
 
   var options = {
     //backgroundColor: $backgroundColorPicker.val(),
     //twentyFourHourFormat: $timeFormatCheckbox[0].checked
-    cnfTrotteuse: $cnfTrotteuse[0].checked,
-    cnfExchange: $cnfExchange.val(),
-    cnfLocation: $cnfLocation.val()
+    cnfTrotteuse:  $cnfTrotteuse[0].checked,
+    cnfExchange:   $cnfExchange.val(),
+    cnfLocation:   $cnfLocation.val(),
+    cnfOWMid:      "", //$cnfOWMid.val(),
+    cnfOWMkey:     $cnfOWMkey.val(),
+    cnfOWMloc:     $cnfOWMloc.val(),
+    cnfService:    $cnfService.val()
   };
 
   //localStorage.backgroundColor = options.backgroundColor;
@@ -48,8 +72,12 @@ function getAndStoreConfigData() {
   localStorage.cnfTrotteuse = options.cnfTrotteuse;
   localStorage.cnfExchange  = options.cnfExchange;
   localStorage.cnfLocation  = options.cnfLocation;
+  localStorage.cnfOWMid     = options.cnfOWMid;
+  localStorage.cnfOWMkey    = options.cnfOWMkey;
+  localStorage.cnfOWMloc    = options.cnfOWMloc;
+  localStorage.cnfService   = options.cnfService;
 
-  console.log('Got options: ' + JSON.stringify(options));
+  console.log('  ==> Got options: ' + JSON.stringify(options));
   return options;
 }
 

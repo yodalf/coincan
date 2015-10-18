@@ -23,7 +23,7 @@
     <div class='item-container-header'></div>
     <div class='item-container-content'>
       <label class='item'>
-        Trotteuse
+        Display seconds ticker
         <input type='checkbox' class='item-toggle' id='cnfTrotteuse' checked>
       </label>
       <label class='item'>
@@ -35,8 +35,17 @@
           <option class="item-select-option">BTCC</option>
         </select>
       </label>
+
       <label class='item'>
-        Location
+        Weather Service
+        <select class='item-select' id='cnfWeatherSvc' dir='rtl'>
+            <option class="item-select-option" Selected>Environnement Canada</option>
+            <option class="item-select-option">Open Weather Map</option>
+        </select>
+      </label>
+
+      <label class='item'>
+        Env. Canada setup
         <select class='item-select' id='cnfLocation' dir='rtl'>
           <option class="item-select-option" Selected>GPS automatic</option>
           <option class="item-select-option">Quebec City</option>
@@ -56,9 +65,40 @@
           <option class="item-select-option">Whitehorse</option>
         </select>
       </label>
+    
+    
     </div>
+  </div>
+      
+  <div class="item-container">
+      <div class="item-container-header"></div>
+     
+
+    <div class="item-container">
+        <div class="item-container-header">OpenWeatherMap info</div>
+        <div class="item-container-content">
+        <!--
+        <label class="item">
+            <div class="item-input-wrapper">
+            <input type="text" class="item-input" id="cnfOWMid" name="input1" placeholder="OWM user id">
+            </div>
+        </label>
+        -->
+        <label class="item">
+          <div class="item-input-wrapper">
+            <input type="text" class="item-input" id="cnfOWMkey" name="input2" placeholder="OWM key">
+          </div>
+        </label>
+        <label class="item">
+          <div class="item-input-wrapper">
+            <input type="text" class="item-input" id="cnfOWMloc" name="input3" placeholder="OWM City location">
+          </div>
+        </label>
+        </div>
+    </div>
+
+
     <div class='item-container-footer'>
-      These settings only change on the watch after you click SAVE.
     </div>
   </div>
 
