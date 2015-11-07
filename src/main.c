@@ -15,6 +15,7 @@
 #define KEY_CNF_OWM_ID 20
 #define KEY_CNF_OWM_KEY 21
 #define KEY_CNF_OWM_LOC 22
+#define KEY_CNF_CELSIUS 23
 //}}}
 
 //{{{  Geometries
@@ -251,9 +252,11 @@ bool BuzzEnable = true;
 
 char geoArea1[5];
 
+// Configuration
 int trotteuse = 0;
 int trotteuse_draw_scale = 1;
 bool cnfTrotteuse = true;
+bool cnfCelsius = true;
 char cnfExchange[20];
 char cnfLocation[32];
 char cnfService[32];
@@ -527,6 +530,7 @@ void fetch_msg(void) //{{{
     dict_write_cstring(iter, KEY_CNF_OWM_ID, cnfOWMid);
     dict_write_cstring(iter, KEY_CNF_OWM_KEY, cnfOWMkey);
     dict_write_cstring(iter, KEY_CNF_OWM_LOC, cnfOWMloc);
+    dict_write_cstring(iter, KEY_CNF_CELSIUS, cnfCelsius ? "1":"0");
 
     dict_write_end(iter);
 
@@ -617,6 +621,7 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
     Tuple *cnfOWMid_tuple    = dict_find(iter, KEY_CNF_OWM_ID);
     Tuple *cnfOWMkey_tuple   = dict_find(iter, KEY_CNF_OWM_KEY);
     Tuple *cnfOWMloc_tuple   = dict_find(iter, KEY_CNF_OWM_LOC);
+    Tuple *cnfCelsius_tuple   = dict_find(iter, KEY_CNF_CELSIUS);
 
     Tuple *jsEvent_tuple = dict_find(iter, KEY_JS_EVENT);
     //}}}
@@ -643,6 +648,14 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
 
         layer_mark_dirty(trotteuse_scale_layer);
         layer_mark_dirty(trotteuse_layer);
+        }
+    //}}}
+    if (cnfCelsius_tuple) //{{{
+        {
+        APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN Celsius: %s",cnfCelsius_tuple->value->cstring);
+        cnfCelsius = strcmp(cnfCelsius_tuple->value->cstring,"0");
+
+        persist_write_bool(KEY_CNF_CELSIUS, cnfCelsius);
         }
     //}}}
     if (cnfExchange_tuple) //{{{
@@ -1215,7 +1228,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     text_layer_set_text(weather_layer->temp1_layer, "");
     text_layer_set_text(weather_layer->temp2_layer, "");
     text_layer_set_text(weather_layer->temp3_layer, "");
-    text_layer_set_text(weather_layer->temp4_layer, "COINCAN 3.0");
+    text_layer_set_text(weather_layer->temp4_layer, "COINCAN 3.1");
     text_layer_set_text(weather_layer->temp5_layer, "world");
 }
 //}}}
@@ -1364,6 +1377,11 @@ void init(void) //{{{
             (2*X_SIZE)-i-1,0
             };
         }
+
+    if (persist_exists(KEY_CNF_CELSIUS))
+        cnfCelsius = persist_read_bool(KEY_CNF_CELSIUS);
+    else
+        cnfCelsius = true;
 
     if (persist_exists(KEY_CNF_TROTTEUSE))
         cnfTrotteuse = persist_read_bool(KEY_CNF_TROTTEUSE);

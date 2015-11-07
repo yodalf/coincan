@@ -14,7 +14,7 @@ var cnfService = "";
 var cnfOWMid = "";
 var cnfOWMkey = "";
 var cnfOWMloc = "";
-
+var cnfCelsius = "1"
 
 var locationOptions = { "timeout": 15000, "maximumAge": 60000 };
 
@@ -886,6 +886,34 @@ var geoBaseArea1= //{{{
 //}}}
 //}}}
 
+function toFarenheight(temperature) //{{{
+{
+    if (0 === temperature.length) return "";
+    
+    if (cnfCelsius[0]!='1')
+        {
+        return (Math.round(32.0 + 1.8 * parseFloat(temperature)).toString());
+        }
+    else
+        {
+        return (temperature);
+        }
+}
+//}}}
+function toMPH(speed) //{{{
+{
+    if (0 === speed.length) return "";
+    
+    if (cnfCelsius[0]!='1')
+        {
+        return (Math.round(0.6214 * parseFloat(speed)).toString());
+        }
+    else
+        {
+        return (speed);
+        }
+}
+//}}}
 function fetch_Location(latitude, longitude) //{{{
 {
     var req = new XMLHttpRequest();
@@ -1018,7 +1046,7 @@ function fetch_BTC () //{{{
                                     if (Xline[0].match("var obTemperature"))
                                         {
                                         var obTemperature = Xline[1].substring(1,Xline[1].indexOf(";"));
-                                        obTemperature = obTemperature.substring(1, obTemperature.length-1);
+                                        obTemperature = toFarenheight(obTemperature.substring(1, obTemperature.length-1));
                                         //console.log("T:"+obTemperature)
                                         }
 
@@ -1032,7 +1060,7 @@ function fetch_BTC () //{{{
                                     if (Xline[0].match("var obWindGust"))
                                         {
                                         var obWindGust = Xline[1].substring(1,Xline[1].indexOf(";"));
-                                        obWindGust = obWindGust.substring(1, obWindGust.length-1);
+                                        obWindGust = toMPH(obWindGust.substring(1, obWindGust.length-1));
                                         if (0 === obWindGust.length) obWindGust = "!";
                                         //console.log("WG:"+obWindGust)
                                         }
@@ -1040,7 +1068,7 @@ function fetch_BTC () //{{{
                                     if (Xline[0].match("var obWindSpeed"))
                                         {
                                         var obWindSpeed = Xline[1].substring(1,Xline[1].indexOf(";"));
-                                        obWindSpeed = obWindSpeed.substring(1, obWindSpeed.length-1);
+                                        obWindSpeed = toMPH(obWindSpeed.substring(1, obWindSpeed.length-1));
                                         if (0 === obWindSpeed.length) obWindSpeed = "!";
                                         //console.log("WS:"+obWindSpeed)
                                         }
@@ -1050,7 +1078,7 @@ function fetch_BTC () //{{{
                                     if (Xline[0].match("var obWindChill"))
                                         {
                                         var obWindChill = Xline[1].substring(1,Xline[1].indexOf(";"));
-                                        obWindChill = obWindChill.substring(1, obWindChill.length-1);
+                                        obWindChill = toFarenheight(obWindChill.substring(1, obWindChill.length-1));
                                         if (0 === obWindChill.length) obWindChill = "!";
                                         //console.log("WC:"+obWindChill)
                                         }
@@ -1058,7 +1086,7 @@ function fetch_BTC () //{{{
                                     if (Xline[0].match("var obHumidex"))
                                         {
                                         var obHumidex = Xline[1].substring(1,Xline[1].indexOf(";"));
-                                        obHumidex = obHumidex.substring(1, obHumidex.length-1);
+                                        obHumidex = toFarenheight(obHumidex.substring(1, obHumidex.length-1));
                                         if (0 === obHumidex.length) obHumidex = "!";
                                         //console.log("H:"+obHumidex)
                                         }
@@ -1073,7 +1101,7 @@ function fetch_BTC () //{{{
                                     if (Xline[0].match("var forecastHighs"))
                                         {
                                         var forecastHigh = Xline[1].substring(2,Xline[1].indexOf(","));
-                                        forecastHigh = forecastHigh.substring(1, forecastHigh.length-1);
+                                        forecastHigh = toFarenheight(forecastHigh.substring(1, forecastHigh.length-1));
                                         //console.log("fH:"+forecastHigh)
                                         }
 
@@ -1087,7 +1115,7 @@ function fetch_BTC () //{{{
                                     if (Xline[0].match("var forecastLows"))
                                         {
                                         var forecastLow = Xline[1].substring(2,Xline[1].indexOf(","));
-                                        forecastLow = forecastLow.substring(1, forecastLow.length-1);
+                                        forecastLow = toFarenheight(forecastLow.substring(1, forecastLow.length-1));
                                         //console.log("fL:"+forecastLow)
                                         }
 
@@ -1127,13 +1155,13 @@ function fetch_BTC () //{{{
                                 else
                                     {
                                     if (res["main"]["temp"] !== undefined)
-                                        obTemperature = res["main"]["temp"].toFixed(0);
+                                        obTemperature = toFarenheight(res["main"]["temp"].toFixed(0));
                                     else 
                                         obTemperature = "?";
 
-                                    obWindSpeed = (res["wind"]["speed"] * 3.6).toFixed(0);
+                                    obWindSpeed = toMPH((res["wind"]["speed"] * 3.6).toFixed(0));
                                     if (res["wind"]["gust"] !== undefined)
-                                        obWindGust = (res["wind"]["gust"] * 3.6).toFixed(0);
+                                        obWindGust = toMPH((res["wind"]["gust"] * 3.6).toFixed(0));
                                     obWindDir = degToCard(res["wind"]["deg"]);
                                     obWindChill = "!";
                                     obHumidex = "!";
@@ -1160,8 +1188,8 @@ function fetch_BTC () //{{{
                                                                 {
                                                                 console.log(req.responseText);
                                                                 var res = JSON.parse(req.responseText);
-                                                                forecastLow = res["list"][0]["temp"]["night"].toFixed(0);
-                                                                forecastHigh = res["list"][0]["temp"]["day"].toFixed(0);
+                                                                forecastLow = toFarenheight(res["list"][0]["temp"]["night"].toFixed(0));
+                                                                forecastHigh = toFarenheight(res["list"][0]["temp"]["day"].toFixed(0));
 
                                                                 Pebble.sendAppMessage( //{{{
                                                                     {
@@ -1420,6 +1448,7 @@ Pebble.addEventListener("appmessage", function(e) //{{{
     console.log(e.payload['20']);
     console.log(e.payload['21']);
     console.log(e.payload['22']);
+    console.log(e.payload['23']);
     console.log('^^^^^^^^^^^^^');
     cnfExchange = e.payload['16'];
     cnfLocation = e.payload['17'];
@@ -1427,6 +1456,7 @@ Pebble.addEventListener("appmessage", function(e) //{{{
     cnfOWMid    = e.payload['20'];
     cnfOWMkey   = e.payload['21'];
     cnfOWMloc   = e.payload['22'];
+    cnfCelsius  = e.payload['23'];
 
     if ("GPS automatic" === cnfLocation)
         {
@@ -1510,7 +1540,8 @@ Pebble.addEventListener('webviewclosed', function(e) //{{{
         "19": configData.cnfService,
         "20": configData.cnfOWMid,
         "21": configData.cnfOWMkey,
-        "22": configData.cnfOWMloc
+        "22": configData.cnfOWMloc,
+        "23": configData.cnfCelsius ? "1":"0"
         }, function()
         {
         console.log('Send successful!');

@@ -1,6 +1,6 @@
-# project  configured on Sun Oct 18 13:23:02 2015 by
+# project  configured on Sat Nov  7 11:15:29 2015 by
 # waf 1.7.11 (abi 98, python 2070af0 on darwin)
-# using /usr/local/Cellar/pebble-sdk/3.6/Pebble/waf configure
+# using /usr/local/Cellar/pebble-sdk/3.6.2/Pebble/waf configure
 #
 ----------------------------------------
 Setting top to
@@ -10,7 +10,7 @@ Setting out to
 /Users/realo/Pebble/CoinCan-Quebec/build
 ----------------------------------------
 Found Pebble SDK for basalt in:
-/usr/local/Cellar/pebble-sdk/3.6/Pebble/basalt
+/usr/local/Cellar/pebble-sdk/3.6.2/Pebble/basalt
 ----------------------------------------
 Checking for program gcc,cc
 arm-none-eabi-gcc
@@ -21,7 +21,7 @@ arm-none-eabi-gcc-ar
 find program=['ar'] paths='' var='AR' -> 'arm-none-eabi-gcc-ar'
 ----------------------------------------
 Found Pebble SDK for aplite in:
-/usr/local/Cellar/pebble-sdk/3.6/Pebble/aplite
+/usr/local/Cellar/pebble-sdk/3.6.2/Pebble/aplite
 ----------------------------------------
 Checking for program gcc,cc
 arm-none-eabi-gcc

@@ -15,6 +15,7 @@ function submitHandler() {
 }
 
 function loadOptions() {
+  var $cnfCelsius = $('#cnfCelsius');
   var $cnfTrotteuse = $('#cnfTrotteuse');
   var $cnfExchange = $('#cnfExchange');
   var $cnfLocation = $('#cnfLocation');
@@ -23,6 +24,9 @@ function loadOptions() {
   var $cnfOWMloc = $('#cnfOWMloc');
   var $cnfService = $('#cnfWeatherSvc');
 
+  if (localStorage.cnfCelsius) {
+    $cnfCelsius[0].checked = localStorage.cnfCelsius === 'true';
+  }
   if (localStorage.cnfTrotteuse) {
     $cnfTrotteuse[0].checked = localStorage.cnfTrotteuse === 'true';
   }
@@ -47,6 +51,7 @@ function loadOptions() {
 }
 
 function getAndStoreConfigData() {
+  var $cnfCelsius     = $('#cnfCelsius');
   var $cnfTrotteuse   = $('#cnfTrotteuse');
   var $cnfExchange    = $('#cnfExchange');
   var $cnfLocation    = $('#cnfLocation');
@@ -58,6 +63,7 @@ function getAndStoreConfigData() {
   var options = {
     //backgroundColor: $backgroundColorPicker.val(),
     //twentyFourHourFormat: $timeFormatCheckbox[0].checked
+    cnfCelsius:    $cnfCelsius[0].checked,
     cnfTrotteuse:  $cnfTrotteuse[0].checked,
     cnfExchange:   $cnfExchange.val(),
     cnfLocation:   $cnfLocation.val(),
@@ -69,6 +75,7 @@ function getAndStoreConfigData() {
 
   //localStorage.backgroundColor = options.backgroundColor;
   //localStorage.twentyFourHourFormat = options.twentyFourHourFormat;
+  localStorage.cnfCelsius   = options.cnfCelsius;
   localStorage.cnfTrotteuse = options.cnfTrotteuse;
   localStorage.cnfExchange  = options.cnfExchange;
   localStorage.cnfLocation  = options.cnfLocation;
