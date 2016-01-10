@@ -16,6 +16,7 @@
 #define KEY_CNF_OWM_KEY 21
 #define KEY_CNF_OWM_LOC 22
 #define KEY_CNF_CELSIUS 23
+#define KEY_CNF_HOURS 24
 //}}}
 
 //{{{  Geometries
@@ -257,6 +258,7 @@ int trotteuse = 0;
 int trotteuse_draw_scale = 1;
 bool cnfTrotteuse = true;
 bool cnfCelsius = true;
+bool cnfHours = true;
 char cnfExchange[20];
 char cnfLocation[32];
 char cnfService[32];
@@ -531,6 +533,7 @@ void fetch_msg(void) //{{{
     dict_write_cstring(iter, KEY_CNF_OWM_KEY, cnfOWMkey);
     dict_write_cstring(iter, KEY_CNF_OWM_LOC, cnfOWMloc);
     dict_write_cstring(iter, KEY_CNF_CELSIUS, cnfCelsius ? "1":"0");
+    dict_write_cstring(iter, KEY_CNF_HOURS, cnfHours ? "1":"0");
 
     dict_write_end(iter);
 
@@ -580,7 +583,15 @@ void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) //{{{
 
         //APP_LOG(APP_LOG_LEVEL_DEBUG,"Buzz: %s", BuzzEnable ? "true":"false");
 
-        strftime(time_text, sizeof(time_text), "%T", tick_time);
+        if (cnfHours) 
+            {
+            strftime(time_text, sizeof(time_text), "%k:%M", tick_time);
+            }
+        else 
+            {
+            strftime(time_text, sizeof(time_text), "%l:%M", tick_time);
+            }
+            
         strftime(date_text, sizeof(date_text), "%a %d", tick_time);
 
         layer_mark_dirty(text_layer_get_layer(time_layer));
@@ -622,6 +633,7 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
     Tuple *cnfOWMkey_tuple   = dict_find(iter, KEY_CNF_OWM_KEY);
     Tuple *cnfOWMloc_tuple   = dict_find(iter, KEY_CNF_OWM_LOC);
     Tuple *cnfCelsius_tuple   = dict_find(iter, KEY_CNF_CELSIUS);
+    Tuple *cnfHours_tuple   = dict_find(iter, KEY_CNF_HOURS);
 
     Tuple *jsEvent_tuple = dict_find(iter, KEY_JS_EVENT);
     //}}}
@@ -650,6 +662,14 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
         layer_mark_dirty(trotteuse_layer);
         }
     //}}}
+    if (cnfHours_tuple) //{{{
+        {
+        APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN Hours: %s",cnfHours_tuple->value->cstring);
+        cnfHours = strcmp(cnfHours_tuple->value->cstring,"0");
+
+        persist_write_bool(KEY_CNF_HOURS, cnfHours);
+        }
+    //}}}
     if (cnfCelsius_tuple) //{{{
         {
         APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN Celsius: %s",cnfCelsius_tuple->value->cstring);
@@ -663,6 +683,8 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
         APP_LOG(APP_LOG_LEVEL_DEBUG, "* IN Exchange: %s", cnfExchange_tuple->value->cstring);
         strcpy(cnfExchange, cnfExchange_tuple->value->cstring);
         persist_write_string(KEY_CNF_EXCHANGE, cnfExchange);
+
+        
         }
     //}}}
     if (cnfLocation_tuple) //{{{
@@ -721,7 +743,31 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
         APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN btcV");
         strncpy(btcV, btcV_tuple->value->cstring, 16);
         btcV_value = _string2float(btcV)/100.0;
-        btcV[strlen(btcV)-2]='\0';
+        if (cnfExchange[0] == 'B' && cnfExchange[1] == 'i' && cnfExchange[2] == 't' && cnfExchange[3] == 'p')
+            {
+            int LL=strlen(btcV);
+            btcV[LL] = btcV[LL-1];
+            btcV[LL-1] = btcV[LL-2];
+            btcV[LL-2] = '.';
+            text_layer_set_text(bcH_layer, "");
+            text_layer_set_text(bcL_layer, "");
+            #ifdef PBL_COLOR
+                layer_set_frame(text_layer_get_layer(bc_layer), GRect(-14, BTC_OFFSET-6, 108, 168-62));
+            #else
+                layer_set_frame(text_layer_get_layer(bc_layer), GRect(-34, BTC_OFFSET-6, 108, 168-92));
+            #endif
+            }
+        else
+            {
+            btcV[strlen(btcV)-2]='\0';
+            text_layer_set_text(bcH_layer, btcH);
+            text_layer_set_text(bcL_layer, btcL);
+            #ifdef PBL_COLOR
+                layer_set_frame(text_layer_get_layer(bc_layer), GRect(0, BTC_OFFSET-6, 108, 168-62));
+            #else
+                layer_set_frame(text_layer_get_layer(bc_layer), GRect(-20, BTC_OFFSET-6, 108, 168-92));
+            #endif
+            }
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "Res: %s", btcV);
         }
     //}}}
@@ -1228,8 +1274,8 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     text_layer_set_text(weather_layer->temp1_layer, "");
     text_layer_set_text(weather_layer->temp2_layer, "");
     text_layer_set_text(weather_layer->temp3_layer, "");
-    text_layer_set_text(weather_layer->temp4_layer, "COINCAN 3.1");
-    text_layer_set_text(weather_layer->temp5_layer, "world");
+    text_layer_set_text(weather_layer->temp4_layer, "COINCAN 3.4");
+    text_layer_set_text(weather_layer->temp5_layer, "12-24");
 }
 //}}}
 void weather_layer_deinit(WeatherLayer* weather_layer) //{{{
@@ -1378,6 +1424,11 @@ void init(void) //{{{
             };
         }
 
+    if (persist_exists(KEY_CNF_HOURS))
+        cnfHours = persist_read_bool(KEY_CNF_HOURS);
+    else
+        cnfHours= true;
+    
     if (persist_exists(KEY_CNF_CELSIUS))
         cnfCelsius = persist_read_bool(KEY_CNF_CELSIUS);
     else

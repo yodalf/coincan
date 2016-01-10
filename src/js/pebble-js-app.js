@@ -14,9 +14,12 @@ var cnfService = "";
 var cnfOWMid = "";
 var cnfOWMkey = "";
 var cnfOWMloc = "";
-var cnfCelsius = "1"
+var cnfCelsius = "1";
+var cnfHours = "1";
 
 var locationOptions = { "timeout": 15000, "maximumAge": 60000 };
+
+var btcVx = [];
 
 var geoBase = //{{{
 {
@@ -1005,6 +1008,47 @@ function fetch_BTC () //{{{
                 //btcL = 1886.0;
                 //btcV = 1887.0;
 
+                if (typeof response[0] != 'undefined') {{{
+                    {
+                    switch (cnfExchange) 
+                        {
+                        case "Bitpay-CNY":
+                            var btcV = response[7]["rate"];
+                            break;
+                        case "Bitpay-CAD":
+                            var btcV = response[5]["rate"];
+                            break;
+                        case "Bitpay-USD":
+                            var btcV = response[1]["rate"];
+                            break;
+                        case "Bitpay-EUR":
+                            var btcV = response[2]["rate"];
+                            break;
+                        default:
+                            var btcV = response[0]["rate"];
+                            break;
+                        }
+                    btcVx.push(btcV);
+                    if (btcVx.length > 60)
+                        {
+                        btcVx.shift();
+                        }
+                    console.log(btcVx.length);
+                    console.log(btcV);
+                    var btcH = btcV;
+                    var btcL = btcV;
+                    for (var i=0; i<btcVx.length; i++)
+                        {
+                        if (btcVx[i] > btcH) btcH = btcVx[i];
+                        if (btcVx[i] < btcL) btcL = btcVx[i];
+                        }
+                    btcV = Math.round(100.0 * btcV);
+                    var btcH = Math.round(btcH + 0.01);
+                    var btcL = Math.round(btcL - 0.01);
+                    console.log(btcL);
+                    console.log(btcH);
+                    }
+                }}}
                 if (typeof response.ticker != 'undefined') {{{
                     {
                     var btcH = Math.round(response.ticker.high);
@@ -1278,6 +1322,12 @@ function fetch_BTC () //{{{
 
     switch (cnfExchange) //{{{
         {
+        case "Bitpay-CNY":
+        case "Bitpay-CAD":
+        case "Bitpay-USD":
+        case "Bitpay-EUR":
+            req.open('GET', "https://www.bitpay.com/api/rates", true);
+            break;
         case "Cavirtex":
             req.open('GET', "https://www.cavirtex.com/api/CAD/ticker.json", true);
             break;
@@ -1289,6 +1339,9 @@ function fetch_BTC () //{{{
             break;
         case "Bitstamp":
             req.open('GET', "https://www.bitstamp.net/api/ticker/", true);
+            break;
+        case "QuadrigaCX":
+            req.open('GET', "https://api.quadrigacx.com/v2/ticker", true);
             break;
         default:
             req.open('GET', "https://www.cavirtex.com/api/CAD/ticker.json", true);
@@ -1449,6 +1502,7 @@ Pebble.addEventListener("appmessage", function(e) //{{{
     console.log(e.payload['21']);
     console.log(e.payload['22']);
     console.log(e.payload['23']);
+    console.log(e.payload['24']);
     console.log('^^^^^^^^^^^^^');
     cnfExchange = e.payload['16'];
     cnfLocation = e.payload['17'];
@@ -1457,6 +1511,7 @@ Pebble.addEventListener("appmessage", function(e) //{{{
     cnfOWMkey   = e.payload['21'];
     cnfOWMloc   = e.payload['22'];
     cnfCelsius  = e.payload['23'];
+    cnfHours    = e.payload['24'];
 
     if ("GPS automatic" === cnfLocation)
         {
@@ -1541,7 +1596,8 @@ Pebble.addEventListener('webviewclosed', function(e) //{{{
         "20": configData.cnfOWMid,
         "21": configData.cnfOWMkey,
         "22": configData.cnfOWMloc,
-        "23": configData.cnfCelsius ? "1":"0"
+        "23": configData.cnfCelsius ? "1":"0",
+        "24": configData.cnfHours ? "1":"0"
         }, function()
         {
         console.log('Send successful!');

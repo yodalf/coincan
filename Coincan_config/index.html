@@ -11,17 +11,14 @@
     <h1 class='title'>Configuration</h1>
   </div>
 
-  <div class='item-container'>
-    <div class='item-container-content'>
-      <div class='item'>
-
-      </div>
-    </div>
-  </div>
 
   <div class='item-container'>
     <div class='item-container-header'></div>
     <div class='item-container-content'>
+      <label class='item'>
+        24-hour display
+        <input type='checkbox' class='item-toggle' id='cnfHours' checked>
+      </label>
       <label class='item'>
         Metric (Celsius and kph)
         <input type='checkbox' class='item-toggle' id='cnfCelsius' checked>
@@ -34,9 +31,14 @@
         Exchange
         <select class='item-select' id='cnfExchange' dir='rtl'>
           <option class="item-select-option" Selected>Cavirtex</option>
+          <option class="item-select-option">Bitpay-CAD</option>
+          <option class="item-select-option">Bitpay-USD</option>
+          <option class="item-select-option">Bitpay-EUR</option>
+          <option class="item-select-option">Bitpay-CNY</option>
           <option class="item-select-option">Bitstamp</option>
           <option class="item-select-option">BTC-e</option>
           <option class="item-select-option">BTCC</option>
+          <option class="item-select-option">QuadrigaCX</option>
         </select>
       </label>
 
