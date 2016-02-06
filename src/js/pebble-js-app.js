@@ -7,7 +7,7 @@ var geoLatitude=0.0;
 var geoLongitude=0.0;
 var gpsError=0;
 
-var cnfExchange = "Cavirtex";
+var cnfExchange = "Bitstamp";
 var cnfLocation = "GPS automatic";
 var cnfGPS = "No";
 var cnfService = "";
@@ -1328,9 +1328,9 @@ function fetch_BTC () //{{{
         case "Bitpay-EUR":
             req.open('GET', "https://www.bitpay.com/api/rates", true);
             break;
-        case "Cavirtex":
-            req.open('GET', "https://www.cavirtex.com/api/CAD/ticker.json", true);
-            break;
+        //case "Cavirtex":
+        //    req.open('GET', "https://www.cavirtex.com/api/CAD/ticker.json", true);
+        //    break;
         case "BTCC":
             req.open('GET', "https://data.btcchina.com/data/ticker?market=btccny", true);
             break;
@@ -1344,7 +1344,8 @@ function fetch_BTC () //{{{
             req.open('GET', "https://api.quadrigacx.com/v2/ticker", true);
             break;
         default:
-            req.open('GET', "https://www.cavirtex.com/api/CAD/ticker.json", true);
+            //req.open('GET', "https://www.cavirtex.com/api/CAD/ticker.json", true);
+            req.open('GET', "https://www.bitstamp.net/api/ticker/", true);
             break;
         }
     //}}}

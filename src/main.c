@@ -54,7 +54,7 @@
 #define cInfoF      GColorWhite
 
 #define cTimeF      GColorYellow
-#define cTimeB      GColorClear
+#define cTimeB      GColorBlack
 
 #define cDateF      GColorWhite
 #define cDateB      GColorClear
@@ -96,7 +96,7 @@
 #define cInfoF      GColorWhite
 
 #define cTimeF      GColorWhite
-#define cTimeB      GColorClear
+#define cTimeB      GColorBlack
 
 #define cDateF      GColorWhite
 #define cDateB      GColorClear
@@ -754,7 +754,7 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
             #ifdef PBL_COLOR
                 layer_set_frame(text_layer_get_layer(bc_layer), GRect(-14, BTC_OFFSET-6, 108, 168-62));
             #else
-                layer_set_frame(text_layer_get_layer(bc_layer), GRect(-34, BTC_OFFSET-6, 108, 168-92));
+                layer_set_frame(text_layer_get_layer(bc_layer), GRect(-14, BTC_OFFSET-6, 108, 168-92));
             #endif
             }
         else
@@ -765,7 +765,18 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
             #ifdef PBL_COLOR
                 layer_set_frame(text_layer_get_layer(bc_layer), GRect(0, BTC_OFFSET-6, 108, 168-62));
             #else
-                layer_set_frame(text_layer_get_layer(bc_layer), GRect(-20, BTC_OFFSET-6, 108, 168-92));
+                if (cnfExchange[0] == 'B' && cnfExchange[1] == 'T' && cnfExchange[2] == 'C' && cnfExchange[3] == 'C')
+                    {
+                    layer_set_frame(text_layer_get_layer(bc_layer), GRect(-5, BTC_OFFSET-6, 108, 168-92));
+                    layer_set_frame(text_layer_get_layer(bcH_layer), GRect(-53, BTC_OFFSET-5, 130, 168-62));
+                    layer_set_frame(text_layer_get_layer(bcL_layer), GRect(-53, BTC_OFFSET+10, 130, 168-62));
+                    }
+                else 
+                    {
+                    layer_set_frame(text_layer_get_layer(bc_layer), GRect(-12, BTC_OFFSET-6, 108, 168-92));
+                    layer_set_frame(text_layer_get_layer(bcH_layer), GRect(-56, BTC_OFFSET-5, 130, 168-62));
+                    layer_set_frame(text_layer_get_layer(bcL_layer), GRect(-56, BTC_OFFSET+10, 130, 168-62));
+                    }    
             #endif
             }
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "Res: %s", btcV);
@@ -1145,7 +1156,8 @@ void app_message_init(void) //{{{
     app_message_register_outbox_failed(out_failed_handler);
 
     // Init buffers
-    app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
+    //app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
+    app_message_open(512, 512);
 }
 //}}}
 
@@ -1274,8 +1286,8 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     text_layer_set_text(weather_layer->temp1_layer, "");
     text_layer_set_text(weather_layer->temp2_layer, "");
     text_layer_set_text(weather_layer->temp3_layer, "");
-    text_layer_set_text(weather_layer->temp4_layer, "COINCAN 3.4");
-    text_layer_set_text(weather_layer->temp5_layer, "12-24");
+    text_layer_set_text(weather_layer->temp4_layer, "COINCAN 3.6");
+    text_layer_set_text(weather_layer->temp5_layer, "sdk 3.9");
 }
 //}}}
 void weather_layer_deinit(WeatherLayer* weather_layer) //{{{
@@ -1364,11 +1376,14 @@ void init(void) //{{{
     text_layer_set_font(bc_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD) );
     text_layer_set_text_alignment(bc_layer, GTextAlignmentCenter);
     text_layer_set_text(bc_layer, btcV);
-    #ifdef PBL_COLOR
-        layer_set_frame(text_layer_get_layer(bc_layer), GRect(0, BTC_OFFSET-6, 108, 168-62));
-    #else
-        layer_set_frame(text_layer_get_layer(bc_layer), GRect(-20, BTC_OFFSET-6, 108, 168-92));
-    #endif
+    
+    // ATTENTION! See in_received_handler (btcV_tuple)
+    PBL_IF_COLOR_ELSE(
+        layer_set_frame(text_layer_get_layer(bc_layer), GRect(0, BTC_OFFSET-6, 108, 168-62))
+    ,
+        layer_set_frame(text_layer_get_layer(bc_layer), GRect(-12, BTC_OFFSET-6, 108, 168-92))
+    );
+    
     layer_add_child(window_get_root_layer(window), text_layer_get_layer(bc_layer));
 
 
@@ -1445,7 +1460,7 @@ void init(void) //{{{
         APP_LOG(APP_LOG_LEVEL_DEBUG, "** Read back Exchange: %s", cnfExchange);
         }
     else
-        strcpy(cnfExchange, "Cavirtex");
+        strcpy(cnfExchange, "Bitstamp");
 
     if (persist_exists(KEY_CNF_LOCATION))
         {
