@@ -1,4 +1,3 @@
-
 //{{{  Includes
 #include <pebble.h>
 //}}}
@@ -39,6 +38,9 @@
 
 #define X_SIZE 60
 #define Y_SIZE 24
+
+#define X_FRAME 144
+#define Y_FRAME 168
 //}}}
 
 //{{{  Colors
@@ -185,6 +187,7 @@ TextLayer *bcL_layer;
 Layer *graph_layer;
 Layer *trotteuse_layer;
 Layer *trotteuse_scale_layer;
+Layer *DOT_layer;
 
 //{{{  WeatherLayer struct
 typedef struct
@@ -350,6 +353,15 @@ const GPathInfo bgraph_info =
     .points = bgraph_data
 };
 //}}}
+
+// FIX THIS when layers are sane again!
+int trigger_minute = 1;
+
+float DOT1 = 0.0;
+float DOT2 = 0.0;
+float DOT3 = 0.0;
+float DOT4 = 0.0;
+
 //}}}
 
 //{{{  Prototypes
@@ -358,6 +370,7 @@ int _atoi(const char *);
 float _string2float(char *);
 void init(void);
 void deinit(void);
+void DOT_update_proc(struct Layer *, GContext *);
 void graph_update_proc(struct Layer *, GContext *);
 void trotteuse_update_proc(struct Layer *, GContext *);
 void trotteuse_scale_update_proc(struct Layer *, GContext *);
@@ -551,7 +564,6 @@ void fetch_msg(void) //{{{
 //{{{  Handlers
 void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) //{{{
 {
-    //#ifdef PBL_COLOR
     if (units_changed & SECOND_UNIT)
         //{{{  
         {
@@ -565,16 +577,49 @@ void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) //{{{
             layer_mark_dirty(trotteuse_scale_layer);
             }
 
+
+
+        #if defined(PBL_HEALTH)
+        // Use the step count metric
+        HealthMetric metric = HealthMetricStepCount;
+        //time_t start = time_start_of_today();
+        //time_t end = time(NULL);
+        time_t start = time_start_of_today() - 24*SECONDS_PER_HOUR;
+        time_t end = time_start_of_today();
+
+        // Check the metric has data available for today
+        HealthServiceAccessibilityMask mask = health_service_metric_accessible(metric, 
+          start, end);
+
+        if(mask & HealthServiceAccessibilityMaskAvailable) {
+          // Data is available!
+          APP_LOG(APP_LOG_LEVEL_DEBUG, "Steps today: %d", 
+                  (int)health_service_sum_today(metric));
+          APP_LOG(APP_LOG_LEVEL_DEBUG, "Steps yesterday: %d",
+                  (int) health_service_sum(HealthMetricStepCount, start, end));
+
+            DOT4 = (float) health_service_sum_today(metric) / (float) health_service_sum(HealthMetricStepCount, start, end);
+
+
+
+        } else {
+          // No data recorded yet today
+          APP_LOG(APP_LOG_LEVEL_ERROR, "Data unavailable!");
+        }
+        #endif
+
+
         layer_mark_dirty(trotteuse_layer);
         }
         //}}}
-    //#endif
 
     if (units_changed & MINUTE_UNIT)
         //{{{  
         {
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "M: %s %s %d", time_text, date_text,tick_time->tm_min);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "TIME: %d %d", tick_time->tm_hour,tick_time->tm_min);
+
+        trigger_minute = 1;
 
         if ((tick_time->tm_hour >= 22) || (tick_time->tm_hour <= 5))
             BuzzEnable = false;
@@ -1100,6 +1145,36 @@ void battery_handler(BatteryChargeState charge) //{{{
 //}}}
 
 //{{{  Graphics update procs
+void DOT_update_proc(struct Layer *layer, GContext *ctx) //{{{
+{
+    
+//    if (0 == trigger_minute)
+//        return;
+   
+    trigger_minute = 0;
+    
+    //GRect bounds = layer_get_bounds(DOT_layer);
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "************* DOT ************");
+    graphics_context_set_stroke_color(ctx, GColorWhite);
+    graphics_context_set_fill_color(ctx, GColorWhite);
+
+    // DOT #1
+    //graphics_fill_radial(ctx, GRect(0,0,11,11), GOvalScaleModeFitCircle, 1, 0 , TRIG_MAX_ANGLE);
+    //graphics_fill_radial(ctx, GRect(0,0,11,11), GOvalScaleModeFitCircle, 5, 0 , TRIG_MAX_ANGLE/1);
+    
+    // DOT #2
+    //graphics_fill_radial(ctx, GRect(12,0,11,11), GOvalScaleModeFitCircle, 1, 0 , TRIG_MAX_ANGLE);
+    //graphics_fill_radial(ctx, GRect(12,0,11,11), GOvalScaleModeFitCircle, 5, 0 , TRIG_MAX_ANGLE/2);
+    
+    // DOT #3
+    //graphics_fill_radial(ctx, GRect(X_FRAME-25,0,11,11), GOvalScaleModeFitCircle, 1, 0 , TRIG_MAX_ANGLE);
+    //graphics_fill_radial(ctx, GRect(X_FRAME-25,0,11,11), GOvalScaleModeFitCircle, 5, 0 , TRIG_MAX_ANGLE/3);
+   
+   // DOT #4
+    graphics_fill_radial(ctx, GRect(X_FRAME-14,0,11,11), GOvalScaleModeFitCircle, 1, 0 , TRIG_MAX_ANGLE);
+    graphics_fill_radial(ctx, GRect(X_FRAME-14,0,11,11), GOvalScaleModeFitCircle, 5, 0 , (int) (TRIG_MAX_ANGLE*(DOT4)) );
+}
+//}}}
 void graph_update_proc(struct Layer *layer, GContext *ctx) //{{{
 {
     if (btcV_value != 0.0)
@@ -1111,7 +1186,6 @@ void graph_update_proc(struct Layer *layer, GContext *ctx) //{{{
 //}}}
 void trotteuse_update_proc(struct Layer *layer, GContext *ctx) //{{{
 {
-//#ifdef PBL_COLOR
     GPoint p0 = GPoint(12, 98);
     GPoint p1 = GPoint(12 + trotteuse*2 , 98);
     if (cnfTrotteuse)
@@ -1119,7 +1193,6 @@ void trotteuse_update_proc(struct Layer *layer, GContext *ctx) //{{{
     else
         graphics_context_set_stroke_color(ctx, cTimeB);
     graphics_draw_line(ctx, p0, p1);
-//#endif
 }
 //}}}
 void trotteuse_scale_update_proc(struct Layer *layer, GContext *ctx) //{{{
@@ -1397,11 +1470,11 @@ void init(void) //{{{
     trotteuse_scale_layer = layer_create( FULL_FRAME );
     layer_add_child(window_get_root_layer(window), trotteuse_scale_layer);
     layer_set_update_proc(trotteuse_scale_layer, trotteuse_scale_update_proc);
-    //layer_insert_below_sibling(trotteuse_scale_layer, trotteuse_layer);
+    //layer_insert_above_sibling(trotteuse_scale_layer, trotteuse_layer);
 
     // Add a trotteuse layer
     trotteuse_layer = layer_create( FULL_FRAME );
-    //layer_add_child(window_get_root_layer(window), trotteuse_layer);
+    layer_add_child(window_get_root_layer(window), trotteuse_layer);
     layer_set_update_proc(trotteuse_layer, trotteuse_update_proc);
     layer_insert_below_sibling(trotteuse_layer, trotteuse_scale_layer);
 
@@ -1412,9 +1485,24 @@ void init(void) //{{{
     #else
         graph_layer = layer_create( GRect(135-X_SIZE, BTC_OFFSET, X_SIZE, Y_SIZE) );
     #endif
-    //text_layer_set_background_color(graph_layer, GColorClear);
     layer_add_child(window_get_root_layer(window), graph_layer);
     layer_set_update_proc(graph_layer, graph_update_proc);
+
+
+    // Upper right DOT layer
+    //#ifdef PBL_COLOR
+    //    DOT_layer = layer_create( GRect(140-(10+1), 1, (10), (10)) );
+    //#else
+    //    DOT_layer = layer_create( GRect(135-(10+1), 1, (10), (10)) );
+    //#endif
+    
+    DOT_layer = layer_create( FULL_FRAME ) ;
+    
+    layer_add_child(window_get_root_layer(window), DOT_layer);
+    layer_set_update_proc(DOT_layer, DOT_update_proc);
+
+
+
 
     // Create the Gpath
     bgraph = gpath_create(&bgraph_info);
@@ -1557,6 +1645,7 @@ void deinit(void) //{{{
     text_layer_destroy(bcL_layer);
 
     layer_destroy(graph_layer);
+    layer_destroy(DOT_layer);
 
     layer_destroy(trotteuse_layer);
     layer_destroy(trotteuse_scale_layer);
