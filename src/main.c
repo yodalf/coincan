@@ -15,7 +15,7 @@
 #define KEY_CNF_OWM_KEY 21
 #define KEY_CNF_OWM_LOC 22
 #define KEY_CNF_CELSIUS 23
-#define KEY_CNF_HOURS 24
+#define KEY_CNF_HEALTH 24
 //}}}
 
 //{{{  Geometries
@@ -30,13 +30,10 @@
 #define X_FRAME 144
 #define Y_FRAME 168
 
-
-
-
 #define GRECT_TROTTEUSE GRect(10, 95, 134, 6)
 
 
-#define GRECT_DOT4 GRect(X_FRAME-10,86,10,10)
+#define GRECT_DOT4 GRect(X_FRAME-10,90,10,10)
 #define GRECT_WEATHER_LAYER_1  GRect(pos.x, pos.y, 144, 80)
 #define GRECT_WEATHER_LAYER_2  GRect(0, 10, 144, 80)
 #define GRECT_WEATHER_LAYER_3  GRect(0, 8, 144, 80)
@@ -77,19 +74,6 @@
 #define GRECT_BCH5_LAYER        GRect( 0, 17,  5, 16)
 #define GRECT_BCL5_LAYER        GRect( 0, 30,  5, 16)
 #endif
-
-//#define GRECT_BCH_LAYER_1 GRect(0, 17, 31, 14)
-//#define GRECT_BCH_LAYER_2 GRect(-56, BTC_OFFSET-5, 130, 168-62)
-//#define GRECT_BCL_LAYER_1 GRect(-47, BTC_OFFSET+10, 130, 168-62)
-//#define GRECT_BCL_LAYER_1 GRect(0, 30, 31, 14)
-//#define GRECT_BCL_LAYER_2 GRect(-56, BTC_OFFSET+10, 130, 168-62)
-//#define GRECT_BCV_LAYER_1 GRect(0, BTC_OFFSET-6, 130, 168-62)
-//#define GRECT_BCV_LAYER_1 GRect(25, 16, 56, 24)
-//#define GRECT_BCV_LAYER_2 GRect(25, 16, 56, 24)
-//#define GRECT_BCV_LAYER_2 GRect(-12, BTC_OFFSET-6, 130, 168-62)
-
-
-
 
 #define GRECT_GRAPH_LAYER_1 GRect(140-X_SIZE, BTC_OFFSET, X_SIZE, Y_SIZE)
 #define GRECT_GRAPH_LAYER_2 GRect(135-X_SIZE, BTC_OFFSET, X_SIZE, Y_SIZE)
@@ -315,7 +299,7 @@ int trotteuse = 0;
 int trotteuse_draw_scale = 1;
 bool cnfTrotteuse = true;
 bool cnfCelsius = true;
-bool cnfHours = true;
+bool cnfHealth = true;
 char cnfExchange[20];
 char cnfLocation[32];
 char cnfService[32];
@@ -591,7 +575,7 @@ void fetch_msg(void) //{{{
     HealthServiceAccessibilityMask mask = health_service_metric_accessible(metric, 
       start, end);
 
-    if(mask & HealthServiceAccessibilityMaskAvailable) 
+    if(cnfHealth && (mask & HealthServiceAccessibilityMaskAvailable))
         {
         // Data is available!
         APP_LOG(APP_LOG_LEVEL_DEBUG, "Steps today: %d", 
@@ -634,7 +618,7 @@ void fetch_msg(void) //{{{
     dict_write_cstring(iter, KEY_CNF_OWM_KEY, cnfOWMkey);
     dict_write_cstring(iter, KEY_CNF_OWM_LOC, cnfOWMloc);
     dict_write_cstring(iter, KEY_CNF_CELSIUS, cnfCelsius ? "1":"0");
-    dict_write_cstring(iter, KEY_CNF_HOURS, cnfHours ? "1":"0");
+    dict_write_cstring(iter, KEY_CNF_HEALTH, cnfHealth ? "1":"0");
 
     dict_write_end(iter);
 
@@ -683,7 +667,8 @@ void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) //{{{
 
         //APP_LOG(APP_LOG_LEVEL_DEBUG,"Buzz: %s", BuzzEnable ? "true":"false");
 
-        if (cnfHours) 
+
+        if (clock_is_24h_style()) 
             {
             strftime(time_text, sizeof(time_text), "%k:%M", tick_time);
             }
@@ -733,7 +718,7 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
     Tuple *cnfOWMkey_tuple   = dict_find(iter, KEY_CNF_OWM_KEY);
     Tuple *cnfOWMloc_tuple   = dict_find(iter, KEY_CNF_OWM_LOC);
     Tuple *cnfCelsius_tuple   = dict_find(iter, KEY_CNF_CELSIUS);
-    Tuple *cnfHours_tuple   = dict_find(iter, KEY_CNF_HOURS);
+    Tuple *cnfHealth_tuple   = dict_find(iter, KEY_CNF_HEALTH);
 
     Tuple *jsEvent_tuple = dict_find(iter, KEY_JS_EVENT);
     //}}}
@@ -765,12 +750,14 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
         layer_mark_dirty(trotteuse_layer);
         }
     //}}}
-    if (cnfHours_tuple) //{{{
+    if (cnfHealth_tuple) //{{{
         {
-        APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN Hours: %s",cnfHours_tuple->value->cstring);
-        cnfHours = strcmp(cnfHours_tuple->value->cstring,"0");
+        APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN Health: %s",cnfHealth_tuple->value->cstring);
+        cnfHealth = strcmp(cnfHealth_tuple->value->cstring,"0");
 
-        persist_write_bool(KEY_CNF_HOURS, cnfHours);
+        persist_write_bool(KEY_CNF_HEALTH, cnfHealth);
+
+        DOT4 = 0.0;
         }
     //}}}
     if (cnfCelsius_tuple) //{{{
@@ -1100,6 +1087,25 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
                     strcpy(bluetooth_text," **");
                     }
                 break;
+            case '5':
+                APP_LOG(APP_LOG_LEVEL_DEBUG,"* IN jsEVENT Fetching weather!");
+                errorInWeather = 1;
+                if (date_text[strlen(date_text)-1] == '*') date_text[strlen(date_text)-1] = '\0';
+                bitmap_layer_set_compositing_mode(weather_layer.icon1_layer, GCompOpClear);
+                bitmap_layer_set_compositing_mode(weather_layer.icon2_layer, GCompOpClear);
+                strncpy(obWindDir, "internet ?", 16);
+                text_layer_set_text(weather_layer.temp1_layer, "");
+                text_layer_set_text(weather_layer.temp2_layer, "?");
+                text_layer_set_text(weather_layer.temp3_layer, "");
+                text_layer_set_text(weather_layer.temp4_layer, "");
+                text_layer_set_text(weather_layer.temp5_layer, "");
+                if (bluetooth_text[1] != '?')
+                    {
+                    strcpy(bluetooth_text," **");
+                    }
+                fetch_msg();
+                break;
+
             default:
                 break;
             }
@@ -1210,7 +1216,6 @@ void DOT_update_proc(struct Layer *layer, GContext *ctx) //{{{
     graphics_context_set_fill_color(ctx, GColorBlack);
     graphics_fill_rect(ctx, GRECT_DOT4, 0, GCornerNone);
 
-
     graphics_context_set_stroke_color(ctx, GColorWhite);
     graphics_context_set_fill_color(ctx, GColorWhite);
 
@@ -1265,7 +1270,7 @@ void graph_update_proc(struct Layer *layer, GContext *ctx) //{{{
 //}}}
 void trotteuse_update_proc(struct Layer *layer, GContext *ctx) //{{{
 {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "************* TROT ************");
+    //APP_LOG(APP_LOG_LEVEL_DEBUG, "************* TROT ************");
     if (0 == trotteuse)
         {
         graphics_context_set_stroke_color(ctx, cTimeB);
@@ -1614,10 +1619,10 @@ void init(void) //{{{
             };
         }
 
-    if (persist_exists(KEY_CNF_HOURS))
-        cnfHours = persist_read_bool(KEY_CNF_HOURS);
+    if (persist_exists(KEY_CNF_HEALTH))
+        cnfHealth = persist_read_bool(KEY_CNF_HEALTH);
     else
-        cnfHours= true;
+        cnfHealth= true;
     
     if (persist_exists(KEY_CNF_CELSIUS))
         cnfCelsius = persist_read_bool(KEY_CNF_CELSIUS);

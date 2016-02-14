@@ -6,10 +6,11 @@
     },
     "capabilities": [
         "location",
-        "configurable"
+        "configurable",
+        "health"
     ],
     "companyName": "Real Ouellet",
-    "longName": "Bitcoin and Weather - Canada",
+    "longName": "Bitcoin and Weather",
     "projectType": "native",
     "resources": {
         "media": [

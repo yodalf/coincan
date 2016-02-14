@@ -15,7 +15,7 @@ var cnfOWMid = "";
 var cnfOWMkey = "";
 var cnfOWMloc = "";
 var cnfCelsius = "1";
-var cnfHours = "1";
+var cnfHealth = "1";
 
 var locationOptions = { "timeout": 15000, "maximumAge": 60000 };
 
@@ -921,6 +921,13 @@ function fetch_Location(latitude, longitude) //{{{
 {
     var req = new XMLHttpRequest();
 
+    req.ontimeout = function(e) //{{{
+        {
+        console.log("****** TIMEOUT!!!! ******")
+        Pebble.sendAppMessage( { "18":  "2" } );
+        };
+    //}}}
+    
     req.onload = function(e) //{{{
         {
         if (req.readyState == 4)
@@ -978,7 +985,7 @@ function fetch_Location(latitude, longitude) //{{{
 
     req.open('GET', "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + latitude + "," + longitude + "&sensor=true");
 
-    req.timeout = 5000;
+    req.timeout = 3000;
     req.send(null);
 }
 //}}}
@@ -1056,6 +1063,31 @@ function fetch_BTC () //{{{
                     var btcV = Math.round(100.0 * response.ticker.last);
                     }
                 }}}
+                if (typeof response.result != 'undefined') //{{{
+                    {
+                    if (typeof response.result.XXBTZCAD != 'undefined') {{{
+                        {
+                        var btcH = Math.round(response.result.XXBTZCAD.h[0]);
+                        var btcL = Math.round(response.result.XXBTZCAD.l[0]);
+                        var btcV = Math.round(100.0 * response.result.XXBTZCAD.c[0]);
+                        }
+                    }}}
+                    if (typeof response.result.XXBTZEUR != 'undefined') {{{
+                        {
+                        var btcH = Math.round(response.result.XXBTZEUR.h[0]);
+                        var btcL = Math.round(response.result.XXBTZEUR.l[0]);
+                        var btcV = Math.round(100.0 * response.result.XXBTZEUR.c[0]);
+                        }
+                    }}}
+                    if (typeof response.result.XXBTZUSD != 'undefined') {{{
+                        {
+                        var btcH = Math.round(response.result.XXBTZUSD.h[0]);
+                        var btcL = Math.round(response.result.XXBTZUSD.l[0]);
+                        var btcV = Math.round(100.0 * response.result.XXBTZUSD.c[0]);
+                        }
+                    }}}
+                    }
+                //}}}
                 if (typeof response.high != 'undefined') {{{
                     {
                     var btcH = Math.round(response.high);
@@ -1066,6 +1098,8 @@ function fetch_BTC () //{{{
                         var btcV = Math.round(100.0 * response.ask);
                     }
                 }}}
+
+                    
 
                 req.onload = function(e) //{{{
                     {
@@ -1289,13 +1323,13 @@ function fetch_BTC () //{{{
                         else
                             {
                             console.log("** ERROR in weather");
-                            Pebble.sendAppMessage( { "18":  "3" } );
+                            Pebble.sendAppMessage( { "18":  "5" } );
                             }
                         }
                     };
                 //}}}
                 
-                if (cnfService[0] === 'O') 
+                    if (cnfService[0] === 'O') 
                     {
                     req.open('GET', "http://api.openweathermap.org/data/2.5/weather?appid=" + encodeURIComponent(cnfOWMkey) + "&q=%7B" + encodeURIComponent(cnfOWMloc) + "%7D&cnt=2&units=metric&mode=json", true);
                     }
@@ -1343,6 +1377,15 @@ function fetch_BTC () //{{{
         case "QuadrigaCX":
             req.open('GET', "https://api.quadrigacx.com/v2/ticker", true);
             break;
+        case "Kraken-CAD":
+            req.open('GET', "https://api.kraken.com/0/public/Ticker?pair=XBTCAD", true);
+            break;
+        case "Kraken-EUR":
+            req.open('GET', "https://api.kraken.com/0/public/Ticker?pair=XBTEUR", true);
+            break;
+        case "Kraken-USD":
+            req.open('GET', "https://api.kraken.com/0/public/Ticker?pair=XBTUSD", true);
+            break;
         default:
             //req.open('GET', "https://www.cavirtex.com/api/CAD/ticker.json", true);
             req.open('GET', "https://www.bitstamp.net/api/ticker/", true);
@@ -1350,7 +1393,7 @@ function fetch_BTC () //{{{
         }
     //}}}
     
-    req.timeout = 5000;
+    req.timeout = 3000;
     req.send(null);
 }
 //}}}
@@ -1512,7 +1555,7 @@ Pebble.addEventListener("appmessage", function(e) //{{{
     cnfOWMkey   = e.payload['21'];
     cnfOWMloc   = e.payload['22'];
     cnfCelsius  = e.payload['23'];
-    cnfHours    = e.payload['24'];
+    cnfHealth    = e.payload['24'];
 
     if ("GPS automatic" === cnfLocation)
         {
@@ -1598,7 +1641,7 @@ Pebble.addEventListener('webviewclosed', function(e) //{{{
         "21": configData.cnfOWMkey,
         "22": configData.cnfOWMloc,
         "23": configData.cnfCelsius ? "1":"0",
-        "24": configData.cnfHours ? "1":"0"
+        "24": configData.cnfHealth ? "1":"0"
         }, function()
         {
         console.log('Send successful!');

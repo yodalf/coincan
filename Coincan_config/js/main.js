@@ -15,7 +15,7 @@ function submitHandler() {
 }
 
 function loadOptions() {
-  var $cnfHours = $('#cnfHours');
+  var $cnfHealth = $('#cnfHealth');
   var $cnfCelsius = $('#cnfCelsius');
   var $cnfTrotteuse = $('#cnfTrotteuse');
   var $cnfExchange = $('#cnfExchange');
@@ -25,8 +25,8 @@ function loadOptions() {
   var $cnfOWMloc = $('#cnfOWMloc');
   var $cnfService = $('#cnfWeatherSvc');
 
-  if (localStorage.cnfHours) {
-    $cnfHours[0].checked = localStorage.cnfHours === 'true';
+  if (localStorage.cnfHealth) {
+    $cnfHealth[0].checked = localStorage.cnfHealth === 'true';
   }
   if (localStorage.cnfCelsius) {
     $cnfCelsius[0].checked = localStorage.cnfCelsius === 'true';
@@ -55,7 +55,7 @@ function loadOptions() {
 }
 
 function getAndStoreConfigData() {
-  var $cnfHours     = $('#cnfHours');
+  var $cnfHealth     = $('#cnfHealth');
   var $cnfCelsius     = $('#cnfCelsius');
   var $cnfTrotteuse   = $('#cnfTrotteuse');
   var $cnfExchange    = $('#cnfExchange');
@@ -68,7 +68,7 @@ function getAndStoreConfigData() {
   var options = {
     //backgroundColor: $backgroundColorPicker.val(),
     //twentyFourHourFormat: $timeFormatCheckbox[0].checked
-    cnfHours:      $cnfHours[0].checked,
+    cnfHealth:      $cnfHealth[0].checked,
     cnfCelsius:    $cnfCelsius[0].checked,
     cnfTrotteuse:  $cnfTrotteuse[0].checked,
     cnfExchange:   $cnfExchange.val(),
@@ -81,7 +81,7 @@ function getAndStoreConfigData() {
 
   //localStorage.backgroundColor = options.backgroundColor;
   //localStorage.twentyFourHourFormat = options.twentyFourHourFormat;
-  localStorage.cnfHours     = options.cnfHours;
+  localStorage.cnfHealth     = options.cnfHealth;
   localStorage.cnfCelsius   = options.cnfCelsius;
   localStorage.cnfTrotteuse = options.cnfTrotteuse;
   localStorage.cnfExchange  = options.cnfExchange;
