@@ -15,30 +15,20 @@ Allocating common symbols
 Common symbol       size              file
 
 cnfExchange         0x14              src/main.c.12.o
-trotteuse_scale_layer
-                    0x4               src/main.c.12.o
 forecastPeriod      0x10              src/main.c.12.o
 bgraph_data         0x1e0             src/main.c.12.o
 forecastLow         0x10              src/main.c.12.o
 btcL                0x10              src/main.c.12.o
-date_layer          0x4               src/main.c.12.o
 forecastTemp        0x10              src/main.c.12.o
 cnfLocation         0x20              src/main.c.12.o
 cnfOWMloc           0x40              src/main.c.12.o
-trotteuse_layer     0x4               src/main.c.12.o
 btcV                0x10              src/main.c.12.o
-bcH_layer           0x4               src/main.c.12.o
-bcL_layer           0x4               src/main.c.12.o
 obWindSpeed         0x10              src/main.c.12.o
-graph_layer         0x4               src/main.c.12.o
-bc_layer            0x4               src/main.c.12.o
 btcH                0x10              src/main.c.12.o
 cnfOWMkey           0x40              src/main.c.12.o
 cnfService          0x20              src/main.c.12.o
-DOT_layer           0x4               src/main.c.12.o
 forecastIconCode    0x10              src/main.c.12.o
 forecastHigh        0x10              src/main.c.12.o
-time_layer          0x4               src/main.c.12.o
 obWindDir_bkp       0x10              src/main.c.12.o
 geoArea1            0x5               src/main.c.12.o
 battery_text        0x8               src/main.c.12.o
@@ -52,7 +42,6 @@ window              0x4               src/main.c.12.o
 bluetooth_text      0x8               src/main.c.12.o
 cnfOWMid            0x20              src/main.c.12.o
 obHumidex           0x10              src/main.c.12.o
-weather_layer       0x9c              src/main.c.12.o
 obWindDir           0x10              src/main.c.12.o
 
 Discarded input sections
@@ -293,6 +282,8 @@ Discarded input sections
                 0x0000000000000000        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
  .text.layer_insert_above_sibling
                 0x0000000000000000        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+ .text.layer_insert_below_sibling
+                0x0000000000000000        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
  .text.layer_remove_child_layers
                 0x0000000000000000        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
  .text.layer_remove_from_parent
@@ -356,8 +347,6 @@ Discarded input sections
  .text.number_window_set_step_size
                 0x0000000000000000        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
  .text.number_window_set_value
-                0x0000000000000000        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
- .text.persist_get_size
                 0x0000000000000000        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
  .text.persist_read_data__deprecated
                 0x0000000000000000        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
@@ -1145,7 +1134,7 @@ LOAD /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none
  .note.gnu.build-id
                 0x0000000000000084       0x24 linker stubs
 
-.text           0x00000000000000a8     0x359c
+.text           0x00000000000000a8     0x3605
  *(.text)
  .text          0x00000000000000a8       0x14 /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
  .text          0x00000000000000bc      0x21c /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_addsubsf3.o)
@@ -1197,446 +1186,456 @@ LOAD /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none
                 0x00000000000006e8       0x80 src/main.c.12.o
                 0x00000000000006e8                trotteuse_update_proc
  .text.bluetooth_handler
-                0x0000000000000768       0xcc src/main.c.12.o
+                0x0000000000000768       0xd4 src/main.c.12.o
                 0x0000000000000768                bluetooth_handler
  .text.trotteuse_scale_update_proc
-                0x0000000000000834       0xdc src/main.c.12.o
-                0x0000000000000834                trotteuse_scale_update_proc
+                0x000000000000083c       0xdc src/main.c.12.o
+                0x000000000000083c                trotteuse_scale_update_proc
  .text.graph_update_proc
-                0x0000000000000910       0xa8 src/main.c.12.o
-                0x0000000000000910                graph_update_proc
+                0x0000000000000918       0xa8 src/main.c.12.o
+                0x0000000000000918                graph_update_proc
  .text.DOT_update_proc
-                0x00000000000009b8      0x12c src/main.c.12.o
-                0x00000000000009b8                DOT_update_proc
+                0x00000000000009c0      0x12c src/main.c.12.o
+                0x00000000000009c0                DOT_update_proc
  .text._string2float
-                0x0000000000000ae4       0x8c src/main.c.12.o
-                0x0000000000000ae4                _string2float
- .text._itoa    0x0000000000000b70       0x4a src/main.c.12.o
-                0x0000000000000b70                _itoa
- *fill*         0x0000000000000bba        0x2 
+                0x0000000000000aec       0x8c src/main.c.12.o
+                0x0000000000000aec                _string2float
+ .text._itoa    0x0000000000000b78       0x4a src/main.c.12.o
+                0x0000000000000b78                _itoa
+ *fill*         0x0000000000000bc2        0x2 
  .text.battery_handler
-                0x0000000000000bbc      0x11c src/main.c.12.o
-                0x0000000000000bbc                battery_handler
- .text.strchr   0x0000000000000cd8       0x1a src/main.c.12.o
-                0x0000000000000cd8                strchr
- *fill*         0x0000000000000cf2        0x2 
- .text._atoi    0x0000000000000cf4       0x74 src/main.c.12.o
-                0x0000000000000cf4                _atoi
+                0x0000000000000bc4      0x138 src/main.c.12.o
+                0x0000000000000bc4                battery_handler
+ .text.strchr   0x0000000000000cfc       0x1a src/main.c.12.o
+                0x0000000000000cfc                strchr
+ *fill*         0x0000000000000d16        0x2 
+ .text._atoi    0x0000000000000d18       0x74 src/main.c.12.o
+                0x0000000000000d18                _atoi
  .text.push_point
-                0x0000000000000d68       0x8c src/main.c.12.o
-                0x0000000000000d68                push_point
+                0x0000000000000d8c       0x90 src/main.c.12.o
+                0x0000000000000d8c                push_point
  .text.fetch_msg
-                0x0000000000000df4      0x17c src/main.c.12.o
-                0x0000000000000df4                fetch_msg
+                0x0000000000000e1c      0x17c src/main.c.12.o
+                0x0000000000000e1c                fetch_msg
  .text.in_received_handler
-                0x0000000000000f70      0xea0 src/main.c.12.o
-                0x0000000000000f70                in_received_handler
+                0x0000000000000f98      0xef8 src/main.c.12.o
+                0x0000000000000f98                in_received_handler
  .text.handle_minute_tick
-                0x0000000000001e10       0xe4 src/main.c.12.o
-                0x0000000000001e10                handle_minute_tick
+                0x0000000000001e90       0xdc src/main.c.12.o
+                0x0000000000001e90                handle_minute_tick
  .text.app_message_init
-                0x0000000000001ef4       0x34 src/main.c.12.o
-                0x0000000000001ef4                app_message_init
+                0x0000000000001f6c       0x34 src/main.c.12.o
+                0x0000000000001f6c                app_message_init
  .text.weather_layer_init
-                0x0000000000001f28      0x434 src/main.c.12.o
-                0x0000000000001f28                weather_layer_init
+                0x0000000000001fa0      0x434 src/main.c.12.o
+                0x0000000000001fa0                weather_layer_init
  .text.weather_layer_deinit
-                0x000000000000235c       0x58 src/main.c.12.o
-                0x000000000000235c                weather_layer_deinit
- .text.init     0x00000000000023b4      0x7b0 src/main.c.12.o
-                0x00000000000023b4                init
- .text.deinit   0x0000000000002b64      0x100 src/main.c.12.o
-                0x0000000000002b64                deinit
+                0x00000000000023d4       0x58 src/main.c.12.o
+                0x00000000000023d4                weather_layer_deinit
+ .text.init     0x000000000000242c      0x7f8 src/main.c.12.o
+                0x000000000000242c                init
+ .text.deinit   0x0000000000002c24       0xe0 src/main.c.12.o
+                0x0000000000002c24                deinit
  .text.startup.main
-                0x0000000000002c64       0x12 src/main.c.12.o
-                0x0000000000002c64                main
- *fill*         0x0000000000002c76        0x2 
+                0x0000000000002d04       0x12 src/main.c.12.o
+                0x0000000000002d04                main
+ *fill*         0x0000000000002d16        0x2 
  .text.app_event_loop
-                0x0000000000002c78        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002c78                app_event_loop
- .text.app_log  0x0000000000002c84        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002c84                app_log
+                0x0000000000002d18        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002d18                app_event_loop
+ .text.app_log  0x0000000000002d24        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002d24                app_log
  .text.app_message_open
-                0x0000000000002c90        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002c90                app_message_open
+                0x0000000000002d30        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002d30                app_message_open
  .text.battery_state_service_peek
-                0x0000000000002c9c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002c9c                battery_state_service_peek
+                0x0000000000002d3c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002d3c                battery_state_service_peek
  .text.battery_state_service_subscribe
-                0x0000000000002ca8        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002ca8                battery_state_service_subscribe
+                0x0000000000002d48        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002d48                battery_state_service_subscribe
  .text.battery_state_service_unsubscribe
-                0x0000000000002cb4        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002cb4                battery_state_service_unsubscribe
+                0x0000000000002d54        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002d54                battery_state_service_unsubscribe
  .text.bitmap_layer_create
-                0x0000000000002cc0        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002cc0                bitmap_layer_create
+                0x0000000000002d60        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002d60                bitmap_layer_create
  .text.bitmap_layer_destroy
-                0x0000000000002ccc        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002ccc                bitmap_layer_destroy
+                0x0000000000002d6c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002d6c                bitmap_layer_destroy
  .text.bitmap_layer_get_layer
-                0x0000000000002cd8        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002cd8                bitmap_layer_get_layer
+                0x0000000000002d78        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002d78                bitmap_layer_get_layer
  .text.bitmap_layer_set_bitmap
-                0x0000000000002ce4        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002ce4                bitmap_layer_set_bitmap
+                0x0000000000002d84        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002d84                bitmap_layer_set_bitmap
  .text.bitmap_layer_set_compositing_mode
-                0x0000000000002cf0        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002cf0                bitmap_layer_set_compositing_mode
+                0x0000000000002d90        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002d90                bitmap_layer_set_compositing_mode
  .text.bluetooth_connection_service_peek
-                0x0000000000002cfc        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002cfc                bluetooth_connection_service_peek
+                0x0000000000002d9c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002d9c                bluetooth_connection_service_peek
  .text.bluetooth_connection_service_subscribe
-                0x0000000000002d08        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002d08                bluetooth_connection_service_subscribe
+                0x0000000000002da8        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002da8                bluetooth_connection_service_subscribe
  .text.bluetooth_connection_service_unsubscribe
-                0x0000000000002d14        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002d14                bluetooth_connection_service_unsubscribe
+                0x0000000000002db4        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002db4                bluetooth_connection_service_unsubscribe
  .text.clock_is_24h_style
-                0x0000000000002d20        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002d20                clock_is_24h_style
+                0x0000000000002dc0        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002dc0                clock_is_24h_style
  .text.dict_find
-                0x0000000000002d2c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002d2c                dict_find
+                0x0000000000002dcc        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002dcc                dict_find
  .text.dict_write_cstring
-                0x0000000000002d38        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002d38                dict_write_cstring
+                0x0000000000002dd8        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002dd8                dict_write_cstring
  .text.dict_write_end
-                0x0000000000002d44        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002d44                dict_write_end
+                0x0000000000002de4        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002de4                dict_write_end
  .text.fonts_get_system_font
-                0x0000000000002d50        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002d50                fonts_get_system_font
+                0x0000000000002df0        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002df0                fonts_get_system_font
  .text.fonts_load_custom_font
-                0x0000000000002d5c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002d5c                fonts_load_custom_font
+                0x0000000000002dfc        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002dfc                fonts_load_custom_font
  .text.gbitmap_create_with_resource
-                0x0000000000002d68        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002d68                gbitmap_create_with_resource
+                0x0000000000002e08        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002e08                gbitmap_create_with_resource
  .text.gbitmap_destroy
-                0x0000000000002d74        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002d74                gbitmap_destroy
+                0x0000000000002e14        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002e14                gbitmap_destroy
  .text.gpath_create
-                0x0000000000002d80        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002d80                gpath_create
+                0x0000000000002e20        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002e20                gpath_create
  .text.gpath_destroy
-                0x0000000000002d8c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002d8c                gpath_destroy
+                0x0000000000002e2c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002e2c                gpath_destroy
  .text.gpath_draw_outline
-                0x0000000000002d98        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002d98                gpath_draw_outline
+                0x0000000000002e38        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002e38                gpath_draw_outline
  .text.graphics_draw_line
-                0x0000000000002da4        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002da4                graphics_draw_line
+                0x0000000000002e44        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002e44                graphics_draw_line
  .text.graphics_fill_rect
-                0x0000000000002db0        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002db0                graphics_fill_rect
+                0x0000000000002e50        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002e50                graphics_fill_rect
  .text.layer_add_child
-                0x0000000000002dbc        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002dbc                layer_add_child
+                0x0000000000002e5c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002e5c                layer_add_child
  .text.layer_create
-                0x0000000000002dc8        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002dc8                layer_create
+                0x0000000000002e68        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002e68                layer_create
  .text.layer_destroy
-                0x0000000000002dd4        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002dd4                layer_destroy
- .text.layer_insert_below_sibling
-                0x0000000000002de0        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002de0                layer_insert_below_sibling
+                0x0000000000002e74        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002e74                layer_destroy
  .text.layer_mark_dirty
-                0x0000000000002dec        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002dec                layer_mark_dirty
+                0x0000000000002e80        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002e80                layer_mark_dirty
  .text.layer_set_frame
-                0x0000000000002df8        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002df8                layer_set_frame
+                0x0000000000002e8c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002e8c                layer_set_frame
  .text.layer_set_update_proc
-                0x0000000000002e04        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002e04                layer_set_update_proc
+                0x0000000000002e98        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002e98                layer_set_update_proc
  .text.persist_delete
-                0x0000000000002e10        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002e10                persist_delete
+                0x0000000000002ea4        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002ea4                persist_delete
  .text.persist_exists
-                0x0000000000002e1c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002e1c                persist_exists
+                0x0000000000002eb0        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002eb0                persist_exists
+ .text.persist_get_size
+                0x0000000000002ebc        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002ebc                persist_get_size
  .text.persist_read_bool
-                0x0000000000002e28        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002e28                persist_read_bool
+                0x0000000000002ec8        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002ec8                persist_read_bool
  .text.persist_write_bool
-                0x0000000000002e34        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002e34                persist_write_bool
+                0x0000000000002ed4        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002ed4                persist_write_bool
  .text.persist_write_string
-                0x0000000000002e40        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002e40                persist_write_string
+                0x0000000000002ee0        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002ee0                persist_write_string
  .text.resource_get_handle
-                0x0000000000002e4c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002e4c                resource_get_handle
- .text.strcat   0x0000000000002e58        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002e58                strcat
- .text.strcmp   0x0000000000002e64        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002e64                strcmp
- .text.strcpy   0x0000000000002e70        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002e70                strcpy
+                0x0000000000002eec        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002eec                resource_get_handle
+ .text.strcat   0x0000000000002ef8        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002ef8                strcat
+ .text.strcmp   0x0000000000002f04        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002f04                strcmp
+ .text.strcpy   0x0000000000002f10        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002f10                strcpy
  .text.strftime
-                0x0000000000002e7c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002e7c                strftime
- .text.strlen   0x0000000000002e88        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002e88                strlen
- .text.strncat  0x0000000000002e94        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002e94                strncat
- .text.strncpy  0x0000000000002ea0        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002ea0                strncpy
+                0x0000000000002f1c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002f1c                strftime
+ .text.strlen   0x0000000000002f28        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002f28                strlen
+ .text.strncat  0x0000000000002f34        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002f34                strncat
+ .text.strncpy  0x0000000000002f40        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002f40                strncpy
  .text.tick_timer_service_subscribe
-                0x0000000000002eac        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002eac                tick_timer_service_subscribe
+                0x0000000000002f4c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002f4c                tick_timer_service_subscribe
  .text.tick_timer_service_unsubscribe
-                0x0000000000002eb8        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002eb8                tick_timer_service_unsubscribe
+                0x0000000000002f58        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002f58                tick_timer_service_unsubscribe
  .text.vibes_enqueue_custom_pattern
-                0x0000000000002ec4        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002ec4                vibes_enqueue_custom_pattern
+                0x0000000000002f64        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002f64                vibes_enqueue_custom_pattern
  .text.window_create
-                0x0000000000002ed0        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002ed0                window_create
+                0x0000000000002f70        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002f70                window_create
  .text.window_destroy
-                0x0000000000002edc        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002edc                window_destroy
+                0x0000000000002f7c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002f7c                window_destroy
  .text.window_get_root_layer
-                0x0000000000002ee8        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002ee8                window_get_root_layer
+                0x0000000000002f88        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002f88                window_get_root_layer
  .text.window_stack_push
-                0x0000000000002ef4        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002ef4                window_stack_push
+                0x0000000000002f94        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002f94                window_stack_push
  .text.app_message_outbox_begin
-                0x0000000000002f00        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002f00                app_message_outbox_begin
+                0x0000000000002fa0        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002fa0                app_message_outbox_begin
  .text.app_message_outbox_send
-                0x0000000000002f0c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002f0c                app_message_outbox_send
+                0x0000000000002fac        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002fac                app_message_outbox_send
  .text.app_message_register_inbox_dropped
-                0x0000000000002f18        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002f18                app_message_register_inbox_dropped
+                0x0000000000002fb8        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002fb8                app_message_register_inbox_dropped
  .text.app_message_register_inbox_received
-                0x0000000000002f24        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002f24                app_message_register_inbox_received
+                0x0000000000002fc4        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002fc4                app_message_register_inbox_received
  .text.app_message_register_outbox_failed
-                0x0000000000002f30        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002f30                app_message_register_outbox_failed
+                0x0000000000002fd0        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002fd0                app_message_register_outbox_failed
  .text.persist_read_data
-                0x0000000000002f3c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002f3c                persist_read_data
+                0x0000000000002fdc        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002fdc                persist_read_data
  .text.persist_read_string
-                0x0000000000002f48        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002f48                persist_read_string
+                0x0000000000002fe8        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002fe8                persist_read_string
  .text.persist_write_data
-                0x0000000000002f54        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002f54                persist_write_data
+                0x0000000000002ff4        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000002ff4                persist_write_data
  .text.bitmap_layer_set_background_color
-                0x0000000000002f60        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002f60                bitmap_layer_set_background_color
+                0x0000000000003000        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000003000                bitmap_layer_set_background_color
  .text.graphics_context_set_fill_color
-                0x0000000000002f6c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002f6c                graphics_context_set_fill_color
+                0x000000000000300c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x000000000000300c                graphics_context_set_fill_color
  .text.graphics_context_set_stroke_color
-                0x0000000000002f78        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002f78                graphics_context_set_stroke_color
+                0x0000000000003018        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000003018                graphics_context_set_stroke_color
  .text.window_set_background_color
-                0x0000000000002f84        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002f84                window_set_background_color
+                0x0000000000003024        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000003024                window_set_background_color
  .text.localtime
-                0x0000000000002f90        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002f90                localtime
+                0x0000000000003030        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000003030                localtime
  .text.text_layer_create
-                0x0000000000002f9c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002f9c                text_layer_create
+                0x000000000000303c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x000000000000303c                text_layer_create
  .text.text_layer_destroy
-                0x0000000000002fa8        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002fa8                text_layer_destroy
+                0x0000000000003048        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000003048                text_layer_destroy
  .text.text_layer_get_layer
-                0x0000000000002fb4        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002fb4                text_layer_get_layer
+                0x0000000000003054        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000003054                text_layer_get_layer
  .text.text_layer_set_background_color
-                0x0000000000002fc0        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002fc0                text_layer_set_background_color
+                0x0000000000003060        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000003060                text_layer_set_background_color
  .text.text_layer_set_font
-                0x0000000000002fcc        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002fcc                text_layer_set_font
+                0x000000000000306c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x000000000000306c                text_layer_set_font
  .text.text_layer_set_text
-                0x0000000000002fd8        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002fd8                text_layer_set_text
+                0x0000000000003078        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000003078                text_layer_set_text
  .text.text_layer_set_text_alignment
-                0x0000000000002fe4        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002fe4                text_layer_set_text_alignment
+                0x0000000000003084        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000003084                text_layer_set_text_alignment
  .text.text_layer_set_text_color
-                0x0000000000002ff0        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002ff0                text_layer_set_text_color
- .text.time     0x0000000000002ffc        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000002ffc                time
+                0x0000000000003090        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x0000000000003090                text_layer_set_text_color
+ .text.time     0x000000000000309c        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x000000000000309c                time
  .text.graphics_fill_radial
-                0x0000000000003008        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
-                0x0000000000003008                graphics_fill_radial
+                0x00000000000030a8        0xc /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+                0x00000000000030a8                graphics_fill_radial
  *(.rodata)
- .rodata        0x0000000000003014       0xc8 src/main.c.12.o
+ .rodata        0x00000000000030b4       0xe0 src/main.c.12.o
  *(.rodata*)
  .rodata.segments_long
-                0x00000000000030dc        0xc src/main.c.12.o
-                0x00000000000030dc                segments_long
+                0x0000000000003194        0xc src/main.c.12.o
+                0x0000000000003194                segments_long
  .rodata.segments_short
-                0x00000000000030e8       0x28 src/main.c.12.o
-                0x00000000000030e8                segments_short
+                0x00000000000031a0       0x28 src/main.c.12.o
+                0x00000000000031a0                segments_short
  .rodata.str1.1
-                0x0000000000003110      0x534 src/main.c.12.o
-                                        0x53d (size before relaxing)
+                0x00000000000031c8      0x4e5 src/main.c.12.o
+                                        0x4ee (size before relaxing)
 
-.glue_7         0x0000000000003644        0x0
+.glue_7         0x00000000000036b0        0x0
  .glue_7        0x0000000000000000        0x0 linker stubs
 
-.glue_7t        0x0000000000003644        0x0
+.glue_7t        0x00000000000036b0        0x0
  .glue_7t       0x0000000000000000        0x0 linker stubs
 
-.vfp11_veneer   0x0000000000003644        0x0
+.vfp11_veneer   0x00000000000036b0        0x0
  .vfp11_veneer  0x0000000000000000        0x0 linker stubs
 
-.v4_bx          0x0000000000003644        0x0
+.v4_bx          0x00000000000036b0        0x0
  .v4_bx         0x0000000000000000        0x0 linker stubs
 
-.iplt           0x0000000000003644        0x0
+.iplt           0x00000000000036b0        0x0
  .iplt          0x0000000000000000        0x0 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/crtbegin.o
 
-.rel.dyn        0x0000000000003644        0x0
+.rel.dyn        0x00000000000036b0        0x0
  .rel.iplt      0x0000000000000000        0x0 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/crtbegin.o
  .rel.got       0x0000000000000000        0x0 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/crtbegin.o
 
-.data           0x0000000000003644       0x6d
+.data           0x00000000000036b0       0x65
  *(.data)
- .data          0x0000000000003644        0x0 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/crti.o
- .data          0x0000000000003644        0x4 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/crtbegin.o
-                0x0000000000003644                __dso_handle
- .data          0x0000000000003648        0x0 src/main.c.12.o
- .data          0x0000000000003648        0x0 aplite/appinfo.auto.c.12.o
- .data          0x0000000000003648        0x0 /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
- .data          0x0000000000003648        0x0 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_addsubsf3.o)
- .data          0x0000000000003648        0x0 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_muldivsf3.o)
- .data          0x0000000000003648        0x0 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_cmpsf2.o)
- .data          0x0000000000003648        0x0 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_fixsfsi.o)
- .data          0x0000000000003648        0x0 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/crtend.o
- .data          0x0000000000003648        0x0 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/crtn.o
+ .data          0x00000000000036b0        0x0 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/crti.o
+ .data          0x00000000000036b0        0x4 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/crtbegin.o
+                0x00000000000036b0                __dso_handle
+ .data          0x00000000000036b4        0x0 src/main.c.12.o
+ .data          0x00000000000036b4        0x0 aplite/appinfo.auto.c.12.o
+ .data          0x00000000000036b4        0x0 /Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite/lib/libpebble.a(tmpeWFBzLpebble.o)
+ .data          0x00000000000036b4        0x0 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_addsubsf3.o)
+ .data          0x00000000000036b4        0x0 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_muldivsf3.o)
+ .data          0x00000000000036b4        0x0 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_cmpsf2.o)
+ .data          0x00000000000036b4        0x0 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_fixsfsi.o)
+ .data          0x00000000000036b4        0x0 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/crtend.o
+ .data          0x00000000000036b4        0x0 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/crtn.o
  *(.data.*)
  .data.BuzzEnable
-                0x0000000000003648        0x1 src/main.c.12.o
-                0x0000000000003648                BuzzEnable
- *fill*         0x0000000000003649        0x3 
+                0x00000000000036b4        0x1 src/main.c.12.o
+                0x00000000000036b4                BuzzEnable
+ *fill*         0x00000000000036b5        0x3 
  .data.trotteuse_draw_scale
-                0x000000000000364c        0x4 src/main.c.12.o
-                0x000000000000364c                trotteuse_draw_scale
+                0x00000000000036b8        0x4 src/main.c.12.o
+                0x00000000000036b8                trotteuse_draw_scale
  .data.rel.myShortVibes
-                0x0000000000003650        0x8 src/main.c.12.o
-                0x0000000000003650                myShortVibes
+                0x00000000000036bc        0x8 src/main.c.12.o
+                0x00000000000036bc                myShortVibes
  .data.rel.ro.bgraph_info
-                0x0000000000003658        0x8 src/main.c.12.o
-                0x0000000000003658                bgraph_info
+                0x00000000000036c4        0x8 src/main.c.12.o
+                0x00000000000036c4                bgraph_info
  .data.date_text
-                0x0000000000003660        0x9 src/main.c.12.o
-                0x0000000000003660                date_text
- *fill*         0x0000000000003669        0x3 
- .data.trigger_minute
-                0x000000000000366c        0x4 src/main.c.12.o
-                0x000000000000366c                trigger_minute
+                0x00000000000036cc        0x9 src/main.c.12.o
+                0x00000000000036cc                date_text
  .data.cnfHealth
-                0x0000000000003670        0x1 src/main.c.12.o
-                0x0000000000003670                cnfHealth
+                0x00000000000036d5        0x1 src/main.c.12.o
+                0x00000000000036d5                cnfHealth
  .data.cnfTrotteuse
-                0x0000000000003671        0x1 src/main.c.12.o
-                0x0000000000003671                cnfTrotteuse
+                0x00000000000036d6        0x1 src/main.c.12.o
+                0x00000000000036d6                cnfTrotteuse
  .data.cnfCelsius
-                0x0000000000003672        0x1 src/main.c.12.o
-                0x0000000000003672                cnfCelsius
- *fill*         0x0000000000003673        0x1 
+                0x00000000000036d7        0x1 src/main.c.12.o
+                0x00000000000036d7                cnfCelsius
  .data.rel.myLongVibes
-                0x0000000000003674        0x8 src/main.c.12.o
-                0x0000000000003674                myLongVibes
+                0x00000000000036d8        0x8 src/main.c.12.o
+                0x00000000000036d8                myLongVibes
  .data.time_text
-                0x000000000000367c        0x6 src/main.c.12.o
-                0x000000000000367c                time_text
+                0x00000000000036e0        0x6 src/main.c.12.o
+                0x00000000000036e0                time_text
  .data.WEATHER_ICONS
-                0x0000000000003682       0x2f src/main.c.12.o
-                0x0000000000003682                WEATHER_ICONS
+                0x00000000000036e6       0x2f src/main.c.12.o
+                0x00000000000036e6                WEATHER_ICONS
 
-.igot.plt       0x00000000000036b4        0x0
+.igot.plt       0x0000000000003718        0x0
  .igot.plt      0x0000000000000000        0x0 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/crtbegin.o
 
-.got            0x00000000000036b4       0x9c
- .got           0x00000000000036b4       0x9c /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/crtbegin.o
+.got            0x0000000000003718       0x74
+ .got           0x0000000000003718       0x74 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/crtbegin.o
 
-.got.plt        0x0000000000003750        0xc
- .got.plt       0x0000000000003750        0xc /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/crtbegin.o
-                0x0000000000003750                _GLOBAL_OFFSET_TABLE_
+.got.plt        0x000000000000378c        0xc
+ .got.plt       0x000000000000378c        0xc /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/crtbegin.o
+                0x000000000000378c                _GLOBAL_OFFSET_TABLE_
 
-.bss            0x000000000000375c      0x4d8
+.bss            0x0000000000003798      0x4e4
  *(.bss)
  *(.bss.*)
+ .bss.bcL_layer
+                0x0000000000003798        0x4 src/main.c.12.o
  .bss.btcL_value
-                0x000000000000375c        0x4 src/main.c.12.o
-                0x000000000000375c                btcL_value
+                0x000000000000379c        0x4 src/main.c.12.o
+                0x000000000000379c                btcL_value
+ .bss.time_layer
+                0x00000000000037a0        0x4 src/main.c.12.o
+ .bss.bcH_layer
+                0x00000000000037a4        0x4 src/main.c.12.o
  .bss.btcH_value
-                0x0000000000003760        0x4 src/main.c.12.o
-                0x0000000000003760                btcH_value
+                0x00000000000037a8        0x4 src/main.c.12.o
+                0x00000000000037a8                btcH_value
+ .bss.bot_layer
+                0x00000000000037ac        0x4 src/main.c.12.o
+ .bss.weather_layer
+                0x00000000000037b0       0x9c src/main.c.12.o
  .bss.btcV_value
-                0x0000000000003764        0x4 src/main.c.12.o
-                0x0000000000003764                btcV_value
+                0x000000000000384c        0x4 src/main.c.12.o
+                0x000000000000384c                btcV_value
+ .bss.trotteuse_layer
+                0x0000000000003850        0x4 src/main.c.12.o
  .bss.obIconCode_value
-                0x0000000000003768        0x4 src/main.c.12.o
-                0x0000000000003768                obIconCode_value
+                0x0000000000003854        0x4 src/main.c.12.o
+                0x0000000000003854                obIconCode_value
+ .bss.trotteuse_scale_layer
+                0x0000000000003858        0x4 src/main.c.12.o
  .bss.message_count
-                0x000000000000376c        0x4 src/main.c.12.o
-                0x000000000000376c                message_count
+                0x000000000000385c        0x4 src/main.c.12.o
+                0x000000000000385c                message_count
+ .bss.top_layer
+                0x0000000000003860        0x4 src/main.c.12.o
+ .bss.graph_layer
+                0x0000000000003864        0x4 src/main.c.12.o
  .bss.errorInWeather
-                0x0000000000003770        0x4 src/main.c.12.o
-                0x0000000000003770                errorInWeather
+                0x0000000000003868        0x4 src/main.c.12.o
+                0x0000000000003868                errorInWeather
  .bss.trotteuse
-                0x0000000000003774        0x4 src/main.c.12.o
-                0x0000000000003774                trotteuse
- .bss.DOT4      0x0000000000003778        0x4 src/main.c.12.o
-                0x0000000000003778                DOT4
- COMMON         0x000000000000377c      0x4b8 src/main.c.12.o
-                0x000000000000377c                cnfExchange
-                0x0000000000003790                trotteuse_scale_layer
-                0x0000000000003794                forecastPeriod
-                0x00000000000037a4                bgraph_data
-                0x0000000000003984                forecastLow
-                0x0000000000003994                btcL
-                0x00000000000039a4                date_layer
-                0x00000000000039a8                forecastTemp
-                0x00000000000039b8                cnfLocation
-                0x00000000000039d8                cnfOWMloc
-                0x0000000000003a18                trotteuse_layer
-                0x0000000000003a1c                btcV
-                0x0000000000003a2c                bcH_layer
-                0x0000000000003a30                bcL_layer
-                0x0000000000003a34                obWindSpeed
-                0x0000000000003a44                graph_layer
-                0x0000000000003a48                bc_layer
-                0x0000000000003a4c                btcH
-                0x0000000000003a5c                cnfOWMkey
-                0x0000000000003a9c                cnfService
-                0x0000000000003abc                DOT_layer
-                0x0000000000003ac0                forecastIconCode
-                0x0000000000003ad0                forecastHigh
-                0x0000000000003ae0                time_layer
-                0x0000000000003ae4                obWindDir_bkp
-                0x0000000000003af4                geoArea1
-                0x0000000000003af9                battery_text
-                0x0000000000003b04                bgraph
-                0x0000000000003b08                obTemperature
-                0x0000000000003b18                obWindGust
-                0x0000000000003b28                obIconCode
-                0x0000000000003b38                obWindChill
-                0x0000000000003b48                battery_state
-                0x0000000000003b4c                window
-                0x0000000000003b50                bluetooth_text
-                0x0000000000003b58                cnfOWMid
-                0x0000000000003b78                obHumidex
-                0x0000000000003b88                weather_layer
-                0x0000000000003c24                obWindDir
+                0x000000000000386c        0x4 src/main.c.12.o
+                0x000000000000386c                trotteuse
+ .bss.DOT4      0x0000000000003870        0x4 src/main.c.12.o
+                0x0000000000003870                DOT4
+ .bss.DOT_layer
+                0x0000000000003874        0x4 src/main.c.12.o
+ .bss.mid_layer
+                0x0000000000003878        0x4 src/main.c.12.o
+ .bss.date_layer
+                0x000000000000387c        0x4 src/main.c.12.o
+ .bss.bc_layer  0x0000000000003880        0x4 src/main.c.12.o
+ COMMON         0x0000000000003884      0x3f8 src/main.c.12.o
+                0x0000000000003884                cnfExchange
+                0x0000000000003898                forecastPeriod
+                0x00000000000038a8                bgraph_data
+                0x0000000000003a88                forecastLow
+                0x0000000000003a98                btcL
+                0x0000000000003aa8                forecastTemp
+                0x0000000000003ab8                cnfLocation
+                0x0000000000003ad8                cnfOWMloc
+                0x0000000000003b18                btcV
+                0x0000000000003b28                obWindSpeed
+                0x0000000000003b38                btcH
+                0x0000000000003b48                cnfOWMkey
+                0x0000000000003b88                cnfService
+                0x0000000000003ba8                forecastIconCode
+                0x0000000000003bb8                forecastHigh
+                0x0000000000003bc8                obWindDir_bkp
+                0x0000000000003bd8                geoArea1
+                0x0000000000003bdd                battery_text
+                0x0000000000003be8                bgraph
+                0x0000000000003bec                obTemperature
+                0x0000000000003bfc                obWindGust
+                0x0000000000003c0c                obIconCode
+                0x0000000000003c1c                obWindChill
+                0x0000000000003c2c                battery_state
+                0x0000000000003c30                window
+                0x0000000000003c34                bluetooth_text
+                0x0000000000003c3c                cnfOWMid
+                0x0000000000003c5c                obHumidex
+                0x0000000000003c6c                obWindDir
 
 DISCARD
  libc.a(*)
@@ -1677,24 +1676,24 @@ OUTPUT(/Users/realo/Pebble/CoinCan-Quebec/build/aplite/pebble-app.elf elf32-litt
  .comment       0x0000000000000000       0x4f aplite/appinfo.auto.c.12.o
  .comment       0x0000000000000000       0x4f /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/crtend.o
 
-.debug_info     0x0000000000000000     0x4e66
- .debug_info    0x0000000000000000     0x4734 src/main.c.12.o
- .debug_info    0x0000000000004734      0x44e aplite/appinfo.auto.c.12.o
- .debug_info    0x0000000000004b82       0xb9 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_addsubsf3.o)
- .debug_info    0x0000000000004c3b       0xb9 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_muldivsf3.o)
- .debug_info    0x0000000000004cf4       0xb9 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_cmpsf2.o)
- .debug_info    0x0000000000004dad       0xb9 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_fixsfsi.o)
+.debug_info     0x0000000000000000     0x4db0
+ .debug_info    0x0000000000000000     0x467e src/main.c.12.o
+ .debug_info    0x000000000000467e      0x44e aplite/appinfo.auto.c.12.o
+ .debug_info    0x0000000000004acc       0xb9 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_addsubsf3.o)
+ .debug_info    0x0000000000004b85       0xb9 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_muldivsf3.o)
+ .debug_info    0x0000000000004c3e       0xb9 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_cmpsf2.o)
+ .debug_info    0x0000000000004cf7       0xb9 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_fixsfsi.o)
 
-.debug_abbrev   0x0000000000000000      0x556
- .debug_abbrev  0x0000000000000000      0x468 src/main.c.12.o
- .debug_abbrev  0x0000000000000468       0x9e aplite/appinfo.auto.c.12.o
- .debug_abbrev  0x0000000000000506       0x14 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_addsubsf3.o)
- .debug_abbrev  0x000000000000051a       0x14 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_muldivsf3.o)
- .debug_abbrev  0x000000000000052e       0x14 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_cmpsf2.o)
- .debug_abbrev  0x0000000000000542       0x14 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_fixsfsi.o)
+.debug_abbrev   0x0000000000000000      0x565
+ .debug_abbrev  0x0000000000000000      0x477 src/main.c.12.o
+ .debug_abbrev  0x0000000000000477       0x9e aplite/appinfo.auto.c.12.o
+ .debug_abbrev  0x0000000000000515       0x14 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_addsubsf3.o)
+ .debug_abbrev  0x0000000000000529       0x14 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_muldivsf3.o)
+ .debug_abbrev  0x000000000000053d       0x14 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_cmpsf2.o)
+ .debug_abbrev  0x0000000000000551       0x14 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_fixsfsi.o)
 
-.debug_loc      0x0000000000000000      0xe18
- .debug_loc     0x0000000000000000      0xe18 src/main.c.12.o
+.debug_loc      0x0000000000000000      0xe1c
+ .debug_loc     0x0000000000000000      0xe1c src/main.c.12.o
 
 .debug_aranges  0x0000000000000000      0x160
  .debug_aranges
@@ -1713,19 +1712,19 @@ OUTPUT(/Users/realo/Pebble/CoinCan-Quebec/build/aplite/pebble-app.elf elf32-litt
 .debug_ranges   0x0000000000000000      0x148
  .debug_ranges  0x0000000000000000      0x148 src/main.c.12.o
 
-.debug_line     0x0000000000000000      0xe36
- .debug_line    0x0000000000000000      0x8e9 src/main.c.12.o
- .debug_line    0x00000000000008e9      0x156 aplite/appinfo.auto.c.12.o
- .debug_line    0x0000000000000a3f      0x128 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_addsubsf3.o)
- .debug_line    0x0000000000000b67      0x149 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_muldivsf3.o)
- .debug_line    0x0000000000000cb0      0x100 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_cmpsf2.o)
- .debug_line    0x0000000000000db0       0x86 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_fixsfsi.o)
+.debug_line     0x0000000000000000      0xe51
+ .debug_line    0x0000000000000000      0x904 src/main.c.12.o
+ .debug_line    0x0000000000000904      0x156 aplite/appinfo.auto.c.12.o
+ .debug_line    0x0000000000000a5a      0x128 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_addsubsf3.o)
+ .debug_line    0x0000000000000b82      0x149 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_muldivsf3.o)
+ .debug_line    0x0000000000000ccb      0x100 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_cmpsf2.o)
+ .debug_line    0x0000000000000dcb       0x86 /usr/local/Cellar/pebble-toolchain/2.0/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.7.2/thumb2/libgcc.a(_arm_fixsfsi.o)
 
-.debug_str      0x0000000000000000     0x1a3a
- .debug_str     0x0000000000000000     0x1828 src/main.c.12.o
-                                       0x18f9 (size before relaxing)
- .debug_str     0x0000000000001828      0x212 aplite/appinfo.auto.c.12.o
+.debug_str      0x0000000000000000     0x1a3f
+ .debug_str     0x0000000000000000     0x182d src/main.c.12.o
+                                       0x18fe (size before relaxing)
+ .debug_str     0x000000000000182d      0x212 aplite/appinfo.auto.c.12.o
                                         0x64e (size before relaxing)
 
-.debug_frame    0x0000000000000000      0x2ac
- .debug_frame   0x0000000000000000      0x2ac src/main.c.12.o
+.debug_frame    0x0000000000000000      0x2a8
+ .debug_frame   0x0000000000000000      0x2a8 src/main.c.12.o

@@ -23,60 +23,65 @@
 
 #define GRECT_DATE_LAYER (GRect((144-100)/2, -4, 100, 19))
 
-#define BTC_OFFSET       20
+#define BTC_OFFSET       14
 #define X_SIZE 60
-#define Y_SIZE 24
+#define Y_SIZE 22
 
 #define X_FRAME 144
 #define Y_FRAME 168
 
-#define GRECT_TROTTEUSE GRect(10, 95, 134, 6)
+//#define GRECT_TROTTEUSE GRect(10, 95, 134, 6)
+#define GRECT_TROTTEUSE GRect(10, 0, 134, 6)
 
 
-#define GRECT_DOT4 GRect(X_FRAME-10,90,10,10)
+#define GRECT_DOT4 GRect(X_FRAME-10,91,10,10)
 #define GRECT_WEATHER_LAYER_1  GRect(pos.x, pos.y, 144, 80)
-#define GRECT_WEATHER_LAYER_2  GRect(0, 10, 144, 80)
-#define GRECT_WEATHER_LAYER_3  GRect(0, 8, 144, 80)
-#define GRECT_WEATHER_LAYER_4  GRect(0, 4, 144, 80)
-#define GRECT_WEATHER_LAYER_5  GRect(0, 29, 144, 80)
-#define GRECT_WEATHER_LAYER_6  GRect(0, 24, 144, 80)
-#define GRECT_WEATHER_LAYER_7  GRect(0, 43, 144, 80)
-#define GRECT_WEATHER_LAYER_8  GRect(0, 38, 144, 80)
-#define GRECT_WEATHER_LAYER_9  GRect(0, 14, 144, 80)
-#define GRECT_WEATHER_LAYER_10 GRect(0, 39, 144, 80)
-#define GRECT_WEATHER_LAYER_11 GRect(0, 35, 144, 80)
-#define GRECT_WEATHER_LAYER_12 GRect(0, 60, 144, 80)
-#define GRECT_BATTERY_LAYER    GRect(122, 63, 22, 16)
-#define GRECT_BLUETOOTH_LAYER  GRect(0, 63, 30, 16)
-#define GRECT_ICON1_LAYER      GRect(0, 11, 60, 60)
-#define GRECT_ICON2_LAYER      GRect(145-60, 11, 60, 60)
+#define GRECT_WEATHER_LAYER_2  GRect(0, 0, 144, 80)
+#define GRECT_WEATHER_LAYER_3  GRect(0, -7, 144, 80)
+#define GRECT_WEATHER_LAYER_5  GRect(0, 14, 144, 80)
+#define GRECT_WEATHER_LAYER_7  GRect(0, 30, 144, 80)
+#define GRECT_WEATHER_LAYER_9  GRect(0, -2, 144, 80)
+#define GRECT_WEATHER_LAYER_10 GRect(0, 23, 144, 80)
+#define GRECT_WEATHER_LAYER_11 GRect(0, 19, 144, 80)
+#define GRECT_WEATHER_LAYER_12 GRect(0, 48, 144, 80)
+#define GRECT_BATTERY_LAYER    GRect(122, 51, 22, 16)
+#define GRECT_BLUETOOTH_LAYER  GRect(0, 51, 30, 16)
+
+#define GRECT_ICON1_LAYER      GRect(0, -3, 60, 60)
+#define GRECT_ICON2_LAYER      GRect(145-60, -3, 60, 60)
 
 #ifdef PBL_COLOR
-#define GRECT_TIME_LAYER (GRect((144-127)/2-1, 37, 127, 55))
-#define GRECT_BCV3_LAYER        GRect(21, 16, 56, 24)
-#define GRECT_BCH3_LAYER        GRect( 0, 17, 31, 14)
-#define GRECT_BCL3_LAYER        GRect( 0, 30, 31, 14)
-#define GRECT_BCV4_LAYER        GRect(23, 16, 56, 24)
-#define GRECT_BCH4_LAYER        GRect( 0, 17, 31, 14)
-#define GRECT_BCL4_LAYER        GRect( 0, 30, 31, 14)
-#define GRECT_BCV5_LAYER        GRect( 5, 16, 66, 24)
-#define GRECT_BCH5_LAYER        GRect( 0, 17,  5, 16)
-#define GRECT_BCL5_LAYER        GRect( 0, 30,  5, 16)
+#define GRECT_TIME_LAYER (GRect((144-134)/2-1, 37, 134, 55))
+#define GRECT_BCV3_LAYER        GRect(21, 16-6, 56, 24)
+#define GRECT_BCH3_LAYER        GRect( 0, 17-6, 31, 14)
+#define GRECT_BCL3_LAYER        GRect( 0, 30-6, 31, 14)
+#define GRECT_BCV4_LAYER        GRect(23, 16-6, 56, 24)
+#define GRECT_BCH4_LAYER        GRect( 0, 17-6, 31, 14)
+#define GRECT_BCL4_LAYER        GRect( 0, 30-6, 31, 14)
+#define GRECT_BCV5_LAYER        GRect( 5, 16-6, 66, 24)
+#define GRECT_BCH5_LAYER        GRect( 0, 17-6,  5, 16)
+#define GRECT_BCL5_LAYER        GRect( 0, 30-6,  5, 16)
 #else
-#define GRECT_TIME_LAYER (GRect((144-127)/2, 40, 127, 55))
-#define GRECT_BCV3_LAYER        GRect(21, 16, 56, 24)
-#define GRECT_BCH3_LAYER        GRect( 0, 17, 31, 14)
-#define GRECT_BCL3_LAYER        GRect( 0, 30, 31, 14)
-#define GRECT_BCV4_LAYER        GRect(23, 16, 56, 24)
-#define GRECT_BCH4_LAYER        GRect( 0, 17, 31, 14)
-#define GRECT_BCL4_LAYER        GRect( 0, 30, 31, 14)
-#define GRECT_BCV5_LAYER        GRect( 5, 16, 66, 24)
-#define GRECT_BCH5_LAYER        GRect( 0, 17,  5, 16)
-#define GRECT_BCL5_LAYER        GRect( 0, 30,  5, 16)
+#define GRECT_TIME_LAYER (GRect((144-134)/2, 37, 134, 55))
+#define GRECT_BCV3_LAYER        GRect(21, 16-6, 56, 24)
+#define GRECT_BCH3_LAYER        GRect( 0, 17-6, 31, 14)
+#define GRECT_BCL3_LAYER        GRect( 0, 30-6, 31, 14)
+#define GRECT_BCV4_LAYER        GRect(23, 16-6, 56, 24)
+#define GRECT_BCH4_LAYER        GRect( 0, 17-6, 31, 14)
+#define GRECT_BCL4_LAYER        GRect( 0, 30-6, 31, 14)
+#define GRECT_BCV5_LAYER        GRect( 5, 16-6, 66, 24)
+#define GRECT_BCH5_LAYER        GRect( 0, 17-6,  5, 16)
+#define GRECT_BCL5_LAYER        GRect( 0, 30-6,  5, 16)
 #endif
 
-#define GRECT_GRAPH_LAYER_1 GRect(140-X_SIZE, BTC_OFFSET, X_SIZE, Y_SIZE)
-#define GRECT_GRAPH_LAYER_2 GRect(135-X_SIZE, BTC_OFFSET, X_SIZE, Y_SIZE)
+#define GRECT_GRAPH_LAYER_1     GRect(140-X_SIZE, BTC_OFFSET+1, X_SIZE, Y_SIZE)
+#define GRECT_GRAPH_LAYER_2     GRect(135-X_SIZE, BTC_OFFSET+1, X_SIZE, Y_SIZE)
+
+#define GRECT_TOP_LAYER         GRect(0,   0, 144, 93)
+#define GRECT_MIDDLE_LAYER      GRect(0,  95, 144, 7)
+#define GRECT_BOTTOM_LAYER      GRect(0, 102, 144, 67)
+
+
 
 
 //}}}
@@ -84,7 +89,7 @@
 //{{{  Colors
 #ifdef PBL_COLOR
 //{{{  
-#define cWindowB    GColorClear
+#define cWindowB    GColorBlack
 #define cTopB
 #define cBitcoinsB
 #define cWeatherB   GColorBlack
@@ -165,47 +170,6 @@
 #define cInfoBatB  GColorClear
 #define cInfoBatAlarmB  GColorWhite
 #define cInfoBatAlarmF  GColorBlack
-/*
-#define cWindowB    GColorBlack
-#define cTopB
-#define cBitcoinsB
-#define cWeatherB   GColorWhite
-#define cIconB      GColorClear
-
-#define cInfoB      GColorClear
-#define cInfoF      GColorBlack
-
-#define cTimeF      GColorWhite
-#define cTimeB      GColorClear
-
-#define cDateF      GColorWhite
-#define cDateB      GColorClear
-
-#define cBtchF      GColorWhite
-#define cBtchB      GColorClear
-
-#define cBtclF      GColorWhite
-#define cBtclB      GColorClear
-
-#define cBtcF       GColorWhite
-#define cBtcB       GColorClear
-
-#define cGraphF     GColorWhite
-
-#define cTempF  GColorBlack
-#define cTempB  GColorClear
-
-
-#define cInfoBlueF  GColorBlack
-#define cInfoBlueB  GColorClear
-#define cInfoBlueAlarmB  GColorBlack
-#define cInfoBlueAlarmF  GColorWhite
-
-#define cInfoBatF  GColorBlack
-#define cInfoBatB  GColorClear
-#define cInfoBatAlarmB  GColorBlack
-#define cInfoBatAlarmF  GColorWhite
-*/
 //}}}
 #endif
 //}}}
@@ -216,16 +180,20 @@
 Window    *window;
 
 //{{{  Layers
-TextLayer *time_layer;
-TextLayer *date_layer;
-TextLayer *bc_layer;
-TextLayer *bcH_layer;
-TextLayer *bcL_layer;
+static TextLayer *time_layer;
+static TextLayer *date_layer;
+static TextLayer *bc_layer;
+static TextLayer *bcH_layer;
+static TextLayer *bcL_layer;
 
-Layer *graph_layer;
-Layer *trotteuse_layer;
-Layer *trotteuse_scale_layer;
-Layer *DOT_layer;
+static Layer *graph_layer;
+static Layer *trotteuse_layer;
+static Layer *trotteuse_scale_layer;
+static Layer *DOT_layer;
+
+static Layer *top_layer;
+static Layer *mid_layer;
+static Layer *bot_layer;
 
 //{{{  WeatherLayer struct
 typedef struct
@@ -259,7 +227,7 @@ typedef struct
 } WeatherLayer;
 //}}}
 
-WeatherLayer weather_layer;
+static WeatherLayer weather_layer;
 //}}}
 
 //{{{  Variables
@@ -391,9 +359,6 @@ const GPathInfo bgraph_info =
     .points = bgraph_data
 };
 //}}}
-
-// FIX THIS when layers are sane again!
-int trigger_minute = 1;
 
 float DOT1 = 0.0;
 float DOT2 = 0.0;
@@ -553,8 +518,9 @@ void push_point(float btc, float btcL, float btcH) //{{{
     for (i=0; i<X_SIZE-1; i++) bgraph_data[i].y = bgraph_data[i+1].y;
     new_point =  (Y_SIZE-1) - ((Y_SIZE-1) * ((btc-btcL)/(btcH-btcL)) );
     bgraph_data[X_SIZE-1].y =  new_point;
+    bgraph_data[X_SIZE].y =  new_point;
     j = 2*X_SIZE;
-    for (i=X_SIZE; i<2*X_SIZE; i++) bgraph_data[i].y = bgraph_data[j-i-1].y;
+    for (i=X_SIZE+1; i<2*X_SIZE; i++) bgraph_data[i].y = bgraph_data[j-i-1].y;
 }
 //}}}
 void fetch_msg(void) //{{{
@@ -640,13 +606,11 @@ void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) //{{{
         {
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "S: %s %s %d", time_text, date_text,tick_time->tm_min);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "TIME: %d %d %d", tick_time->tm_hour,tick_time->tm_min, tick_time->tm_sec);
+
         trotteuse = tick_time->tm_sec;
 
-        //if (trotteuse_draw_scale)
-        //    {
-        //    //trotteuse_draw_scale = 0;
-        //    layer_mark_dirty(trotteuse_scale_layer);
-        //    }
+        //time_text[0]=0x30+(time_text[0]+1) % 3;
+        //obTemperature[1]=0x30+(time_text[0]+1) % 3;
 
         layer_mark_dirty(trotteuse_layer);
         }
@@ -657,8 +621,6 @@ void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) //{{{
         {
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "M: %s %s %d", time_text, date_text,tick_time->tm_min);
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "TIME: %d %d", tick_time->tm_hour,tick_time->tm_min);
-
-        trigger_minute = 1;
 
         if ((tick_time->tm_hour >= 22) || (tick_time->tm_hour <= 5))
             BuzzEnable = false;
@@ -681,6 +643,7 @@ void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) //{{{
 
         layer_mark_dirty(text_layer_get_layer(time_layer));
         layer_mark_dirty(text_layer_get_layer(date_layer));
+        layer_mark_dirty(top_layer);
 
         if ( (0 == (tick_time->tm_min % 5))  /*|| (message_count != 3)*/)
             {
@@ -773,8 +736,6 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
         APP_LOG(APP_LOG_LEVEL_DEBUG, "* IN Exchange: %s", cnfExchange_tuple->value->cstring);
         strcpy(cnfExchange, cnfExchange_tuple->value->cstring);
         persist_write_string(KEY_CNF_EXCHANGE, cnfExchange);
-
-        
         }
     //}}}
     if (cnfLocation_tuple) //{{{
@@ -1303,7 +1264,7 @@ void trotteuse_scale_update_proc(struct Layer *layer, GContext *ctx) //{{{
         else
             graphics_context_set_stroke_color(ctx, cTimeB);
 
-        graphics_context_set_fill_color(ctx, GColorBlack );
+        graphics_context_set_fill_color(ctx, GColorBlack);
         graphics_fill_rect(ctx, FULL_FRAME, 0, GCornerNone);
         
         for (int i=0; i<=60; i+=5)
@@ -1346,11 +1307,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp_layer_background));
 
     // Add temperature #1 layer
-    //#ifdef PBL_COLOR
     weather_layer->temp1_layer = text_layer_create(GRECT_WEATHER_LAYER_3);
-    //#else
-    //weather_layer->temp1_layer = text_layer_create(GRECT_WEATHER_LAYER_4);
-    //#endif
     text_layer_set_background_color(weather_layer->temp1_layer, cTempB);
     text_layer_set_text_color(weather_layer->temp1_layer, cTempF );
     text_layer_set_font(weather_layer->temp1_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
@@ -1359,11 +1316,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp1_layer));
 
     // Add temperature #2 layer
-    //#ifdef PBL_COLOR
     weather_layer->temp2_layer = text_layer_create(GRECT_WEATHER_LAYER_5);
-    //#else
-    //weather_layer->temp2_layer = text_layer_create(GRECT_WEATHER_LAYER_6);
-    //#endif
     text_layer_set_background_color(weather_layer->temp2_layer, cTempB);
     text_layer_set_text_color(weather_layer->temp2_layer, cTempF);
     text_layer_set_font(weather_layer->temp2_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
@@ -1372,12 +1325,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp2_layer));
 
     // Add temperature #3 layer
-    //#ifdef PBL_COLOR
     weather_layer->temp3_layer = text_layer_create(GRECT_WEATHER_LAYER_7);
-    //#else
-    //weather_layer->temp3_layer = text_layer_create(GRECT_WEATHER_LAYER_8);
-    //#endif
-
     text_layer_set_background_color(weather_layer->temp3_layer, cTempB);
     text_layer_set_text_color(weather_layer->temp3_layer, cTempF);
     text_layer_set_font(weather_layer->temp3_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
@@ -1458,8 +1406,8 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     text_layer_set_text(weather_layer->temp1_layer, "");
     text_layer_set_text(weather_layer->temp2_layer, "");
     text_layer_set_text(weather_layer->temp3_layer, "");
-    text_layer_set_text(weather_layer->temp4_layer, "COINCAN 3.7");
-    text_layer_set_text(weather_layer->temp5_layer, "health");
+    text_layer_set_text(weather_layer->temp4_layer, "COINCAN 3.8");
+    text_layer_set_text(weather_layer->temp5_layer, "bugfix");
 }
 //}}}
 void weather_layer_deinit(WeatherLayer* weather_layer) //{{{
@@ -1499,22 +1447,50 @@ void init(void) //{{{
 
 
 
+    top_layer = layer_create( GRECT_TOP_LAYER );
+    mid_layer = layer_create( GRECT_MIDDLE_LAYER );
+    bot_layer = layer_create( GRECT_BOTTOM_LAYER );
+    layer_add_child(window_get_root_layer(window), top_layer);
+    //layer_insert_above_sibling(mid_layer, top_layer);
+    //layer_insert_above_sibling(bot_layer, bot_layer);
+    layer_add_child(window_get_root_layer(window), mid_layer);
+    //layer_add_child(mid_layer, top_layer);
+    //layer_add_child(mid_layer, bot_layer);
+    layer_add_child(window_get_root_layer(window), bot_layer);
+
+    // Add graph layer
+    #ifdef PBL_COLOR
+        graph_layer = layer_create( GRECT_GRAPH_LAYER_1 );
+    #else
+        graph_layer = layer_create( GRECT_GRAPH_LAYER_2 );
+    #endif
+    //layer_add_child(window_get_root_layer(window), graph_layer);
+    //layer_insert_below_sibling(window_get_root_layer(window), graph_layer);
+    layer_add_child(top_layer, graph_layer);
+    layer_set_update_proc(graph_layer, graph_update_proc);
+    //layer_insert_below_sibling(text_layer_get_layer(time_layer), graph_layer);
+    //layer_insert_above_sibling(top_layer, graph_layer);
+    //layer_insert_below_sibling(graph_layer, text_layer_get_layer(time_layer));
+
+
     time_layer = text_layer_create(GRECT_TIME_LAYER);
     text_layer_set_text_color(time_layer, cTimeF);
     text_layer_set_background_color(time_layer, cTimeB);
     text_layer_set_font(time_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FUTURA_CONDENSED_53)));
     text_layer_set_text_alignment(time_layer, GTextAlignmentCenter);
     text_layer_set_text(time_layer, time_text);
-    layer_add_child(window_get_root_layer(window), text_layer_get_layer(time_layer));
-    //layer_add_child(text_layer_get_layer(bcH_layer), text_layer_get_layer(time_layer));
-
+    //layer_add_child(window_get_root_layer(window), text_layer_get_layer(time_layer));
+    layer_add_child(top_layer, text_layer_get_layer(time_layer));
+    //layer_insert_below_sibling(text_layer_get_layer(time_layer), top_layer);
+    
     date_layer = text_layer_create(GRECT_DATE_LAYER);
     text_layer_set_text_color(date_layer, cDateF);
     text_layer_set_background_color(date_layer, cDateB);
-    text_layer_set_font(date_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FUTURA_18)));
+    text_layer_set_font(date_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+    //text_layer_set_font(date_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FUTURA_18)));
     text_layer_set_text_alignment(date_layer, GTextAlignmentCenter);
     text_layer_set_text(date_layer, date_text);
-    layer_add_child(window_get_root_layer(window), text_layer_get_layer(date_layer));
+    layer_add_child(top_layer, text_layer_get_layer(date_layer));
 
     bc_layer = text_layer_create(GRECT_BCV3_LAYER);
     text_layer_set_text_color(bc_layer, cBtcF);
@@ -1523,7 +1499,7 @@ void init(void) //{{{
     text_layer_set_text_alignment(bc_layer, GTextAlignmentCenter);
     text_layer_set_text(bc_layer, btcV);
     //layer_add_child(window_get_root_layer(window), text_layer_get_layer(bc_layer));
-    layer_add_child(window_get_root_layer(window), text_layer_get_layer(bc_layer));
+    layer_add_child(top_layer, text_layer_get_layer(bc_layer));
 
     bcL_layer = text_layer_create(GRECT_BCL3_LAYER);
     text_layer_set_text_color(bcL_layer, cBtclF);
@@ -1532,7 +1508,7 @@ void init(void) //{{{
     text_layer_set_text_alignment(bcL_layer, GTextAlignmentCenter);
     text_layer_set_text(bcL_layer, btcL);
     //layer_add_child(text_layer_get_layer(bc_layer), text_layer_get_layer(bcL_layer));
-    layer_add_child(window_get_root_layer(window), text_layer_get_layer(bcL_layer));
+    layer_add_child(top_layer, text_layer_get_layer(bcL_layer));
     
     bcH_layer = text_layer_create(GRECT_BCH3_LAYER);
     text_layer_set_text_color(bcH_layer, cBtchF);
@@ -1542,41 +1518,31 @@ void init(void) //{{{
     text_layer_set_text(bcH_layer, btcH);
     //layer_add_child(text_layer_get_layer(bcL_layer), text_layer_get_layer(bcH_layer));
     //layer_add_child(window_get_root_layer(window), text_layer_get_layer(bcH_layer));
-    layer_add_child(window_get_root_layer(window), text_layer_get_layer(bcH_layer));
+    layer_add_child(top_layer, text_layer_get_layer(bcH_layer));
 
-    layer_insert_below_sibling(text_layer_get_layer(bc_layer), text_layer_get_layer(bcL_layer));
-    layer_insert_below_sibling(text_layer_get_layer(bcL_layer), text_layer_get_layer(bcH_layer));
-
-
-
+    //layer_insert_below_sibling(text_layer_get_layer(bc_layer), text_layer_get_layer(bcL_layer));
+    //layer_insert_below_sibling(text_layer_get_layer(bcL_layer), text_layer_get_layer(bcH_layer));
 
 
     // Add weather layer
-    weather_layer_init(&weather_layer, GPoint(0, 90));
-    layer_add_child(window_get_root_layer(window), weather_layer.layer);
+    weather_layer_init(&weather_layer, GPoint(0, 0));
+    layer_add_child(bot_layer, weather_layer.layer);
 
 
-    // Add a trotteuse scale layer
-    trotteuse_scale_layer = layer_create( GRECT_TROTTEUSE );
-    layer_add_child(window_get_root_layer(window), trotteuse_scale_layer);
-    layer_set_update_proc(trotteuse_scale_layer, trotteuse_scale_update_proc);
-    //layer_insert_above_sibling(trotteuse_scale_layer, trotteuse_layer);
 
     // Add a trotteuse layer
     trotteuse_layer = layer_create( GRECT_TROTTEUSE );
-    layer_add_child(window_get_root_layer(window), trotteuse_layer);
+    layer_add_child(mid_layer, trotteuse_layer);
     layer_set_update_proc(trotteuse_layer, trotteuse_update_proc);
-    layer_insert_below_sibling(trotteuse_layer, trotteuse_scale_layer);
+    //layer_insert_above_sibling(trotteuse_layer, mid_layer);
 
+    // Add a trotteuse scale layer
+    trotteuse_scale_layer = layer_create( GRECT_TROTTEUSE );
+    //layer_add_child(window_get_root_layer(window), trotteuse_scale_layer);
+    layer_add_child(mid_layer, trotteuse_scale_layer);
+    layer_set_update_proc(trotteuse_scale_layer, trotteuse_scale_update_proc);
+    //layer_insert_above_sibling(trotteuse_scale_layer, trotteuse_layer);
 
-    // Add graph layer
-    #ifdef PBL_COLOR
-        graph_layer = layer_create( GRECT_GRAPH_LAYER_1 );
-    #else
-        graph_layer = layer_create( GRECT_GRAPH_LAYER_2 );
-    #endif
-    layer_add_child(window_get_root_layer(window), graph_layer);
-    layer_set_update_proc(graph_layer, graph_update_proc);
 
 
     // Upper right DOT layer
@@ -1598,25 +1564,24 @@ void init(void) //{{{
 
     // Create the Gpath
     bgraph = gpath_create(&bgraph_info);
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "** Persist size: %d", sizeof(bgraph_data));
 
     if (persist_exists(0))
         {
         int dsize = sizeof(bgraph_data);
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "** Read Persist size: %d", dsize);
-        persist_read_data(0, bgraph_data, 200);
-        persist_read_data(1, ((char *) bgraph_data) + 200, dsize-200);
+        persist_read_data(0, bgraph_data, 250);
+        persist_read_data(1, ((char *) bgraph_data) + 250, dsize-250);
         }
     else
         {
         for (int i=0; i<X_SIZE; i++) bgraph_data[i] = (GPoint)
             {
-            i,0
+            i,Y_SIZE/2
             };
         for (int i=X_SIZE; i<2*X_SIZE; i++) bgraph_data[i] = (GPoint)
             {
-            (2*X_SIZE)-i-1,0
+            (2*X_SIZE)-i-1,Y_SIZE/2
             };
+
         }
 
     if (persist_exists(KEY_CNF_HEALTH))
@@ -1705,10 +1670,18 @@ void init(void) //{{{
     battery_state_service_subscribe( & battery_handler );
 
 
-    //gpath_init(&bgraph, &bgraph_info);
-    //for (int i=0; i<X_SIZE; i++) bgraph_data[i] = (GPoint) {i,0};
-    //for (int i=X_SIZE; i<2*X_SIZE; i++) bgraph_data[i] = (GPoint) {(2*X_SIZE)-i-1,0};
+    // GRAPH DEBUG
+    //for (int i=0; i<X_SIZE; i++) push_point(X_SIZE-i, X_SIZE/4, X_SIZE/2);
+    //for (int i=0; i<X_SIZE; i++) push_point(i, 0, X_SIZE);
+    //for (int i=0; i<X_SIZE; i++) push_point(1, 0, 2);
 
+
+    if (persist_get_size(0) != 250)
+        {
+        persist_delete(0);
+        persist_delete(1);
+        for (int i=0; i<X_SIZE; i++) push_point(1, 0, 2);
+        }    
 
     obWindSpeed[0] = obWindGust[0] = '!';
 
@@ -1723,7 +1696,6 @@ void init(void) //{{{
     else
         strcpy(bluetooth_text," LOST!");
 
-//    fetch_msg();
 }
 //}}}
 void deinit(void) //{{{
@@ -1749,9 +1721,9 @@ void deinit(void) //{{{
     // Save persistent data
     int dsize = sizeof(bgraph_data);
     persist_delete(0);
-    int ret = persist_write_data(0, bgraph_data, 200);
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "** Write Persist size, ret: %d %d", dsize, ret);
-    persist_write_data(1, ((char *) bgraph_data)+200, dsize-200);
+    persist_delete(1);
+    int ret = persist_write_data(0, bgraph_data, 250);
+    persist_write_data(1, ((char *) bgraph_data)+250, dsize-250+1);
 
 }
 //}}}
