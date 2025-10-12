@@ -7,7 +7,7 @@ var geoLatitude=0.0;
 var geoLongitude=0.0;
 var gpsError=0;
 
-var cnfExchange = "Bitstamp";
+var cnfExchange = "Kraken-USD";
 var cnfService = "";
 var cnfOWMid = "";
 var cnfOWMkey = "";
@@ -1015,58 +1015,8 @@ function fetch_BTC () //{{{
                 var response = JSON.parse(req.responseText);
 
                 btcH = btcL = btcV = 0.0;
-                //btcH = 1888.0;
-                //btcL = 1886.0;
-                //btcV = 1887.0;
 
-                if (typeof response[0] != 'undefined') {{{
-                    {
-                    switch (cnfExchange) 
-                        {
-                        case "Bitpay-CNY":
-                            var btcV = response[7]["rate"];
-                            break;
-                        case "Bitpay-CAD":
-                            var btcV = response[5]["rate"];
-                            break;
-                        case "Bitpay-USD":
-                            var btcV = response[1]["rate"];
-                            break;
-                        case "Bitpay-EUR":
-                            var btcV = response[2]["rate"];
-                            break;
-                        default:
-                            var btcV = response[0]["rate"];
-                            break;
-                        }
-                    btcVx.push(btcV);
-                    if (btcVx.length > 60)
-                        {
-                        btcVx.shift();
-                        }
-                    console.log(btcVx.length);
-                    console.log(btcV);
-                    var btcH = btcV;
-                    var btcL = btcV;
-                    for (var i=0; i<btcVx.length; i++)
-                        {
-                        if (btcVx[i] > btcH) btcH = btcVx[i];
-                        if (btcVx[i] < btcL) btcL = btcVx[i];
-                        }
-                    btcV = Math.round(100.0 * btcV);
-                    var btcH = Math.round(btcH + 0.01);
-                    var btcL = Math.round(btcL - 0.01);
-                    console.log(btcL);
-                    console.log(btcH);
-                    }
-                }}}
-                if (typeof response.ticker != 'undefined') {{{
-                    {
-                    var btcH = Math.round(response.ticker.high);
-                    var btcL = Math.round(response.ticker.low);
-                    var btcV = Math.round(100.0 * response.ticker.last);
-                    }
-                }}}
+                // Kraken API response handling
                 if (typeof response.result != 'undefined') //{{{
                     {
                     if (typeof response.result.XXBTZCAD != 'undefined') {{{
@@ -1098,18 +1048,8 @@ function fetch_BTC () //{{{
                     }}}
                     }
                 //}}}
-                if (typeof response.high != 'undefined') {{{
-                    {
-                    var btcH = Math.round(response.high);
-                    var btcL = Math.round(response.low);
-                    if (typeof response.last != 'undefined')
-                        var btcV = Math.round(100.0 * response.last);
-                    else
-                        var btcV = Math.round(100.0 * response.ask);
-                    }
-                }}}
 
-                    
+
 
                 req.onload = function(e) //{{{
                     {
@@ -1446,27 +1386,6 @@ function fetch_BTC () //{{{
 
     switch (cnfExchange) //{{{
         {
-        case "Bitpay-CNY":
-        case "Bitpay-CAD":
-        case "Bitpay-USD":
-        case "Bitpay-EUR":
-            req.open('GET', "https://www.bitpay.com/api/rates", true);
-            break;
-        //case "Cavirtex":
-        //    req.open('GET', "https://www.cavirtex.com/api/CAD/ticker.json", true);
-        //    break;
-        case "BTCC":
-            req.open('GET', "https://data.btcchina.com/data/ticker?market=btccny", true);
-            break;
-        case "BTC-e":
-            req.open('GET', "https://btc-e.com/api/2/btc_usd/ticker", true);
-            break;
-        case "Bitstamp":
-            req.open('GET', "https://www.bitstamp.net/api/ticker/", true);
-            break;
-        case "QuadrigaCX":
-            req.open('GET', "https://api.quadrigacx.com/v2/ticker", true);
-            break;
         case "Kraken-CAD":
             req.open('GET', "https://api.kraken.com/0/public/Ticker?pair=XBTCAD", true);
             break;
@@ -1477,8 +1396,7 @@ function fetch_BTC () //{{{
             req.open('GET', "https://api.kraken.com/0/public/Ticker?pair=XBTUSD", true);
             break;
         default:
-            //req.open('GET', "https://www.cavirtex.com/api/CAD/ticker.json", true);
-            req.open('GET', "https://www.bitstamp.net/api/ticker/", true);
+            req.open('GET', "https://api.kraken.com/0/public/Ticker?pair=XBTUSD", true);
             break;
         }
     //}}}

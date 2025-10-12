@@ -44,38 +44,6 @@ module.exports = [
         "label": "Exchange",
         "options": [
           {
-            "label": "Bitstamp",
-            "value": "Bitstamp"
-          },
-          {
-            "label": "Bitpay CAD",
-            "value": "Bitpay-CAD"
-          },
-          {
-            "label": "Bitpay USD",
-            "value": "Bitpay-USD"
-          },
-          {
-            "label": "Bitpay EUR",
-            "value": "Bitpay-EUR"
-          },
-          {
-            "label": "Bitpay CNY",
-            "value": "Bitpay-CNY"
-          },
-          {
-            "label": "BTC-e",
-            "value": "BTC-e"
-          },
-          {
-            "label": "BTCC",
-            "value": "BTCC"
-          },
-          {
-            "label": "QuadrigaCX",
-            "value": "QuadrigaCX"
-          },
-          {
             "label": "Kraken CAD",
             "value": "Kraken-CAD"
           },
