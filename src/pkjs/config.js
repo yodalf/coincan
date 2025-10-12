@@ -107,10 +107,6 @@ module.exports = [
           {
             "label": "Environnement Canada",
             "value": "Environnement Canada"
-          },
-          {
-            "label": "Open Weather Map",
-            "value": "Open Weather Map"
           }
         ]
       },
