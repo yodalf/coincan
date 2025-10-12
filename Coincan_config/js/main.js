@@ -7,10 +7,21 @@ function submitHandler() {
   var $submitButton = $('#submitButton');
 
   $submitButton.on('click', function() {
-    console.log('Submit');
+    console.log('Submit button clicked!');
+
+    var configData = getAndStoreConfigData();
+    console.log('Config data:', JSON.stringify(configData));
 
     var return_to = getQueryParam('return_to', 'pebblejs://close#');
-    document.location = return_to + encodeURIComponent(JSON.stringify(getAndStoreConfigData()));
+    console.log('Return to:', return_to);
+
+    var encodedData = encodeURIComponent(JSON.stringify(configData));
+    console.log('Encoded data:', encodedData);
+
+    var finalURL = return_to + encodedData;
+    console.log('Final URL:', finalURL);
+
+    document.location = finalURL;
   });
 }
 
