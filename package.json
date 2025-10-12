@@ -35,7 +35,8 @@
       "health",
       "exchange",
       "service",
-      "location"
+      "location",
+      "cadence"
     ],
     "resources": {
       "media": [

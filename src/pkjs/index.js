@@ -1224,7 +1224,16 @@ function fetch_BTC () //{{{
 
                                         var obWindSpeed = currentConditions.wind && currentConditions.wind.speed ? toMPH(currentConditions.wind.speed.value.en.toString()) : "!";
                                         var obWindGust = currentConditions.wind && currentConditions.wind.gust ? toMPH(currentConditions.wind.gust.value.en.toString()) : "!";
-                                        var obWindChill = currentConditions.windChill ? toFarenheight(currentConditions.windChill.value.en.toString()) : "!";
+
+                                        // Only show wind chill if current temperature is 0°C or below
+                                        var obWindChill = "!";
+                                        if (currentConditions.windChill && tempValue !== null && tempValue <= 0) {
+                                            obWindChill = toFarenheight(currentConditions.windChill.value.en.toString());
+                                            console.log("EC API: Wind chill=" + obWindChill + " (temp=" + tempValue + "C)");
+                                        } else if (tempValue !== null && tempValue > 0) {
+                                            console.log("EC API: Suppressing wind chill (temp=" + tempValue + "C is above 0)");
+                                        }
+
                                         var obHumidex = "!"; // Not provided in new API
 
                                         // Forecast (first forecast period - usually today) with null checks
@@ -1248,6 +1257,7 @@ function fetch_BTC () //{{{
                                         }
 
                                         console.log("EC API: temp=" + obTemperature + ", wind=" + obWindSpeed + ", icon=" + obIconCode);
+                                        console.log("EC API: forecastHigh=" + forecastHigh + ", forecastLow=" + forecastLow);
                                         console.log("EC API: Sending message to watch");
 
                                         Pebble.sendAppMessage( //{{{

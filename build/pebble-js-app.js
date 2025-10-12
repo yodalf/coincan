@@ -1226,12 +1226,42 @@
 	
 	                                    if (res.features && res.features.length > 0)
 	                                        {
-	                                        console.log("EC API: Found features");
-	                                        var weatherData = res.features[0].properties;
+	                                        console.log("EC API: Found " + res.features.length + " weather station(s)");
+	
+	                                        // Log all available stations
+	                                        for (var i = 0; i < res.features.length; i++) {
+	                                            console.log("EC API: Station " + i + ": " + res.features[i].id);
+	                                        }
+	
+	                                        // Find the best station - prefer certain stations, or use closest to center of bbox
+	                                        var selectedIndex = 0;
+	
+	                                        // Calculate center point of our search
+	                                        var centerLat = geoLatitude;
+	                                        var centerLon = geoLongitude;
+	
+	                                        // Find station closest to GPS coordinates
+	                                        var minDistance = 999999;
+	                                        for (var i = 0; i < res.features.length; i++) {
+	                                            var stationLat = res.features[i].geometry.coordinates[1];
+	                                            var stationLon = res.features[i].geometry.coordinates[0];
+	                                            // Simple distance calculation (not perfect but good enough)
+	                                            var distance = Math.sqrt(Math.pow(stationLat - centerLat, 2) + Math.pow(stationLon - centerLon, 2));
+	                                            console.log("EC API: Station " + res.features[i].id + " distance=" + distance.toFixed(4));
+	                                            if (distance < minDistance) {
+	                                                minDistance = distance;
+	                                                selectedIndex = i;
+	                                            }
+	                                        }
+	
+	                                        console.log("EC API: Selected station " + selectedIndex + ": " + res.features[selectedIndex].id);
+	                                        var weatherData = res.features[selectedIndex].properties;
 	                                        var currentConditions = weatherData.currentConditions;
 	                                        var forecasts = weatherData.forecastGroup.forecasts;
 	
 	                                        // Debug logging
+	                                        console.log("EC API: RAW temperature=" + JSON.stringify(currentConditions.temperature));
+	                                        console.log("EC API: RAW wind=" + JSON.stringify(currentConditions.wind));
 	                                        console.log("EC API: iconCode=" + (currentConditions.iconCode ? currentConditions.iconCode.value : "NULL"));
 	                                        console.log("EC API: forecast icon=" + (forecasts[0] && forecasts[0].abbreviatedForecast && forecasts[0].abbreviatedForecast.icon ? forecasts[0].abbreviatedForecast.icon.value : "NULL"));
 	
@@ -1248,11 +1278,42 @@
 	                                        // Current conditions with null checks - use forecast icon as fallback
 	                                        var obIconCode = pad2(currentConditions.iconCode ? currentConditions.iconCode.value :
 	                                                             (forecasts[0] && forecasts[0].abbreviatedForecast && forecasts[0].abbreviatedForecast.icon ? forecasts[0].abbreviatedForecast.icon.value : null));
-	                                        var obTemperature = toFarenheight(currentConditions.temperature.value.en.toFixed(0));
-	                                        var obWindDir = currentConditions.wind && currentConditions.wind.direction ? currentConditions.wind.direction.value.en : "!";
+	
+	                                        // Temperature - use most precise value available
+	                                        var tempValue = currentConditions.temperature && currentConditions.temperature.value ? currentConditions.temperature.value.en : null;
+	                                        console.log("EC API: Temperature value=" + tempValue);
+	                                        var obTemperature = tempValue !== null ? toFarenheight(tempValue.toFixed(0)) : "!";
+	
+	                                        // Wind direction - prefer text direction from API, fall back to bearing conversion
+	                                        var windDir = "!";
+	                                        if (currentConditions.wind) {
+	                                            // First try text direction (e.g., "ENE") - this is most accurate
+	                                            if (currentConditions.wind.direction && currentConditions.wind.direction.value) {
+	                                                windDir = currentConditions.wind.direction.value.en;
+	                                                console.log("EC API: Using text direction=" + windDir);
+	                                            }
+	                                            // Fall back to converting bearing if no text direction available
+	                                            else if (currentConditions.wind.bearing && currentConditions.wind.bearing.value) {
+	                                                var bearing = currentConditions.wind.bearing.value.en;
+	                                                console.log("EC API: Wind bearing=" + bearing);
+	                                                windDir = degToCard(bearing);
+	                                                console.log("EC API: Converted bearing to direction=" + windDir);
+	                                            }
+	                                        }
+	                                        var obWindDir = windDir;
+	
 	                                        var obWindSpeed = currentConditions.wind && currentConditions.wind.speed ? toMPH(currentConditions.wind.speed.value.en.toString()) : "!";
 	                                        var obWindGust = currentConditions.wind && currentConditions.wind.gust ? toMPH(currentConditions.wind.gust.value.en.toString()) : "!";
-	                                        var obWindChill = currentConditions.windChill ? toFarenheight(currentConditions.windChill.value.en.toString()) : "!";
+	
+	                                        // Only show wind chill if current temperature is 0°C or below
+	                                        var obWindChill = "!";
+	                                        if (currentConditions.windChill && tempValue !== null && tempValue <= 0) {
+	                                            obWindChill = toFarenheight(currentConditions.windChill.value.en.toString());
+	                                            console.log("EC API: Wind chill=" + obWindChill + " (temp=" + tempValue + "C)");
+	                                        } else if (tempValue !== null && tempValue > 0) {
+	                                            console.log("EC API: Suppressing wind chill (temp=" + tempValue + "C is above 0)");
+	                                        }
+	
 	                                        var obHumidex = "!"; // Not provided in new API
 	
 	                                        // Forecast (first forecast period - usually today) with null checks
@@ -1276,6 +1337,7 @@
 	                                        }
 	
 	                                        console.log("EC API: temp=" + obTemperature + ", wind=" + obWindSpeed + ", icon=" + obIconCode);
+	                                        console.log("EC API: forecastHigh=" + forecastHigh + ", forecastLow=" + forecastLow);
 	                                        console.log("EC API: Sending message to watch");
 	
 	                                        Pebble.sendAppMessage( //{{{
@@ -1595,7 +1657,8 @@
 	    geoLatitude = coordinates.latitude;
 	    geoLongitude = coordinates.longitude;
 	
-	    console.log ("*** GPS LOCATION SUCCESS! **: " , geoLatitude , geoLongitude);
+	    console.log ("*** GPS LOCATION SUCCESS! **: LAT=" + geoLatitude + " LON=" + geoLongitude);
+	    console.log ("GPS accuracy: " + coordinates.accuracy + " meters");
 	    gpsError = 0;
 	    fetch_Location(geoLatitude, geoLongitude);
 	    fetch_BTC();
@@ -1695,7 +1758,7 @@
 /* 5 */
 /***/ (function(module, exports) {
 
-	module.exports = {"celsius":10001,"exchange":10003,"health":10002,"location":10005,"service":10004,"trotteuse":10000}
+	module.exports = {"cadence":10006,"celsius":10001,"exchange":10003,"health":10002,"location":10005,"service":10004,"trotteuse":10000}
 
 /***/ }),
 /* 6 */
@@ -1782,6 +1845,47 @@
 	          {
 	            "label": "Open-Meteo",
 	            "value": "Open-Meteo"
+	          }
+	        ]
+	      }
+	    ]
+	  },
+	  {
+	    "type": "section",
+	    "items": [
+	      {
+	        "type": "heading",
+	        "defaultValue": "Update Settings"
+	      },
+	      {
+	        "type": "select",
+	        "messageKey": "cadence",
+	        "defaultValue": 30,
+	        "label": "Update Interval",
+	        "options": [
+	          {
+	            "label": "1 minute",
+	            "value": 1
+	          },
+	          {
+	            "label": "5 minutes",
+	            "value": 5
+	          },
+	          {
+	            "label": "30 minutes",
+	            "value": 30
+	          },
+	          {
+	            "label": "1 hour",
+	            "value": 60
+	          },
+	          {
+	            "label": "3 hours",
+	            "value": 180
+	          },
+	          {
+	            "label": "6 hours",
+	            "value": 360
 	          }
 	        ]
 	      }

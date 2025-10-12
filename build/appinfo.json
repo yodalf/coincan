@@ -14,9 +14,9 @@
         "watchface": true
     },
     "capabilities": [
-        "health",
         "configurable",
-        "location"
+        "location",
+        "health"
     ],
     "messageKeys": {
         "trotteuse": 10000,
@@ -24,7 +24,8 @@
         "health": 10002,
         "exchange": 10003,
         "service": 10004,
-        "location": 10005
+        "location": 10005,
+        "cadence": 10006
     },
     "resources": {
         "media": [
@@ -285,6 +286,7 @@
         "health": 10002,
         "exchange": 10003,
         "service": 10004,
-        "location": 10005
+        "location": 10005,
+        "cadence": 10006
     }
 }

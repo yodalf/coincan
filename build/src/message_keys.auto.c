@@ -6,6 +6,7 @@
 // DO NOT MODIFY - CHANGES WILL BE OVERWRITTEN
 //
 
+uint32_t MESSAGE_KEY_cadence = 10006;
 uint32_t MESSAGE_KEY_celsius = 10001;
 uint32_t MESSAGE_KEY_exchange = 10003;
 uint32_t MESSAGE_KEY_health = 10002;

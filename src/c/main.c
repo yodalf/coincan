@@ -14,6 +14,7 @@
 #define KEY_CNF_SERVICE MESSAGE_KEY_service
 #define KEY_CNF_CELSIUS MESSAGE_KEY_celsius
 #define KEY_CNF_HEALTH MESSAGE_KEY_health
+#define KEY_CNF_CADENCE MESSAGE_KEY_cadence
 // Legacy keys that are not in the new config
 #define KEY_JS_EVENT 18
 //}}}
@@ -272,6 +273,8 @@ bool cnfHealth = true;
 char cnfExchange[20];
 char cnfLocation[32];
 char cnfService[32];
+int cnfCadence = 30;  // Update interval in minutes (default: 30 minutes)
+int last_fetch_minute = -1;  // Track last fetch minute to prevent duplicate fetches
 
 int errorInWeather = 0;
 
@@ -401,6 +404,7 @@ void handle_config_celsius(Tuple *tuple);
 void handle_config_exchange(Tuple *tuple);
 void handle_config_location(Tuple *tuple);
 void handle_config_service(Tuple *tuple);
+void handle_config_cadence(Tuple *tuple);
 
 // Data handlers
 void handle_bitcoin_data(Tuple *btcV_tuple, Tuple *btcL_tuple, Tuple *btcH_tuple);
@@ -653,11 +657,33 @@ void handle_minute_update(struct tm* tick_time) //{{{
     // Mark layers for redraw
     layer_mark_dirty(text_layer_get_layer(time_layer));
     layer_mark_dirty(text_layer_get_layer(date_layer));
-    layer_mark_dirty(top_layer);
 
-    // Fetch weather data every 5 minutes
-    if (tick_time->tm_min % 5 == 0) {
+    // Fetch weather data based on configurable cadence aligned to clock intervals
+    // For cadence of N minutes, fetch at 0, N, 2N, 3N... minutes after the hour
+    int current_minute = tick_time->tm_min;
+    int current_hour = tick_time->tm_hour;
+
+    // Calculate if current time aligns with cadence interval
+    bool should_fetch = false;
+
+    if (cnfCadence >= 60) {
+        // For hourly intervals (60, 180, 360 min)
+        int hour_interval = cnfCadence / 60;
+        if (current_minute == 0 && (current_hour % hour_interval) == 0) {
+            should_fetch = true;
+        }
+    } else {
+        // For sub-hourly intervals (1, 5, 30 min)
+        if (current_minute % cnfCadence == 0) {
+            should_fetch = true;
+        }
+    }
+
+    // Only fetch if we haven't already fetched this minute
+    if (should_fetch && last_fetch_minute != current_minute) {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Fetching weather (cadence: %d min, time: %02d:%02d)", cnfCadence, current_hour, current_minute);
         fetch_msg();
+        last_fetch_minute = current_minute;
     }
 }
 //}}}
@@ -824,6 +850,30 @@ void handle_config_service(Tuple *tuple) //{{{
     APP_LOG(APP_LOG_LEVEL_DEBUG, "* IN cnfService: %s", tuple->value->cstring);
     strcpy(cnfService, tuple->value->cstring);
     persist_write_string(KEY_CNF_SERVICE, cnfService);
+}
+//}}}
+
+/**
+ * Handle configuration tuple for update cadence
+ */
+void handle_config_cadence(Tuple *tuple) //{{{
+{
+    if (!tuple) return;
+
+    // Handle different tuple types
+    if (tuple->type == TUPLE_CSTRING) {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "* IN cnfCadence: %s", tuple->value->cstring);
+        cnfCadence = atoi(tuple->value->cstring);
+    } else if (tuple->type == TUPLE_INT || tuple->type == TUPLE_UINT) {
+        cnfCadence = tuple->value->int32;
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "* IN cnfCadence (int): %d", cnfCadence);
+    } else {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "* IN cnfCadence (empty) - using default");
+        cnfCadence = 30;
+    }
+
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "cnfCadence set to: %d minutes", cnfCadence);
+    persist_write_int(KEY_CNF_CADENCE, cnfCadence);
 }
 //}}}
 
@@ -1113,6 +1163,7 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
     Tuple *cnfService_tuple  = dict_find(iter, KEY_CNF_SERVICE);
     Tuple *cnfCelsius_tuple   = dict_find(iter, KEY_CNF_CELSIUS);
     Tuple *cnfHealth_tuple   = dict_find(iter, KEY_CNF_HEALTH);
+    Tuple *cnfCadence_tuple  = dict_find(iter, KEY_CNF_CADENCE);
 
     Tuple *jsEvent_tuple = dict_find(iter, KEY_JS_EVENT);
     //}}}
@@ -1132,6 +1183,7 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
     handle_config_exchange(cnfExchange_tuple);
     handle_config_location(cnfLocation_tuple);
     handle_config_service(cnfService_tuple);
+    handle_config_cadence(cnfCadence_tuple);
 
     // Refetch weather if exchange or location changed
     if (cnfExchange_tuple || cnfLocation_tuple) {
@@ -1771,6 +1823,20 @@ void init(void) //{{{
     else
         strcpy(cnfService, "Environnement Canada");
 
+    if (persist_exists(KEY_CNF_CADENCE))
+        {
+        cnfCadence = persist_read_int(KEY_CNF_CADENCE);
+        // Validate cadence value - must be one of: 1, 5, 30, 60, 180, 360
+        if (cnfCadence != 1 && cnfCadence != 5 && cnfCadence != 30 &&
+            cnfCadence != 60 && cnfCadence != 180 && cnfCadence != 360) {
+            APP_LOG(APP_LOG_LEVEL_WARNING, "** Invalid cadence value %d, resetting to 30", cnfCadence);
+            cnfCadence = 30;
+            persist_write_int(KEY_CNF_CADENCE, cnfCadence);
+        }
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "** Read back Cadence: %d minutes", cnfCadence);
+        }
+    else
+        cnfCadence = 30;  // Default: 30 minutes
 
     // Ensures time is displayed immediately (will break if NULL tick event accessed).
     // (This is why it's a good idea to have a separate routine to do the update itself.)

@@ -6,6 +6,7 @@
 // DO NOT MODIFY - CHANGES WILL BE OVERWRITTEN
 //
 
+extern uint32_t MESSAGE_KEY_cadence;
 extern uint32_t MESSAGE_KEY_celsius;
 extern uint32_t MESSAGE_KEY_exchange;
 extern uint32_t MESSAGE_KEY_health;

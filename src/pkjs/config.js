@@ -85,6 +85,47 @@ module.exports = [
     ]
   },
   {
+    "type": "section",
+    "items": [
+      {
+        "type": "heading",
+        "defaultValue": "Update Settings"
+      },
+      {
+        "type": "select",
+        "messageKey": "cadence",
+        "defaultValue": 30,
+        "label": "Update Interval",
+        "options": [
+          {
+            "label": "1 minute",
+            "value": 1
+          },
+          {
+            "label": "5 minutes",
+            "value": 5
+          },
+          {
+            "label": "30 minutes",
+            "value": 30
+          },
+          {
+            "label": "1 hour",
+            "value": 60
+          },
+          {
+            "label": "3 hours",
+            "value": 180
+          },
+          {
+            "label": "6 hours",
+            "value": 360
+          }
+        ]
+      }
+    ]
+  },
+  {
     "type": "submit",
     "defaultValue": "Save Settings"
   }
