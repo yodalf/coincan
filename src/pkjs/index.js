@@ -935,7 +935,13 @@ function fetch_Location(latitude, longitude) //{{{
             if(req.status == 200)
                 {
                 var response = JSON.parse(req.responseText);
-                
+
+                // Check if we have valid results from geocoding API
+                if (!response.results || response.results.length === 0) {
+                    console.log("Geocoding API returned no results - skipping location name lookup");
+                    return;
+                }
+
                 // Find administrative_area_level_1 (province)
                 for(var i=0; i<7; i++)
                     {
@@ -1220,8 +1226,9 @@ function fetch_BTC () //{{{
                                             return s.length < 2 ? '0' + s : s;
                                         }
 
-                                        // Current conditions with null checks
-                                        var obIconCode = pad2(currentConditions.iconCode ? currentConditions.iconCode.value : null);
+                                        // Current conditions with null checks - use forecast icon as fallback
+                                        var obIconCode = pad2(currentConditions.iconCode ? currentConditions.iconCode.value :
+                                                             (forecasts[0] && forecasts[0].abbreviatedForecast && forecasts[0].abbreviatedForecast.icon ? forecasts[0].abbreviatedForecast.icon.value : null));
                                         var obTemperature = toFarenheight(currentConditions.temperature.value.en.toFixed(0));
                                         var obWindDir = currentConditions.wind && currentConditions.wind.direction ? currentConditions.wind.direction.value.en : "!";
                                         var obWindSpeed = currentConditions.wind && currentConditions.wind.speed ? toMPH(currentConditions.wind.speed.value.en.toString()) : "!";
