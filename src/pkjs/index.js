@@ -1410,8 +1410,15 @@ function fetch_BTC () //{{{
                     }
                 else
                     {
-                    // New Environment Canada API for Quebec City
-                    req.open('GET', "https://api.weather.gc.ca/collections/citypageweather-realtime/items?bbox=-71.3,46.7,-71.1,46.9&f=json&lang=en", true);
+                    // New Environment Canada API - use GPS coordinates with a small bounding box
+                    var lonMin = (geoLongitude - 0.1).toFixed(1);
+                    var latMin = (geoLatitude - 0.1).toFixed(1);
+                    var lonMax = (geoLongitude + 0.1).toFixed(1);
+                    var latMax = (geoLatitude + 0.1).toFixed(1);
+                    var url = "https://api.weather.gc.ca/collections/citypageweather-realtime/items?bbox=" +
+                              lonMin + "," + latMin + "," + lonMax + "," + latMax + "&f=json&lang=en";
+                    console.log("EC API: Using GPS coordinates - bbox=" + lonMin + "," + latMin + "," + lonMax + "," + latMax);
+                    req.open('GET', url, true);
                     }
                 req.timeout = 10000;  // 10 second timeout
                 req.send(null);
