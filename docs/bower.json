@@ -1,0 +1,19 @@
+{
+  "name": "Coincan_config",
+  "version": "0.0.0",
+  "homepage": "",
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "Slate": "pebble-slate#~0.0.3"
+  }
+}

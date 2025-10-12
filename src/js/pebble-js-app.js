@@ -1621,7 +1621,7 @@ Pebble.addEventListener("appmessage", function(e) //{{{
 //}}}
 Pebble.addEventListener('showConfiguration', function() //{{{
 {
-    Pebble.openURL('http://realo.ca/Pebble/Coincan_config/index.html');
+    Pebble.openURL('https://yodalf.github.io/coincan/');
 });
 //}}}
 Pebble.addEventListener('webviewclosed', function(e) //{{{

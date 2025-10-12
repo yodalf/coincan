@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <link rel='stylesheet' type='text/css' href='bower_components/Slate/dist/css/slate.min.css'>
+  <link rel='stylesheet' type='text/css' href='css/style.css'>
+</head>
+<body>
+  <div class='item-container'>
+    <h1 class='title'>Configuration</h1>
+  </div>
+
+
+  <div class='item-container'>
+    <div class='item-container-header'></div>
+    <div class='item-container-content'>
+      <label class='item'>
+        Health display
+        <input type='checkbox' class='item-toggle' id='cnfHealth' checked>
+      </label>
+      <label class='item'>
+        Metric (Celsius and kph)
+        <input type='checkbox' class='item-toggle' id='cnfCelsius' checked>
+      </label>
+      <label class='item'>
+        Display seconds ticker
+        <input type='checkbox' class='item-toggle' id='cnfTrotteuse' checked>
+      </label>
+      <label class='item'>
+        Exchange
+        <select class='item-select' id='cnfExchange' dir='rtl'>
+          <option class="item-select-option" Selected>Bitstamp</option>
+          <option class="item-select-option">Bitpay-CAD</option>
+          <option class="item-select-option">Bitpay-USD</option>
+          <option class="item-select-option">Bitpay-EUR</option>
+          <option class="item-select-option">Bitpay-CNY</option>
+          <option class="item-select-option">BTC-e</option>
+          <option class="item-select-option">BTCC</option>
+          <option class="item-select-option">QuadrigaCX</option>
+          <option class="item-select-option">Kraken-CAD</option>
+          <option class="item-select-option">Kraken-USD</option>
+          <option class="item-select-option">Kraken-EUR</option>
+        </select>
+      </label>
+
+      <label class='item'>
+        Weather Service
+        <select class='item-select' id='cnfWeatherSvc' dir='rtl'>
+            <option class="item-select-option" Selected>Environnement Canada</option>
+            <option class="item-select-option">Open Weather Map</option>
+        </select>
+      </label>
+
+      <label class='item'>
+        Env. Canada setup
+        <select class='item-select' id='cnfLocation' dir='rtl'>
+          <option class="item-select-option" Selected>GPS automatic</option>
+          <option class="item-select-option">Quebec City</option>
+          <option class="item-select-option">Montreal</option>
+          <option class="item-select-option">Vancouver</option>
+          <option class="item-select-option">Sept-Iles</option>
+          <option class="item-select-option">St-John's (NL)</option>
+          <option class="item-select-option">Fredericton</option>
+          <option class="item-select-option">Charlottetown</option>
+          <option class="item-select-option">Toronto</option>
+          <option class="item-select-option">Winnipeg</option>
+          <option class="item-select-option">Regina</option>
+          <option class="item-select-option">Edmonton</option>
+          <option class="item-select-option">Victoria</option>
+          <option class="item-select-option">Iqaluit</option>
+          <option class="item-select-option">Yellowknife</option>
+          <option class="item-select-option">Whitehorse</option>
+        </select>
+      </label>
+    
+    
+    </div>
+  </div>
+      
+  <div class="item-container">
+      <div class="item-container-header"></div>
+     
+
+    <div class="item-container">
+        <div class="item-container-header">OpenWeatherMap info</div>
+        <div class="item-container-content">
+        <!--
+        <label class="item">
+            <div class="item-input-wrapper">
+            <input type="text" class="item-input" id="cnfOWMid" name="input1" placeholder="OWM user id">
+            </div>
+        </label>
+        -->
+        <label class="item">
+          <div class="item-input-wrapper">
+            <input type="text" class="item-input" id="cnfOWMkey" name="input2" placeholder="OWM key">
+          </div>
+        </label>
+        <label class="item">
+          <div class="item-input-wrapper">
+            <input type="text" class="item-input" id="cnfOWMloc" name="input3" placeholder="OWM City location">
+          </div>
+        </label>
+        </div>
+    </div>
+
+
+    <div class='item-container-footer'>
+    </div>
+  </div>
+
+  <div class='item-container'>
+    <div class='button-container'>
+      <input id='submitButton' type='button' class='item-button' value='SAVE'>
+    </div>
+  </div>
+
+  <script src='bower_components/Slate/dist/js/slate.min.js'></script>
+  <script src='js/main.js'></script>
+</body>
+</html>
