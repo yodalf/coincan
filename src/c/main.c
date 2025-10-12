@@ -46,7 +46,7 @@
 #define GRECT_WEATHER_LAYER_10 GRect(0, 23, 144, 80)
 #define GRECT_WEATHER_LAYER_11 GRect(0, 19, 144, 80)
 #define GRECT_WEATHER_LAYER_12 GRect(0, 48, 144, 80)
-#define GRECT_BATTERY_LAYER    GRect(122, 51, 22, 16)
+#define GRECT_BATTERY_LAYER    GRect(105, 51, 39, 16)
 #define GRECT_BLUETOOTH_LAYER  GRect(0, 51, 30, 16)
 
 #define GRECT_ICON1_LAYER      GRect(0, -3, 60, 60)
@@ -1325,7 +1325,10 @@ void battery_handler(BatteryChargeState charge) //{{{
     if (battery_state.charge_percent > 99)
         strncat(battery_text, "FL", 8);
     else
+        {
         strncat(battery_text,  _itoa(battery_state.charge_percent, Buffer), 8);
+        strncat(battery_text, "%", 8);
+        }
 
     if (battery_state.is_charging)
         strncat(battery_text, "*", 8);
