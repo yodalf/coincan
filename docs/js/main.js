@@ -1,4 +1,6 @@
 (function() {
+  console.log('Configuration page loaded');
+  alert('Configuration page loaded - v1');
   loadOptions();
   submitHandler();
 })();
