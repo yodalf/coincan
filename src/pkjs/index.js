@@ -1113,7 +1113,85 @@ function fetch_BTC () //{{{
                         {
                         if(req.status == 200)
                             {
-                            if (cnfService[0] !== 'O')
+                            if (cnfService === 'Open-Meteo')
+                                {
+                                // Parse Open-Meteo API
+                                console.log("Open-Meteo API: Parsing response");
+                                try {
+                                    var res = JSON.parse(req.responseText);
+                                    console.log("Open-Meteo API: Parsed JSON successfully");
+
+                                    if (res.current)
+                                        {
+                                        console.log("Open-Meteo API: Found current weather data");
+
+                                        // Map Open-Meteo weather codes to EC icon codes
+                                        function weatherCodeToEC(code) {
+                                            // WMO Weather interpretation codes
+                                            if (code === 0) return "00"; // Clear sky
+                                            if (code === 1) return "01"; // Mainly clear
+                                            if (code === 2) return "02"; // Partly cloudy
+                                            if (code === 3) return "10"; // Overcast
+                                            if (code >= 45 && code <= 48) return "24"; // Fog
+                                            if (code >= 51 && code <= 55) return "09"; // Drizzle
+                                            if (code >= 61 && code <= 65) return "12"; // Rain
+                                            if (code >= 71 && code <= 77) return "16"; // Snow
+                                            if (code >= 80 && code <= 82) return "11"; // Rain showers
+                                            if (code >= 85 && code <= 86) return "15"; // Snow showers
+                                            if (code >= 95 && code <= 99) return "19"; // Thunderstorm
+                                            return "00"; // Default
+                                        }
+
+                                        // Extract current weather
+                                        var obTemperature = toFarenheight(res.current.temperature_2m.toFixed(0));
+                                        var obWindSpeed = toMPH(res.current.wind_speed_10m.toFixed(0));
+                                        var obWindDir = degToCard(res.current.wind_direction_10m);
+                                        var obWindGust = toMPH(res.current.wind_gusts_10m.toFixed(0));
+                                        var obIconCode = weatherCodeToEC(res.current.weather_code);
+                                        var obWindChill = "!";
+                                        var obHumidex = "!";
+
+                                        // Extract daily forecast
+                                        var forecastHigh = res.daily && res.daily.temperature_2m_max ? toFarenheight(res.daily.temperature_2m_max[0].toFixed(0)) : "!";
+                                        var forecastLow = res.daily && res.daily.temperature_2m_min ? toFarenheight(res.daily.temperature_2m_min[0].toFixed(0)) : "!";
+                                        var forecastIconCode = res.daily && res.daily.weather_code ? weatherCodeToEC(res.daily.weather_code[0]) : "00";
+                                        var forecastPeriod = "Today";
+                                        var locationName = "Lat: " + geoLatitude.toFixed(2) + " Lon: " + geoLongitude.toFixed(2);
+
+                                        console.log("Open-Meteo API: temp=" + obTemperature + ", wind=" + obWindSpeed + ", icon=" + obIconCode);
+                                        console.log("Open-Meteo API: Sending message to watch");
+
+                                        Pebble.sendAppMessage(
+                                            {
+                                            "0":  btcV.toString(),
+                                            "1":  btcL.toString(),
+                                            "2":  btcH.toString(),
+                                            "3":  obIconCode,
+                                            "4":  obTemperature,
+                                            "5":  obWindDir,
+                                            "6":  obWindGust,
+                                            "7":  obWindSpeed,
+                                            "8":  obWindChill,
+                                            "9":  obHumidex,
+                                            "10": forecastIconCode,
+                                            "11": forecastHigh,
+                                            "12": forecastLow,
+                                            "13": forecastPeriod,
+                                            "14": locationName
+                                            });
+                                        console.log("Open-Meteo API: Message sent");
+                                        }
+                                    else
+                                        {
+                                        console.log("** ERROR: No weather data in Open-Meteo API response");
+                                        Pebble.sendAppMessage( { "18":  "5" } );
+                                        }
+                                } catch (err) {
+                                    console.log("** ERROR parsing Open-Meteo API response: " + err.message);
+                                    Pebble.sendAppMessage( { "18":  "5" } );
+                                }
+                                }
+                            else if (cnfService[0] !== 'O')
                                 {
                                 // Parse new Environment Canada JSON API
                                 console.log("EC API: Parsing response");
@@ -1315,7 +1393,18 @@ function fetch_BTC () //{{{
                     };
                 //}}}
                 
-                    if (cnfService[0] === 'O')
+                    if (cnfService === 'Open-Meteo')
+                    {
+                    // Open-Meteo API - uses GPS coordinates
+                    var url = "https://api.open-meteo.com/v1/forecast?" +
+                              "latitude=" + geoLatitude +
+                              "&longitude=" + geoLongitude +
+                              "&current=temperature_2m,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m" +
+                              "&daily=temperature_2m_max,temperature_2m_min,weather_code" +
+                              "&timezone=auto";
+                    req.open('GET', url, true);
+                    }
+                else if (cnfService[0] === 'O')
                     {
                     req.open('GET', "http://api.openweathermap.org/data/2.5/weather?appid=" + encodeURIComponent(cnfOWMkey) + "&q=%7B" + encodeURIComponent(cnfOWMloc) + "%7D&cnt=2&units=metric&mode=json", true);
                     }

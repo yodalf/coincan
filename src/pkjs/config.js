@@ -107,6 +107,10 @@ module.exports = [
           {
             "label": "Environnement Canada",
             "value": "Environnement Canada"
+          },
+          {
+            "label": "Open-Meteo",
+            "value": "Open-Meteo"
           }
         ]
       },
