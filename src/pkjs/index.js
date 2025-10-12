@@ -1156,8 +1156,8 @@ function fetch_BTC () //{{{
                                         var forecastLow = res.daily && res.daily.temperature_2m_min ? toFarenheight(res.daily.temperature_2m_min[0].toFixed(0)) : "!";
                                         var forecastIconCode = res.daily && res.daily.weather_code ? weatherCodeToEC(res.daily.weather_code[0]) : "00";
                                         var forecastPeriod = "Today";
-                                        var locationName = "Lat: " + geoLatitude.toFixed(2) + " Lon: " + geoLongitude.toFixed(2);
 
+                                        console.log("Open-Meteo API: Location - Lat: " + geoLatitude.toFixed(2) + " Lon: " + geoLongitude.toFixed(2));
                                         console.log("Open-Meteo API: temp=" + obTemperature + ", wind=" + obWindSpeed + ", icon=" + obIconCode);
                                         console.log("Open-Meteo API: Sending message to watch");
 
@@ -1177,7 +1177,7 @@ function fetch_BTC () //{{{
                                             "11": forecastHigh,
                                             "12": forecastLow,
                                             "13": forecastPeriod,
-                                            "14": locationName
+                                            "14": ""
                                             });
                                         console.log("Open-Meteo API: Message sent");
                                         }
