@@ -1599,10 +1599,10 @@ function locationSuccess(pos) //{{{
 function locationError(err) //{{{
 {
     console.log ("*** GPS LOCATION ERROR! **: ");
-    /* Use Montreal as default when GPS is off */
-    geoLongitude = -73.6;
-    geoLatitude  = 45.5;
-    console.log ("Using Montreal as default city.");
+    /* Use Quebec City area as default when GPS is off */
+    geoLongitude = -71.2;
+    geoLatitude  = 47.0;
+    console.log ("Using Quebec City area as default location (47.0, -71.2).");
 
     gpsError = 1;
 
