@@ -1277,13 +1277,15 @@ void bluetooth_handler(bool connected) //{{{
         strcat(bluetooth_text, geoArea1);
 
         text_layer_set_font(weather_layer.bluetooth_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
+        text_layer_set_text_alignment(weather_layer.bluetooth_layer, GTextAlignmentLeft);
         text_layer_set_background_color(weather_layer.bluetooth_layer, cInfoBlueB);
         text_layer_set_text_color(weather_layer.bluetooth_layer, cInfoBlueF );
         }
     else
         {
-        strcpy(bluetooth_text, " ??");
+        strcpy(bluetooth_text, "B");  // B for Bluetooth disconnected
         text_layer_set_font(weather_layer.bluetooth_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD) );
+        text_layer_set_text_alignment(weather_layer.bluetooth_layer, GTextAlignmentCenter);
         text_layer_set_background_color(weather_layer.bluetooth_layer, cInfoBlueAlarmB);
         text_layer_set_text_color(weather_layer.bluetooth_layer, cInfoBlueAlarmF );
         if (BuzzEnable) vibes_enqueue_custom_pattern(myLongVibes);
