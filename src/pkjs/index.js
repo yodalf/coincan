@@ -8,8 +8,6 @@ var geoLongitude=0.0;
 var gpsError=0;
 
 var cnfExchange = "Bitstamp";
-var cnfLocation = "GPS automatic";
-var cnfGPS = "No";
 var cnfService = "";
 var cnfOWMid = "";
 var cnfOWMkey = "";
@@ -1642,7 +1640,6 @@ Pebble.addEventListener("appmessage", function(e) //{{{
     console.log('10002 (health): ' + e.payload['10002']);
     console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
     cnfExchange = e.payload.exchange || e.payload['10003']; // MESSAGE_KEY_exchange
-    cnfLocation = e.payload.location || e.payload['10005']; // MESSAGE_KEY_location
     cnfService  = e.payload.service || e.payload['10004']; // MESSAGE_KEY_service
     cnfOWMid    = e.payload['20'];
     cnfOWMkey   = e.payload['21'];
@@ -1650,66 +1647,9 @@ Pebble.addEventListener("appmessage", function(e) //{{{
     cnfCelsius  = e.payload.celsius || e.payload['10001']; // MESSAGE_KEY_celsius
     cnfHealth    = e.payload.health || e.payload['10002']; // MESSAGE_KEY_health
 
-    if ("GPS automatic" === cnfLocation)
-        {
-        console.log("** Using GPS!");
-        navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
-        }
-    else
-        {
-        console.log("** Using HARDCODED coordinates!");
-        switch (cnfLocation)
-            {
-            case "Montreal":
-                locationSuccess({coords:{latitude:45.5,longitude:-73.6}});
-                break;
-            case "Quebec City":
-                locationSuccess({coords:{latitude:46.8,longitude:-71.2}});
-                break;
-            case "Sept-Iles":
-                locationSuccess({coords:{latitude:50.2,longitude:-66.4}});
-                break;
-            case "Vancouver":
-                locationSuccess({coords:{latitude:49.3,longitude:-123.1}});
-                break;
-            case "St-John's (NL)":
-                locationSuccess({coords:{latitude:47.6,longitude:-52.7}});
-                break;
-            case "Fredericton":
-                locationSuccess({coords:{latitude:46.0,longitude:-66.6}});
-                break;
-            case "Charlottetown":
-                locationSuccess({coords:{latitude:46.2,longitude:-63.1}});
-                break;
-            case "Toronto":
-                locationSuccess({coords:{latitude:43.7,longitude:-79.4}});
-                break;
-            case "Winnipeg":
-                locationSuccess({coords:{latitude:49.9,longitude:-97.1}});
-                break;
-            case "Regina":
-                locationSuccess({coords:{latitude:50.4,longitude:-104.6}});
-                break;
-            case "Edmonton":
-                locationSuccess({coords:{latitude:53.5,longitude:-113.5}});
-                break;
-            case "Victoria":
-                locationSuccess({coords:{latitude:48.4,longitude:-123.4}});
-                break;
-            case "Iqaluit":
-                locationSuccess({coords:{latitude:63.7,longitude:-68.5}});
-                break;
-            case "Yellowknife":
-                locationSuccess({coords:{latitude:62.5,longitude:-114.4}});
-                break;
-            case "Whitehorse":
-                locationSuccess({coords:{latitude:60.7,longitude:-135.1}});
-                break;
-            default:
-                locationSuccess({coords:{latitude:46.8,longitude:-71.2}});
-                break;
-            }
-        }
+    // Always use GPS
+    console.log("** Using GPS!");
+    navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
 });
 //}}}
 // Initialize Clay configuration

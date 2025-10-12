@@ -113,30 +113,6 @@ module.exports = [
             "value": "Open-Meteo"
           }
         ]
-      },
-      {
-        "type": "select",
-        "messageKey": "location",
-        "defaultValue": "GPS automatic",
-        "label": "Env. Canada Location",
-        "options": [
-          { "label": "GPS automatic", "value": "GPS automatic" },
-          { "label": "Quebec City", "value": "Quebec City" },
-          { "label": "Montreal", "value": "Montreal" },
-          { "label": "Vancouver", "value": "Vancouver" },
-          { "label": "Sept-Iles", "value": "Sept-Iles" },
-          { "label": "St-John's (NL)", "value": "St-John's (NL)" },
-          { "label": "Fredericton", "value": "Fredericton" },
-          { "label": "Charlottetown", "value": "Charlottetown" },
-          { "label": "Toronto", "value": "Toronto" },
-          { "label": "Winnipeg", "value": "Winnipeg" },
-          { "label": "Regina", "value": "Regina" },
-          { "label": "Edmonton", "value": "Edmonton" },
-          { "label": "Victoria", "value": "Victoria" },
-          { "label": "Iqaluit", "value": "Iqaluit" },
-          { "label": "Yellowknife", "value": "Yellowknife" },
-          { "label": "Whitehorse", "value": "Whitehorse" }
-        ]
       }
     ]
   },
