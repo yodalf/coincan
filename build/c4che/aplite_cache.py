@@ -1,8 +1,12 @@
-AR = 'arm-none-eabi-gcc-ar'
+AR = 'arm-none-eabi-ar'
 ARFLAGS = 'rcs'
 AS = 'arm-none-eabi-gcc'
 BINDIR = '/usr/local/bin'
+BLOCK_MESSAGE_KEYS = []
 BUILD_DIR = 'aplite'
+BUILD_TYPE = 'app'
+BUNDLE_BIN_DIR = 'aplite'
+BUNDLE_NAME = 'coincan.pbw'
 CC = ['arm-none-eabi-gcc']
 CCLNK_SRC_F = []
 CCLNK_TGT_F = ['-o']
@@ -10,11 +14,11 @@ CC_NAME = 'gcc'
 CC_SRC_F = []
 CC_TGT_F = ['-c', '-o']
 CC_VERSION = ('4', '7', '2')
-CFLAGS = ['-std=c99', '-mcpu=cortex-m3', '-mthumb', '-ffunction-sections', '-fdata-sections', '-g', '-Os', '-D_TIME_H_', '-Wall', '-Wextra', '-Werror', '-Wno-unused-parameter', '-Wno-error=unused-function', '-Wno-error=unused-variable']
+CFLAGS = ['-std=c99', '-mcpu=cortex-m3', '-mthumb', '-ffunction-sections', '-fdata-sections', '-g', '-fPIE', '-Os', '-D_TIME_H_', '-Wall', '-Wextra', '-Werror', '-Wno-unused-parameter', '-Wno-error=unused-function', '-Wno-error=unused-variable']
 CFLAGS_MACBUNDLE = ['-fPIC']
 CFLAGS_cshlib = ['-fPIC']
 CPPPATH_ST = '-I%s'
-DEFINES = ['RELEASE', 'PBL_PLATFORM_APLITE', 'PBL_BW', 'PBL_RECT', 'PBL_SDK_3']
+DEFINES = ['RELEASE', 'PBL_PLATFORM_APLITE', 'PBL_BW', 'PBL_RECT', 'PBL_COMPASS', 'PBL_DISPLAY_WIDTH=144', 'PBL_DISPLAY_HEIGHT=168', 'PBL_SDK_3']
 DEFINES_ST = '-D%s'
 DEST_BINFMT = 'elf'
 DEST_CPU = 'arm'
@@ -23,28 +27,45 @@ INCLUDES = ['aplite']
 LD = 'arm-none-eabi-ld'
 LIBDIR = '/usr/local/lib'
 LIBPATH_ST = '-L%s'
+LIB_DIR = 'node_modules'
+LIB_JSON = [{'name': 'pebble-clay', 'version': '1.0.4', 'description': 'Pebble Config Framework', 'scripts': {'test-travis': './node_modules/.bin/gulp && ./node_modules/.bin/karma start ./test/karma.conf.js --single-run --browsers chromeTravisCI && ./node_modules/.bin/eslint ./', 'test-debug': '(export DEBUG=true && ./node_modules/.bin/gulp && ./node_modules/.bin/karma start ./test/karma.conf.js --no-single-run)', 'test': './node_modules/.bin/gulp && ./node_modules/.bin/karma start ./test/karma.conf.js --single-run', 'lint': './node_modules/.bin/eslint ./', 'build': 'gulp', 'dev': 'gulp dev', 'pebble-clean': 'rm -rf tmp src/js/index.js && pebble clean', 'pebble-publish': 'npm run pebble-clean && npm run build && pebble build && pebble package publish && npm run pebble-clean', 'pebble-build': 'npm run build && pebble build'}, 'repository': {'type': 'git', 'url': 'git+https://github.com/pebble/clay.git'}, 'keywords': ['pebble', 'config', 'configuration', 'pebble-package'], 'author': 'Pebble Technology', 'license': 'MIT', 'bugs': {'url': 'https://github.com/pebble/clay/issues'}, 'pebble': {'projectType': 'package', 'sdkVersion': '3', 'targetPlatforms': ['aplite', 'basalt', 'chalk', 'diorite', 'emery'], 'resources': {'media': []}, 'capabilities': ['configurable']}, 'homepage': 'https://github.com/pebble/clay#readme', 'devDependencies': {'autoprefixer': '^6.3.1', 'bourbon': '^4.2.6', 'browserify': '^13.0.0', 'browserify-istanbul': '^0.2.1', 'chai': '^3.4.1', 'deamdify': '^0.2.0', 'deepcopy': '^0.6.1', 'del': '^2.0.2', 'eslint': '^1.5.1', 'eslint-config-pebble': '^1.2.0', 'eslint-plugin-standard': '^1.3.1', 'gulp': '^3.9.0', 'gulp-autoprefixer': '^3.1.0', 'gulp-htmlmin': '^1.3.0', 'gulp-inline': '0.0.15', 'gulp-insert': '^0.5.0', 'gulp-sass': '^2.1.1', 'gulp-sourcemaps': '^1.6.0', 'gulp-uglify': '^1.5.2', 'joi': '^6.10.1', 'karma': '^0.13.19', 'karma-browserify': '^5.0.1', 'karma-chrome-launcher': '^0.2.2', 'karma-coverage': '^0.5.3', 'karma-mocha': '^0.2.1', 'karma-mocha-reporter': '^1.1.5', 'karma-source-map-support': '^1.1.0', 'karma-threshold-reporter': '^0.1.15', 'mocha': '^2.3.4', 'postcss': '^5.0.14', 'require-from-string': '^1.1.0', 'sassify': '^0.9.1', 'sinon': '^1.17.3', 'stringify': '^3.2.0', 'through': '^2.3.8', 'tosource': '^1.0.0', 'vinyl-buffer': '^1.0.0', 'vinyl-source-stream': '^1.1.0', 'watchify': '^3.7.0'}, 'dependencies': {}, 'path': 'node_modules/pebble-clay/dist', 'js_paths': ['node_modules/pebble-clay/dist/js/index.js']}]
+LIB_RESOURCES_JSON = {'pebble-clay': []}
 LIB_ST = '-l%s'
-LINKFLAGS = ['-mcpu=cortex-m3', '-mthumb', '-Wl,--gc-sections', '-Wl,--warn-common', '-Os']
+LINKFLAGS = ['-mcpu=cortex-m3', '-mthumb', '-Wl,--gc-sections', '-Wl,--warn-common', '-fPIE', '-Os']
 LINKFLAGS_MACBUNDLE = ['-bundle', '-undefined', 'dynamic_lookup']
 LINKFLAGS_cshlib = ['-shared']
 LINKFLAGS_cstlib = ['-Wl,-Bstatic']
 LINK_CC = ['arm-none-eabi-gcc']
-PBW_BIN_DIR = 'aplite'
-PEBBLE_SDK = '/Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite'
+MESSAGE_KEYS = {'trotteuse': 10000, 'celsius': 10001, 'health': 10002, 'exchange': 10003, 'service': 10004, 'location': 10005}
+MESSAGE_KEYS_DEFINITION = '/Users/realo/Work/PEBBLE/coincan/build/src/message_keys.auto.c'
+MESSAGE_KEYS_HEADER = '/Users/realo/Work/PEBBLE/coincan/build/include/message_keys.auto.h'
+MESSAGE_KEYS_JSON = '/Users/realo/Work/PEBBLE/coincan/build/js/message_keys.json'
+NODE_PATH = '/Users/realo/Library/Application Support/Pebble SDK/SDKs/current/node_modules'
 PEBBLE_SDK_COMMON = '/Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/common'
-PLATFORM = {'PBW_BIN_DIR': 'aplite', 'TAGS': ['aplite', 'bw', 'rect'], 'ADDITIONAL_TEXT_LINES_FOR_PEBBLE_H': [], 'MAX_APP_BINARY_SIZE': 65536, 'MAX_RESOURCES_SIZE': 524288, 'MAX_APP_MEMORY_SIZE': 24576, 'MAX_WORKER_MEMORY_SIZE': 10240, 'NAME': 'aplite', 'BUILD_DIR': 'aplite', 'MAX_RESOURCES_SIZE_APPSTORE_2_X': 98304, 'MAX_RESOURCES_SIZE_APPSTORE': 128000, 'DEFINES': ['PBL_PLATFORM_APLITE', 'PBL_BW', 'PBL_RECT']}
+PEBBLE_SDK_PLATFORM = '/Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble/aplite'
+PEBBLE_SDK_ROOT = '/Users/realo/Library/Application Support/Pebble SDK/SDKs/current/sdk-core/pebble'
+PLATFORM = {'NAME': 'aplite', 'MAX_APP_BINARY_SIZE': 65536, 'MAX_APP_MEMORY_SIZE': 24576, 'MAX_WORKER_MEMORY_SIZE': 10240, 'MAX_RESOURCES_SIZE_APPSTORE': 131072, 'MAX_RESOURCES_SIZE_APPSTORE_2_X': 98304, 'MAX_RESOURCES_SIZE': 524288, 'DEFINES': ['PBL_PLATFORM_APLITE', 'PBL_BW', 'PBL_RECT', 'PBL_COMPASS', 'PBL_DISPLAY_WIDTH=144', 'PBL_DISPLAY_HEIGHT=168'], 'BUILD_DIR': 'aplite', 'BUNDLE_BIN_DIR': 'aplite', 'ADDITIONAL_TEXT_LINES_FOR_PEBBLE_H': [], 'MAX_FONT_GLYPH_SIZE': 256, 'TAGS': ['aplite', 'bw', 'rect', 'compass', '144w', '168h']}
 PLATFORM_NAME = 'aplite'
 PREFIX = '/usr/local'
+PROJECT_INFO = {'displayName': 'Bitcoin and Weather', 'uuid': '6f32143a-2bb9-4009-bc98-af2406b3c1AA', 'sdkVersion': '3', 'enableMultiJS': True, 'targetPlatforms': ['aplite', 'basalt', 'chalk', 'diorite', 'emery'], 'watchapp': {'watchface': True}, 'capabilities': ['location', 'configurable', 'health'], 'messageKeys': {'trotteuse': 10000, 'celsius': 10001, 'health': 10002, 'exchange': 10003, 'service': 10004, 'location': 10005}, 'resources': {'media': [{'file': 'images/41.png', 'name': 'I41', 'type': 'pbi'}, {'compatibility': '2.7', 'file': 'fonts/futura_condensed_bold-webfont.ttf', 'name': 'FUTURA_CONDENSED_53', 'type': 'font'}, {'file': 'images/18.png', 'name': 'I18', 'type': 'pbi'}, {'file': 'images/17.png', 'name': 'I17', 'type': 'pbi'}, {'file': 'images/02.png', 'name': 'I02', 'type': 'pbi'}, {'file': 'images/04.png', 'name': 'I04', 'type': 'pbi'}, {'file': 'images/16.png', 'name': 'I16', 'type': 'pbi'}, {'file': 'images/22.png', 'name': 'I22', 'type': 'pbi'}, {'file': 'images/23.png', 'name': 'I23', 'type': 'pbi'}, {'file': 'images/35.png', 'name': 'I35', 'type': 'pbi'}, {'file': 'images/33.png', 'name': 'I33', 'type': 'pbi'}, {'file': 'images/32.png', 'name': 'I32', 'type': 'pbi'}, {'file': 'images/45.png', 'name': 'I45', 'type': 'pbi'}, {'file': 'images/21.png', 'name': 'I21', 'type': 'pbi'}, {'file': 'images/24.png', 'name': 'I24', 'type': 'pbi'}, {'file': 'images/07.png', 'name': 'I07', 'type': 'pbi'}, {'file': 'images/44.png', 'name': 'I44', 'type': 'pbi'}, {'file': 'images/error.png', 'name': 'ICON_ERROR', 'type': 'pbi'}, {'file': 'images/39.png', 'name': 'I39', 'type': 'pbi'}, {'file': 'images/27.png', 'name': 'I27', 'type': 'pbi'}, {'file': 'images/42.png', 'name': 'I42', 'type': 'pbi'}, {'file': 'images/43.png', 'name': 'I43', 'type': 'pbi'}, {'file': 'images/37.png', 'name': 'I37', 'type': 'pbi'}, {'file': 'images/25.png', 'name': 'I25', 'type': 'pbi'}, {'file': 'images/05.png', 'name': 'I05', 'type': 'pbi'}, {'file': 'images/28.png', 'name': 'I28', 'type': 'pbi'}, {'characterRegex': '[0-9adeFhiMnorSTtuW: -]*', 'compatibility': '2.7', 'file': 'fonts/futura.ttf', 'name': 'FUTURA_18', 'trackingAdjust': 3, 'type': 'font'}, {'file': 'images/15.png', 'name': 'I15', 'type': 'pbi'}, {'file': 'images/14.png', 'name': 'I14', 'type': 'pbi'}, {'file': 'images/06.png', 'name': 'I06', 'type': 'pbi'}, {'file': 'images/36.png', 'name': 'I36', 'type': 'pbi'}, {'file': 'images/26.png', 'name': 'I26', 'type': 'pbi'}, {'file': 'images/03.png', 'name': 'I03', 'type': 'pbi'}, {'file': 'images/20.png', 'name': 'I20', 'type': 'pbi'}, {'file': 'images/34.png', 'name': 'I34', 'type': 'pbi'}, {'file': 'images/08.png', 'name': 'I08', 'type': 'pbi'}, {'file': 'images/01.png', 'name': 'I01', 'type': 'pbi'}, {'file': 'images/40.png', 'name': 'I40', 'type': 'pbi'}, {'file': 'images/38.png', 'name': 'I38', 'type': 'pbi'}, {'file': 'images/19.png', 'name': 'I19', 'type': 'pbi'}, {'file': 'images/11.png', 'name': 'I11', 'type': 'pbi'}, {'file': 'images/31.png', 'name': 'I31', 'type': 'pbi'}, {'file': 'images/12.png', 'name': 'I12', 'type': 'pbi'}, {'file': 'images/09.png', 'name': 'I09', 'type': 'pbi'}, {'file': 'images/30.png', 'name': 'I30', 'type': 'pbi'}, {'file': 'images/10.png', 'name': 'I10', 'type': 'pbi'}, {'file': 'images/00.png', 'name': 'I00', 'type': 'pbi'}, {'file': 'images/13.png', 'name': 'I13', 'type': 'pbi'}]}, 'name': 'coincan', 'shortName': 'Bitcoin and Weather', 'longName': 'Bitcoin and Weather', 'versionLabel': '5.1', 'companyName': 'Real Ouellet', 'appKeys': {'trotteuse': 10000, 'celsius': 10001, 'health': 10002, 'exchange': 10003, 'service': 10004, 'location': 10005}}
+REQUESTED_PLATFORMS = ['aplite', 'basalt', 'chalk', 'diorite', 'emery']
+RESOURCES_JSON = [{'file': 'images/41.png', 'name': 'I41', 'type': 'pbi'}, {'compatibility': '2.7', 'file': 'fonts/futura_condensed_bold-webfont.ttf', 'name': 'FUTURA_CONDENSED_53', 'type': 'font'}, {'file': 'images/18.png', 'name': 'I18', 'type': 'pbi'}, {'file': 'images/17.png', 'name': 'I17', 'type': 'pbi'}, {'file': 'images/02.png', 'name': 'I02', 'type': 'pbi'}, {'file': 'images/04.png', 'name': 'I04', 'type': 'pbi'}, {'file': 'images/16.png', 'name': 'I16', 'type': 'pbi'}, {'file': 'images/22.png', 'name': 'I22', 'type': 'pbi'}, {'file': 'images/23.png', 'name': 'I23', 'type': 'pbi'}, {'file': 'images/35.png', 'name': 'I35', 'type': 'pbi'}, {'file': 'images/33.png', 'name': 'I33', 'type': 'pbi'}, {'file': 'images/32.png', 'name': 'I32', 'type': 'pbi'}, {'file': 'images/45.png', 'name': 'I45', 'type': 'pbi'}, {'file': 'images/21.png', 'name': 'I21', 'type': 'pbi'}, {'file': 'images/24.png', 'name': 'I24', 'type': 'pbi'}, {'file': 'images/07.png', 'name': 'I07', 'type': 'pbi'}, {'file': 'images/44.png', 'name': 'I44', 'type': 'pbi'}, {'file': 'images/error.png', 'name': 'ICON_ERROR', 'type': 'pbi'}, {'file': 'images/39.png', 'name': 'I39', 'type': 'pbi'}, {'file': 'images/27.png', 'name': 'I27', 'type': 'pbi'}, {'file': 'images/42.png', 'name': 'I42', 'type': 'pbi'}, {'file': 'images/43.png', 'name': 'I43', 'type': 'pbi'}, {'file': 'images/37.png', 'name': 'I37', 'type': 'pbi'}, {'file': 'images/25.png', 'name': 'I25', 'type': 'pbi'}, {'file': 'images/05.png', 'name': 'I05', 'type': 'pbi'}, {'file': 'images/28.png', 'name': 'I28', 'type': 'pbi'}, {'characterRegex': '[0-9adeFhiMnorSTtuW: -]*', 'compatibility': '2.7', 'file': 'fonts/futura.ttf', 'name': 'FUTURA_18', 'trackingAdjust': 3, 'type': 'font'}, {'file': 'images/15.png', 'name': 'I15', 'type': 'pbi'}, {'file': 'images/14.png', 'name': 'I14', 'type': 'pbi'}, {'file': 'images/06.png', 'name': 'I06', 'type': 'pbi'}, {'file': 'images/36.png', 'name': 'I36', 'type': 'pbi'}, {'file': 'images/26.png', 'name': 'I26', 'type': 'pbi'}, {'file': 'images/03.png', 'name': 'I03', 'type': 'pbi'}, {'file': 'images/20.png', 'name': 'I20', 'type': 'pbi'}, {'file': 'images/34.png', 'name': 'I34', 'type': 'pbi'}, {'file': 'images/08.png', 'name': 'I08', 'type': 'pbi'}, {'file': 'images/01.png', 'name': 'I01', 'type': 'pbi'}, {'file': 'images/40.png', 'name': 'I40', 'type': 'pbi'}, {'file': 'images/38.png', 'name': 'I38', 'type': 'pbi'}, {'file': 'images/19.png', 'name': 'I19', 'type': 'pbi'}, {'file': 'images/11.png', 'name': 'I11', 'type': 'pbi'}, {'file': 'images/31.png', 'name': 'I31', 'type': 'pbi'}, {'file': 'images/12.png', 'name': 'I12', 'type': 'pbi'}, {'file': 'images/09.png', 'name': 'I09', 'type': 'pbi'}, {'file': 'images/30.png', 'name': 'I30', 'type': 'pbi'}, {'file': 'images/10.png', 'name': 'I10', 'type': 'pbi'}, {'file': 'images/00.png', 'name': 'I00', 'type': 'pbi'}, {'file': 'images/13.png', 'name': 'I13', 'type': 'pbi'}]
 RPATH_ST = '-Wl,-rpath,%s'
+SANDBOX = False
 SDK_VERSION_MAJOR = 5
-SDK_VERSION_MINOR = 75
+SDK_VERSION_MINOR = 78
 SHLIB_MARKER = None
 SIZE = 'arm-none-eabi-size'
 SONAME_ST = '-Wl,-h,%s'
 STLIBPATH_ST = '-L%s'
 STLIB_MARKER = None
 STLIB_ST = '-l%s'
-TARGET_PLATFORMS = [u'basalt', u'aplite']
+SUPPORTED_PLATFORMS = ['basalt', 'aplite', 'diorite', 'chalk', 'emery']
+TARGET_PLATFORMS = ['emery', 'diorite', 'chalk', 'basalt', 'aplite']
+TIMESTAMP = 1760291620
+USE_GROUPS = True
+VERBOSE = 0
+WEBPACK = '/Users/realo/Library/Application Support/Pebble SDK/SDKs/current/node_modules/.bin/webpack'
 cprogram_PATTERN = '%s'
 cshlib_PATTERN = 'lib%s.so'
 cstlib_PATTERN = 'lib%s.a'

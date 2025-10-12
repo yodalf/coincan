@@ -35,9 +35,7 @@
       "health",
       "exchange",
       "service",
-      "location",
-      "owmKey",
-      "owmLocation"
+      "location"
     ],
     "resources": {
       "media": [

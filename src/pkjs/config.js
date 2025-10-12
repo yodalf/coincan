@@ -141,33 +141,6 @@ module.exports = [
     ]
   },
   {
-    "type": "section",
-    "items": [
-      {
-        "type": "heading",
-        "defaultValue": "OpenWeatherMap Settings"
-      },
-      {
-        "type": "input",
-        "messageKey": "owmKey",
-        "defaultValue": "",
-        "label": "OWM API Key",
-        "attributes": {
-          "placeholder": "Enter your OWM API key"
-        }
-      },
-      {
-        "type": "input",
-        "messageKey": "owmLocation",
-        "defaultValue": "",
-        "label": "OWM City Location",
-        "attributes": {
-          "placeholder": "e.g. London,UK"
-        }
-      }
-    ]
-  },
-  {
     "type": "submit",
     "defaultValue": "Save Settings"
   }

@@ -16,9 +16,6 @@
 #define KEY_CNF_HEALTH MESSAGE_KEY_health
 // Legacy keys that are not in the new config
 #define KEY_JS_EVENT 18
-#define KEY_CNF_OWM_ID 20
-#define KEY_CNF_OWM_KEY 21
-#define KEY_CNF_OWM_LOC 22
 //}}}
 
 //{{{  Geometries
@@ -275,9 +272,6 @@ bool cnfHealth = true;
 char cnfExchange[20];
 char cnfLocation[32];
 char cnfService[32];
-char cnfOWMid[32];
-char cnfOWMkey[64];
-char cnfOWMloc[64];
 
 int errorInWeather = 0;
 
@@ -407,9 +401,6 @@ void handle_config_celsius(Tuple *tuple);
 void handle_config_exchange(Tuple *tuple);
 void handle_config_location(Tuple *tuple);
 void handle_config_service(Tuple *tuple);
-void handle_config_owm_id(Tuple *tuple);
-void handle_config_owm_key(Tuple *tuple);
-void handle_config_owm_loc(Tuple *tuple);
 
 // Data handlers
 void handle_bitcoin_data(Tuple *btcV_tuple, Tuple *btcL_tuple, Tuple *btcH_tuple);
@@ -614,9 +605,6 @@ void fetch_msg(void) //{{{
     dict_write_cstring(iter, KEY_CNF_LOCATION, cnfLocation);
     dict_write_cstring(iter, KEY_CNF_EXCHANGE, cnfExchange);
     dict_write_cstring(iter, KEY_CNF_SERVICE, cnfService);
-    dict_write_cstring(iter, KEY_CNF_OWM_ID, cnfOWMid);
-    dict_write_cstring(iter, KEY_CNF_OWM_KEY, cnfOWMkey);
-    dict_write_cstring(iter, KEY_CNF_OWM_LOC, cnfOWMloc);
     dict_write_cstring(iter, KEY_CNF_CELSIUS, cnfCelsius ? "1":"0");
     dict_write_cstring(iter, KEY_CNF_HEALTH, cnfHealth ? "1":"0");
 
@@ -836,45 +824,6 @@ void handle_config_service(Tuple *tuple) //{{{
     APP_LOG(APP_LOG_LEVEL_DEBUG, "* IN cnfService: %s", tuple->value->cstring);
     strcpy(cnfService, tuple->value->cstring);
     persist_write_string(KEY_CNF_SERVICE, cnfService);
-}
-//}}}
-
-/**
- * Handle configuration tuple for OpenWeatherMap ID
- */
-void handle_config_owm_id(Tuple *tuple) //{{{
-{
-    if (!tuple) return;
-
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "* IN cnfOWMid: %s", tuple->value->cstring);
-    strcpy(cnfOWMid, tuple->value->cstring);
-    persist_write_string(KEY_CNF_OWM_ID, cnfOWMid);
-}
-//}}}
-
-/**
- * Handle configuration tuple for OpenWeatherMap key
- */
-void handle_config_owm_key(Tuple *tuple) //{{{
-{
-    if (!tuple) return;
-
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "* IN cnfOWMkey: %s", tuple->value->cstring);
-    strcpy(cnfOWMkey, tuple->value->cstring);
-    persist_write_string(KEY_CNF_OWM_KEY, cnfOWMkey);
-}
-//}}}
-
-/**
- * Handle configuration tuple for OpenWeatherMap location
- */
-void handle_config_owm_loc(Tuple *tuple) //{{{
-{
-    if (!tuple) return;
-
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "* IN cnfOWMloc: %s", tuple->value->cstring);
-    strcpy(cnfOWMloc, tuple->value->cstring);
-    persist_write_string(KEY_CNF_OWM_LOC, cnfOWMloc);
 }
 //}}}
 
@@ -1162,9 +1111,6 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
     Tuple *cnfExchange_tuple = dict_find(iter, KEY_CNF_EXCHANGE);
     Tuple *cnfLocation_tuple = dict_find(iter, KEY_CNF_LOCATION);
     Tuple *cnfService_tuple  = dict_find(iter, KEY_CNF_SERVICE);
-    Tuple *cnfOWMid_tuple    = dict_find(iter, KEY_CNF_OWM_ID);
-    Tuple *cnfOWMkey_tuple   = dict_find(iter, KEY_CNF_OWM_KEY);
-    Tuple *cnfOWMloc_tuple   = dict_find(iter, KEY_CNF_OWM_LOC);
     Tuple *cnfCelsius_tuple   = dict_find(iter, KEY_CNF_CELSIUS);
     Tuple *cnfHealth_tuple   = dict_find(iter, KEY_CNF_HEALTH);
 
@@ -1186,9 +1132,6 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
     handle_config_exchange(cnfExchange_tuple);
     handle_config_location(cnfLocation_tuple);
     handle_config_service(cnfService_tuple);
-    handle_config_owm_id(cnfOWMid_tuple);
-    handle_config_owm_key(cnfOWMkey_tuple);
-    handle_config_owm_loc(cnfOWMloc_tuple);
 
     // Refetch weather if exchange or location changed
     if (cnfExchange_tuple || cnfLocation_tuple) {
@@ -1827,29 +1770,6 @@ void init(void) //{{{
         }
     else
         strcpy(cnfService, "Environnement Canada");
-    if (persist_exists(KEY_CNF_OWM_ID))
-        {
-        persist_read_string(KEY_CNF_OWM_ID, cnfOWMid, 32);
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "** Read back OWM id: %s", cnfOWMid);
-        }
-    else
-        strcpy(cnfOWMid, "");
-    if (persist_exists(KEY_CNF_OWM_KEY))
-        {
-        persist_read_string(KEY_CNF_OWM_KEY, cnfOWMkey, 64);
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "** Read back OWM key: %s", cnfOWMkey);
-        }
-    else
-        strcpy(cnfOWMkey, "");
-    if (persist_exists(KEY_CNF_OWM_LOC))
-        {
-        persist_read_string(KEY_CNF_OWM_LOC, cnfOWMloc, 64);
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "** Read back OWM location: %s", cnfOWMloc);
-        }
-    else
-        strcpy(cnfOWMloc, "");
-
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "** KEY is: %s", cnfOWMkey);
 
 
     // Ensures time is displayed immediately (will break if NULL tick event accessed).

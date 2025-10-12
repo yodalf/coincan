@@ -1,0 +1,8 @@
+{
+    "celsius": 10001,
+    "exchange": 10003,
+    "health": 10002,
+    "location": 10005,
+    "service": 10004,
+    "trotteuse": 10000
+}
