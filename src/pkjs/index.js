@@ -973,6 +973,11 @@ function fetch_Location(latitude, longitude) //{{{
                 console.log("geoArea1: " + geoArea1);
                 console.log("geoArea2: " + geoArea2);
                 console.log("ADDRESS: " + displayAddress);
+
+                // Send locality update to watch now that we have it
+                var localityCode = geoLocality.substring(0, 3).toUpperCase();
+                console.log("Sending locality update: " + localityCode);
+                Pebble.sendAppMessage({"14": localityCode});
                 }
             else
                 {
@@ -1178,8 +1183,9 @@ function fetch_BTC () //{{{
                                             "11": forecastHigh,
                                             "12": forecastLow,
                                             "13": forecastPeriod,
-                                            "14": ""
+                                            "14": geoLocality.substring(0, 3).toUpperCase()
                                             });
+                                        console.log("Open-Meteo API: Sending locality=" + geoLocality.substring(0, 3).toUpperCase());
                                         console.log("Open-Meteo API: Message sent");
                                         }
                                     else
@@ -1270,8 +1276,9 @@ function fetch_BTC () //{{{
                                             "11": forecastHigh,
                                             "12": forecastLow,
                                             "13": forecastPeriod,
-                                            "14": weatherData.name.en
+                                            "14": geoLocality.substring(0, 3).toUpperCase()
                                             });
+                                        console.log("EC API: Sending locality=" + geoLocality.substring(0, 3).toUpperCase());
                                         console.log("EC API: Message sent");
                                         //}}}
                                         }
