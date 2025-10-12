@@ -35,6 +35,7 @@
 
 //#define GRECT_TROTTEUSE GRect(10, 95, 134, 6)
 #define GRECT_TROTTEUSE GRect(10, 0, 134, 6)
+#define GRECT_TROTTEUSE_WITH_HEALTH GRect(0, 0, 121, 6)
 
 
 #define GRECT_DOT4 GRect(X_FRAME-10,91,10,10)
@@ -741,6 +742,20 @@ void handle_config_trotteuse(Tuple *tuple) //{{{
 /**
  * Handle configuration tuple for health tracking
  */
+void update_trotteuse_layout() //{{{
+{
+    // Adjust trotteuse layer width based on health display setting
+    GRect bounds;
+    if (cnfHealth) {
+        bounds = GRECT_TROTTEUSE_WITH_HEALTH;
+    } else {
+        bounds = GRECT_TROTTEUSE;
+    }
+    layer_set_frame(trotteuse_layer, bounds);
+    layer_set_frame(trotteuse_scale_layer, bounds);
+}
+//}}}
+
 void handle_config_health(Tuple *tuple) //{{{
 {
     if (!tuple) return;
@@ -760,6 +775,9 @@ void handle_config_health(Tuple *tuple) //{{{
 
     persist_write_bool(KEY_CNF_HEALTH, cnfHealth);
     DOT4 = 0.0;
+
+    // Update trotteuse layer layout when health setting changes
+    update_trotteuse_layout();
 }
 //}}}
 
@@ -1719,7 +1737,8 @@ void init(void) //{{{
     layer_set_update_proc(trotteuse_scale_layer, trotteuse_scale_update_proc);
     //layer_insert_above_sibling(trotteuse_scale_layer, trotteuse_layer);
 
-
+    // Adjust trotteuse layout based on health setting
+    update_trotteuse_layout();
 
     // Upper right DOT layer
     //#ifdef PBL_COLOR
