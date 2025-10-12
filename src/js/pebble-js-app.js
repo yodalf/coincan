@@ -1621,7 +1621,11 @@ Pebble.addEventListener("appmessage", function(e) //{{{
 //}}}
 Pebble.addEventListener('showConfiguration', function() //{{{
 {
-    Pebble.openURL('https://yodalf.github.io/coincan/');
+    console.log('=== CONFIG: Opening configuration page ===');
+    var configURL = 'https://yodalf.github.io/coincan/';
+    console.log('=== CONFIG: URL = ' + configURL);
+    Pebble.openURL(configURL);
+    console.log('=== CONFIG: openURL called ===');
 });
 //}}}
 Pebble.addEventListener('webviewclosed', function(e) //{{{
