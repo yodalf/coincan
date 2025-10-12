@@ -936,31 +936,24 @@ function fetch_Location(latitude, longitude) //{{{
                 {
                 var response = JSON.parse(req.responseText);
 
-                // Check if we have valid results from geocoding API
-                if (!response.results || response.results.length === 0) {
-                    console.log("Geocoding API returned no results - skipping location name lookup");
+                // Check if we have valid response from Nominatim
+                if (!response || !response.address) {
+                    console.log("Nominatim API returned no address data - skipping location name lookup");
                     return;
                 }
 
-                // Find administrative_area_level_1 (province)
-                for(var i=0; i<7; i++)
-                    {
-                    if (response.results[0].address_components[i].types[0].match("locality"))
-                        {
-                        geoLocality = response.results[0].address_components[i].short_name;
-                        }
-                    if (response.results[0].address_components[i].types[0].match("administrative_area_level_2"))
-                        {
-                        geoArea2 = response.results[0].address_components[i].short_name;
-                        }
-                    if (response.results[0].address_components[i].types[0].match("administrative_area_level_1"))
-                        {
-                        geoArea1 = response.results[0].address_components[i].short_name;
-                        break;
-                        }
+                // Extract location components from Nominatim response
+                var address = response.address;
 
-                    }
-                
+                // Get locality (city/town)
+                geoLocality = address.city || address.town || address.village || address.municipality || "";
+
+                // Get area2 (county/region)
+                geoArea2 = address.county || "";
+
+                // Get area1 (state/province)
+                geoArea1 = address.state || "";
+
                 geoString = geoBase[geoLocality];
                 if ( geoString === undefined )
                     {
@@ -971,7 +964,7 @@ function fetch_Location(latitude, longitude) //{{{
                     geoString = geoBaseArea1[geoArea1];
                     }
 
-                var address = response.results[0].formatted_address;
+                var displayAddress = response.display_name;
 
                 console.log("geoLatitude: "+geoLatitude);
                 console.log("geoLongitude: "+geoLongitude);
@@ -979,7 +972,7 @@ function fetch_Location(latitude, longitude) //{{{
                 console.log("geoLocality: " + geoLocality);
                 console.log("geoArea1: " + geoArea1);
                 console.log("geoArea2: " + geoArea2);
-                console.log("ADDRESS: " + address);
+                console.log("ADDRESS: " + displayAddress);
                 }
             else
                 {
@@ -989,7 +982,9 @@ function fetch_Location(latitude, longitude) //{{{
         };
     //}}}
 
-    req.open('GET', "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + latitude + "," + longitude + "&sensor=true");
+    // Use OpenStreetMap Nominatim for free reverse geocoding (no API key required)
+    req.open('GET', "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + latitude + "&lon=" + longitude + "&zoom=10");
+    req.setRequestHeader('User-Agent', 'PebbleBitcoinWeatherApp/1.0');
 
     req.timeout = 3000;
     req.send(null);

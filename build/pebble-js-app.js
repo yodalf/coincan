@@ -1015,26 +1015,25 @@
 	            if(req.status == 200)
 	                {
 	                var response = JSON.parse(req.responseText);
-	                
-	                // Find administrative_area_level_1 (province)
-	                for(var i=0; i<7; i++)
-	                    {
-	                    if (response.results[0].address_components[i].types[0].match("locality"))
-	                        {
-	                        geoLocality = response.results[0].address_components[i].short_name;
-	                        }
-	                    if (response.results[0].address_components[i].types[0].match("administrative_area_level_2"))
-	                        {
-	                        geoArea2 = response.results[0].address_components[i].short_name;
-	                        }
-	                    if (response.results[0].address_components[i].types[0].match("administrative_area_level_1"))
-	                        {
-	                        geoArea1 = response.results[0].address_components[i].short_name;
-	                        break;
-	                        }
 	
-	                    }
-	                
+	                // Check if we have valid response from Nominatim
+	                if (!response || !response.address) {
+	                    console.log("Nominatim API returned no address data - skipping location name lookup");
+	                    return;
+	                }
+	
+	                // Extract location components from Nominatim response
+	                var address = response.address;
+	
+	                // Get locality (city/town)
+	                geoLocality = address.city || address.town || address.village || address.municipality || "";
+	
+	                // Get area2 (county/region)
+	                geoArea2 = address.county || "";
+	
+	                // Get area1 (state/province)
+	                geoArea1 = address.state || "";
+	
 	                geoString = geoBase[geoLocality];
 	                if ( geoString === undefined )
 	                    {
@@ -1045,7 +1044,7 @@
 	                    geoString = geoBaseArea1[geoArea1];
 	                    }
 	
-	                var address = response.results[0].formatted_address;
+	                var displayAddress = response.display_name;
 	
 	                console.log("geoLatitude: "+geoLatitude);
 	                console.log("geoLongitude: "+geoLongitude);
@@ -1053,7 +1052,7 @@
 	                console.log("geoLocality: " + geoLocality);
 	                console.log("geoArea1: " + geoArea1);
 	                console.log("geoArea2: " + geoArea2);
-	                console.log("ADDRESS: " + address);
+	                console.log("ADDRESS: " + displayAddress);
 	                }
 	            else
 	                {
@@ -1063,7 +1062,9 @@
 	        };
 	    //}}}
 	
-	    req.open('GET', "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + latitude + "," + longitude + "&sensor=true");
+	    // Use OpenStreetMap Nominatim for free reverse geocoding (no API key required)
+	    req.open('GET', "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + latitude + "&lon=" + longitude + "&zoom=10");
+	    req.setRequestHeader('User-Agent', 'PebbleBitcoinWeatherApp/1.0');
 	
 	    req.timeout = 3000;
 	    req.send(null);
@@ -1193,7 +1194,85 @@
 	                        {
 	                        if(req.status == 200)
 	                            {
-	                            if (cnfService[0] !== 'O')
+	                            if (cnfService === 'Open-Meteo')
+	                                {
+	                                // Parse Open-Meteo API
+	                                console.log("Open-Meteo API: Parsing response");
+	                                try {
+	                                    var res = JSON.parse(req.responseText);
+	                                    console.log("Open-Meteo API: Parsed JSON successfully");
+	
+	                                    if (res.current)
+	                                        {
+	                                        console.log("Open-Meteo API: Found current weather data");
+	
+	                                        // Map Open-Meteo weather codes to EC icon codes
+	                                        function weatherCodeToEC(code) {
+	                                            // WMO Weather interpretation codes
+	                                            if (code === 0) return "00"; // Clear sky
+	                                            if (code === 1) return "01"; // Mainly clear
+	                                            if (code === 2) return "02"; // Partly cloudy
+	                                            if (code === 3) return "10"; // Overcast
+	                                            if (code >= 45 && code <= 48) return "24"; // Fog
+	                                            if (code >= 51 && code <= 55) return "09"; // Drizzle
+	                                            if (code >= 61 && code <= 65) return "12"; // Rain
+	                                            if (code >= 71 && code <= 77) return "16"; // Snow
+	                                            if (code >= 80 && code <= 82) return "11"; // Rain showers
+	                                            if (code >= 85 && code <= 86) return "15"; // Snow showers
+	                                            if (code >= 95 && code <= 99) return "19"; // Thunderstorm
+	                                            return "00"; // Default
+	                                        }
+	
+	                                        // Extract current weather
+	                                        var obTemperature = toFarenheight(res.current.temperature_2m.toFixed(0));
+	                                        var obWindSpeed = toMPH(res.current.wind_speed_10m.toFixed(0));
+	                                        var obWindDir = degToCard(res.current.wind_direction_10m);
+	                                        var obWindGust = toMPH(res.current.wind_gusts_10m.toFixed(0));
+	                                        var obIconCode = weatherCodeToEC(res.current.weather_code);
+	                                        var obWindChill = "!";
+	                                        var obHumidex = "!";
+	
+	                                        // Extract daily forecast
+	                                        var forecastHigh = res.daily && res.daily.temperature_2m_max ? toFarenheight(res.daily.temperature_2m_max[0].toFixed(0)) : "!";
+	                                        var forecastLow = res.daily && res.daily.temperature_2m_min ? toFarenheight(res.daily.temperature_2m_min[0].toFixed(0)) : "!";
+	                                        var forecastIconCode = res.daily && res.daily.weather_code ? weatherCodeToEC(res.daily.weather_code[0]) : "00";
+	                                        var forecastPeriod = "Today";
+	
+	                                        console.log("Open-Meteo API: Location - Lat: " + geoLatitude.toFixed(2) + " Lon: " + geoLongitude.toFixed(2));
+	                                        console.log("Open-Meteo API: temp=" + obTemperature + ", wind=" + obWindSpeed + ", icon=" + obIconCode);
+	                                        console.log("Open-Meteo API: Sending message to watch");
+	
+	                                        Pebble.sendAppMessage(
+	                                            {
+	                                            "0":  btcV.toString(),
+	                                            "1":  btcL.toString(),
+	                                            "2":  btcH.toString(),
+	                                            "3":  obIconCode,
+	                                            "4":  obTemperature,
+	                                            "5":  obWindDir,
+	                                            "6":  obWindGust,
+	                                            "7":  obWindSpeed,
+	                                            "8":  obWindChill,
+	                                            "9":  obHumidex,
+	                                            "10": forecastIconCode,
+	                                            "11": forecastHigh,
+	                                            "12": forecastLow,
+	                                            "13": forecastPeriod,
+	                                            "14": ""
+	                                            });
+	                                        console.log("Open-Meteo API: Message sent");
+	                                        }
+	                                    else
+	                                        {
+	                                        console.log("** ERROR: No weather data in Open-Meteo API response");
+	                                        Pebble.sendAppMessage( { "18":  "5" } );
+	                                        }
+	                                } catch (err) {
+	                                    console.log("** ERROR parsing Open-Meteo API response: " + err.message);
+	                                    Pebble.sendAppMessage( { "18":  "5" } );
+	                                }
+	                                }
+	                            else if (cnfService[0] !== 'O')
 	                                {
 	                                // Parse new Environment Canada JSON API
 	                                console.log("EC API: Parsing response");
@@ -1222,8 +1301,9 @@
 	                                            return s.length < 2 ? '0' + s : s;
 	                                        }
 	
-	                                        // Current conditions with null checks
-	                                        var obIconCode = pad2(currentConditions.iconCode ? currentConditions.iconCode.value : null);
+	                                        // Current conditions with null checks - use forecast icon as fallback
+	                                        var obIconCode = pad2(currentConditions.iconCode ? currentConditions.iconCode.value :
+	                                                             (forecasts[0] && forecasts[0].abbreviatedForecast && forecasts[0].abbreviatedForecast.icon ? forecasts[0].abbreviatedForecast.icon.value : null));
 	                                        var obTemperature = toFarenheight(currentConditions.temperature.value.en.toFixed(0));
 	                                        var obWindDir = currentConditions.wind && currentConditions.wind.direction ? currentConditions.wind.direction.value.en : "!";
 	                                        var obWindSpeed = currentConditions.wind && currentConditions.wind.speed ? toMPH(currentConditions.wind.speed.value.en.toString()) : "!";
@@ -1395,14 +1475,32 @@
 	                    };
 	                //}}}
 	                
-	                    if (cnfService[0] === 'O')
+	                    if (cnfService === 'Open-Meteo')
+	                    {
+	                    // Open-Meteo API - uses GPS coordinates
+	                    var url = "https://api.open-meteo.com/v1/forecast?" +
+	                              "latitude=" + geoLatitude +
+	                              "&longitude=" + geoLongitude +
+	                              "&current=temperature_2m,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m" +
+	                              "&daily=temperature_2m_max,temperature_2m_min,weather_code" +
+	                              "&timezone=auto";
+	                    req.open('GET', url, true);
+	                    }
+	                else if (cnfService[0] === 'O')
 	                    {
 	                    req.open('GET', "http://api.openweathermap.org/data/2.5/weather?appid=" + encodeURIComponent(cnfOWMkey) + "&q=%7B" + encodeURIComponent(cnfOWMloc) + "%7D&cnt=2&units=metric&mode=json", true);
 	                    }
 	                else
 	                    {
-	                    // New Environment Canada API for Quebec City
-	                    req.open('GET', "https://api.weather.gc.ca/collections/citypageweather-realtime/items?bbox=-71.3,46.7,-71.1,46.9&f=json&lang=en", true);
+	                    // New Environment Canada API - use GPS coordinates with a small bounding box
+	                    var lonMin = (geoLongitude - 0.1).toFixed(1);
+	                    var latMin = (geoLatitude - 0.1).toFixed(1);
+	                    var lonMax = (geoLongitude + 0.1).toFixed(1);
+	                    var latMax = (geoLatitude + 0.1).toFixed(1);
+	                    var url = "https://api.weather.gc.ca/collections/citypageweather-realtime/items?bbox=" +
+	                              lonMin + "," + latMin + "," + lonMax + "," + latMax + "&f=json&lang=en";
+	                    console.log("EC API: Using GPS coordinates - bbox=" + lonMin + "," + latMin + "," + lonMax + "," + latMax);
+	                    req.open('GET', url, true);
 	                    }
 	                req.timeout = 10000;  // 10 second timeout
 	                req.send(null);
@@ -1583,10 +1681,10 @@
 	function locationError(err) //{{{
 	{
 	    console.log ("*** GPS LOCATION ERROR! **: ");
-	    /* Use Montreal as default when GPS is off */
-	    geoLongitude = -73.6;
-	    geoLatitude  = 45.5;
-	    console.log ("Using Montreal as default city.");
+	    /* Use Quebec City area as default when GPS is off */
+	    geoLongitude = -71.2;
+	    geoLatitude  = 47.0;
+	    console.log ("Using Quebec City area as default location (47.0, -71.2).");
 	
 	    gpsError = 1;
 	
@@ -1849,8 +1947,8 @@
 	            "value": "Environnement Canada"
 	          },
 	          {
-	            "label": "Open Weather Map",
-	            "value": "Open Weather Map"
+	            "label": "Open-Meteo",
+	            "value": "Open-Meteo"
 	          }
 	        ]
 	      },
