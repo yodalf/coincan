@@ -35,13 +35,13 @@ module.exports = [
     "items": [
       {
         "type": "heading",
-        "defaultValue": "Bitcoin Settings"
+        "defaultValue": "Other Settings"
       },
       {
         "type": "select",
         "messageKey": "exchange",
         "defaultValue": "Kraken-USD",
-        "label": "Exchange",
+        "label": "Bitcoin Exchange",
         "options": [
           {
             "label": "Kraken CAD",
@@ -56,15 +56,6 @@ module.exports = [
             "value": "Kraken-EUR"
           }
         ]
-      }
-    ]
-  },
-  {
-    "type": "section",
-    "items": [
-      {
-        "type": "heading",
-        "defaultValue": "Weather Settings"
       },
       {
         "type": "select",
@@ -81,15 +72,6 @@ module.exports = [
             "value": "Open-Meteo"
           }
         ]
-      }
-    ]
-  },
-  {
-    "type": "section",
-    "items": [
-      {
-        "type": "heading",
-        "defaultValue": "Update Settings"
       },
       {
         "type": "select",

@@ -1087,19 +1087,34 @@ function fetch_BTC () //{{{
                                         }
 
                                         // Extract current weather
-                                        var obTemperature = toFarenheight(res.current.temperature_2m.toFixed(0));
+                                        var currentTempC = res.current.temperature_2m;
+                                        var obTemperature = toFarenheight(currentTempC.toFixed(0));
                                         var obWindSpeed = toMPH(res.current.wind_speed_10m.toFixed(0));
                                         var obWindDir = degToCard(res.current.wind_direction_10m);
                                         var obWindGust = toMPH(res.current.wind_gusts_10m.toFixed(0));
                                         var obIconCode = weatherCodeToEC(res.current.weather_code);
+
+                                        // Only show wind chill (apparent temperature) if current temperature is 0°C or below
                                         var obWindChill = "!";
+                                        if (res.current.apparent_temperature && currentTempC <= 0) {
+                                            obWindChill = toFarenheight(res.current.apparent_temperature.toFixed(0));
+                                            console.log("Open-Meteo API: Wind chill=" + obWindChill + " (temp=" + currentTempC + "C)");
+                                        } else if (currentTempC > 0) {
+                                            console.log("Open-Meteo API: Suppressing wind chill (temp=" + currentTempC + "C is above 0)");
+                                        }
                                         var obHumidex = "!";
 
-                                        // Extract daily forecast
-                                        var forecastHigh = res.daily && res.daily.temperature_2m_max ? toFarenheight(res.daily.temperature_2m_max[0].toFixed(0)) : "!";
-                                        var forecastLow = res.daily && res.daily.temperature_2m_min ? toFarenheight(res.daily.temperature_2m_min[0].toFixed(0)) : "!";
+                                        // Extract hourly forecast for next 12 hours to get high/low trend
+                                        var forecastHigh = "!";
+                                        var forecastLow = "!";
+                                        if (res.hourly && res.hourly.temperature_2m && res.hourly.temperature_2m.length >= 12) {
+                                            var nextHours = res.hourly.temperature_2m.slice(0, 12);
+                                            forecastHigh = toFarenheight(Math.max.apply(null, nextHours).toFixed(0));
+                                            forecastLow = toFarenheight(Math.min.apply(null, nextHours).toFixed(0));
+                                        }
+
                                         var forecastIconCode = res.daily && res.daily.weather_code ? weatherCodeToEC(res.daily.weather_code[0]) : "00";
-                                        var forecastPeriod = "Today";
+                                        var forecastPeriod = "Next 12h";
 
                                         console.log("Open-Meteo API: Location - Lat: " + geoLatitude.toFixed(2) + " Lon: " + geoLongitude.toFixed(2));
                                         console.log("Open-Meteo API: temp=" + obTemperature + ", wind=" + obWindSpeed + ", icon=" + obIconCode);
@@ -1408,8 +1423,10 @@ function fetch_BTC () //{{{
                     var url = "https://api.open-meteo.com/v1/forecast?" +
                               "latitude=" + geoLatitude +
                               "&longitude=" + geoLongitude +
-                              "&current=temperature_2m,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m" +
+                              "&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m" +
+                              "&hourly=temperature_2m" +
                               "&daily=temperature_2m_max,temperature_2m_min,weather_code" +
+                              "&forecast_days=1" +
                               "&timezone=auto";
                     req.open('GET', url, true);
                     }
