@@ -34,7 +34,7 @@
 #define Y_FRAME 168
 
 //#define GRECT_TROTTEUSE GRect(10, 95, 134, 6)
-#define GRECT_TROTTEUSE GRect(10, 0, 134, 6)
+#define GRECT_TROTTEUSE GRect(36, 0, 73, 6)
 #define GRECT_TROTTEUSE_WITH_HEALTH GRect(0, 0, 121, 6)
 
 
@@ -744,13 +744,8 @@ void handle_config_trotteuse(Tuple *tuple) //{{{
  */
 void update_trotteuse_layout() //{{{
 {
-    // Adjust trotteuse layer width based on health display setting
-    GRect bounds;
-    if (cnfHealth) {
-        bounds = GRECT_TROTTEUSE_WITH_HEALTH;
-    } else {
-        bounds = GRECT_TROTTEUSE;
-    }
+    // Always use the centered layout now
+    GRect bounds = GRECT_TROTTEUSE;
     layer_set_frame(trotteuse_layer, bounds);
     layer_set_frame(trotteuse_scale_layer, bounds);
 }
@@ -1426,11 +1421,15 @@ void graph_update_proc(struct Layer *layer, GContext *ctx) //{{{
 void trotteuse_update_proc(struct Layer *layer, GContext *ctx) //{{{
 {
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "************* TROT ************");
+    // Calculate pixels per second based on layer width
+    GRect bounds = layer_get_frame(layer);
+    float pixels_per_second = (float)bounds.size.w / 60.0;
+
     if (0 == trotteuse)
         {
         graphics_context_set_stroke_color(ctx, cTimeB);
         GPoint p0 = GPoint(10, 98);
-        GPoint p1 = GPoint(10 + 60*2 , 98);
+        GPoint p1 = GPoint(10 + (int)(60 * pixels_per_second), 98);
         graphics_draw_line(ctx, p0, p1);
         }
     if (cnfTrotteuse)
@@ -1440,7 +1439,7 @@ void trotteuse_update_proc(struct Layer *layer, GContext *ctx) //{{{
     //GPoint p0 = GPoint(10, 98);
     //GPoint p1 = GPoint(10 + trotteuse*2 , 98);
     GPoint p0 = GPoint(0, 2);
-    GPoint p1 = GPoint(0 + trotteuse*2 , 2);
+    GPoint p1 = GPoint(0 + (int)(trotteuse * pixels_per_second), 2);
     graphics_draw_line(ctx, p0, p1);
 }
 //}}}
@@ -1453,6 +1452,10 @@ void trotteuse_scale_update_proc(struct Layer *layer, GContext *ctx) //{{{
         {
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "SCALE!");
 
+        // Calculate pixels per second based on layer width
+        GRect bounds = layer_get_frame(layer);
+        float pixels_per_second = (float)bounds.size.w / 60.0;
+
         if (cnfTrotteuse)
             graphics_context_set_stroke_color(ctx, cTimeF);
         else
@@ -1460,13 +1463,18 @@ void trotteuse_scale_update_proc(struct Layer *layer, GContext *ctx) //{{{
 
         graphics_context_set_fill_color(ctx, GColorBlack);
         graphics_fill_rect(ctx, FULL_FRAME, 0, GCornerNone);
-        
+
         for (int i=0; i<=60; i+=5)
             {
+            int x_pos = (int)(i * pixels_per_second);
+            // Ensure last mark doesn't exceed bounds
+            if (x_pos >= bounds.size.w)
+                x_pos = bounds.size.w - 1;
+
             if (0 == (i%10) )
-                graphics_draw_line(ctx, GPoint(2*i,0), GPoint(2*i,4));
+                graphics_draw_line(ctx, GPoint(x_pos,0), GPoint(x_pos,4));
             else
-                graphics_draw_line(ctx, GPoint(2*i,0), GPoint(2*i,2));
+                graphics_draw_line(ctx, GPoint(x_pos,0), GPoint(x_pos,2));
             }
         }
 }
