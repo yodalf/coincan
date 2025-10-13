@@ -1,0 +1,124 @@
+COINCAN WATCHFACE - FEATURES
+============================
+
+DISPLAY ELEMENTS
+----------------
+
+Time Display:
+- Large, centered digital time in hours and minutes
+- Automatically adjusts vertical position based on seconds ticker visibility
+
+Date Display:
+- Day of week and date shown at the top center
+
+Bitcoin Information:
+- Current Bitcoin price (center-left)
+- 24-hour high price (top-left)
+- 24-hour low price (bottom-left)
+- Price graph showing historical trend (right side)
+- Supports multiple exchanges: Kraken-USD (default), and others
+- Automatically adjusts vertical position based on seconds ticker visibility
+
+Weather Information:
+- Current temperature
+- Wind speed and direction
+- Weather icons showing current conditions
+- High/low forecast temperatures
+- Location name (from GPS or manual setting)
+
+Visual Indicators:
+- Bluetooth connection status indicator
+- Battery level indicator
+- Step count display (when health tracking enabled)
+  * Compares today's steps to yesterday's total
+  * White portion fills first (up to yesterday's count)
+  * Black portion fills when exceeding yesterday's count
+  * Visual motivation to beat previous day's activity
+
+
+CONFIGURATION OPTIONS
+---------------------
+
+Seconds Ticker (Trotteuse):
+- Toggle on/off to show/hide the seconds hand
+- Default: Disabled
+- When disabled, time and Bitcoin info shift down for better visual balance
+
+Health Display:
+- Toggle on/off to show/hide step count
+- Default: Disabled
+- Affects trotteuse layout when both are enabled
+
+Temperature Units:
+- Choose between Celsius and Fahrenheit
+- Default: Celsius
+
+Bitcoin Currency:
+- Uses Kraken exchange for Bitcoin price data
+- Select display currency: USD (default), CAD, or EUR
+- Shows BTC price in your preferred currency
+
+Location:
+- GPS automatic only - always uses device location
+- Automatically finds nearest weather station based on GPS coordinates
+
+Weather Service:
+- Environnement Canada (default) - Canadian weather data
+- Open-Meteo - International weather service
+- Both use GPS coordinates to fetch weather data
+
+Update Cadence:
+- Weather/Bitcoin update frequency
+- Options: 1 minute or 3 minutes
+- Default: 3 minutes
+- Restricted to these two values for optimal battery life
+
+
+TECHNICAL DETAILS
+-----------------
+
+Platform Support:
+- Pebble Classic (aplite)
+- Pebble Time (basalt)
+- Pebble Time Round (chalk)
+- Pebble 2 (diorite)
+- Pebble Time 2 (emery)
+
+Data Sources:
+- Bitcoin prices via Kraken API
+- Weather data via Environnement Canada API
+- Location via OpenStreetMap Nominatim geocoding
+- GPS coordinates from device
+
+Memory Usage:
+- Optimized for low memory devices
+- Efficient resource management
+- Persistent storage for settings
+
+
+USER INTERFACE
+--------------
+
+Layout:
+- Top section: Date and Bitcoin high/low values
+- Center section: Large time display with Bitcoin price to left and graph to right
+- Bottom section: Weather information with icons
+- Dynamic positioning ensures optimal spacing regardless of configuration
+
+Color Support:
+- Full color display on color-capable Pebble models
+- Optimized black and white display on monochrome models
+
+
+UPDATES & CONNECTIVITY
+----------------------
+
+Automatic Updates:
+- Weather and Bitcoin prices update based on configured cadence
+- Initial fetch occurs 3 seconds after app launch
+- Subsequent updates follow cadence schedule
+
+Connectivity:
+- Requires Bluetooth connection to phone
+- Uses Pebble's AppMessage system for data transfer
+- JavaScript component handles API requests on phone
