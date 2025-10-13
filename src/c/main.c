@@ -1952,6 +1952,10 @@ void init(void) //{{{
     bool bt_connected = bluetooth_connection_service_peek();
     bluetooth_handler(bt_connected);
 
+    // Set splash screen text after bluetooth handler
+    // This ensures splash appears even if Bluetooth is disconnected
+    text_layer_set_text(weather_layer.temp4_layer, "COINCAN 5.1d");
+
 }
 //}}}
 void deinit(void) //{{{
