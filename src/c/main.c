@@ -278,6 +278,9 @@ int last_fetch_minute = -1;  // Track last fetch minute to prevent duplicate fet
 
 int errorInWeather = 0;
 
+// Splash screen timer
+static AppTimer *splash_timer = NULL;
+
 char time_text[] = "00:00"; // Needs to be static because it's used by the system later.
 char date_text[] = "........";
 
@@ -396,6 +399,9 @@ void fetch_msg(void);
 void handle_second_tick(struct tm* tick_time);
 void handle_minute_update(struct tm* tick_time);
 void handle_minute_tick(struct tm*, TimeUnits);
+
+// Splash screen timer
+void splash_timer_callback(void *data);
 
 // Configuration handlers
 void handle_config_trotteuse(Tuple *tuple);
@@ -567,13 +573,13 @@ void fetch_msg(void) //{{{
     time_t end = time_start_of_today();
 
     // Check the metric has data available for today
-    HealthServiceAccessibilityMask mask = health_service_metric_accessible(metric, 
+    HealthServiceAccessibilityMask mask = health_service_metric_accessible(metric,
       start, end);
 
     if(cnfHealth && (mask & HealthServiceAccessibilityMaskAvailable))
         {
         // Data is available!
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "Steps today: %d", 
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Steps today: %d",
               (int)health_service_sum_today(metric));
         APP_LOG(APP_LOG_LEVEL_DEBUG, "Steps yesterday: %d",
               (int) health_service_sum(HealthMetricStepCount, start, end));
@@ -581,18 +587,18 @@ void fetch_msg(void) //{{{
         unsigned long steps_today = (unsigned long) health_service_sum_today(metric);
         unsigned long steps_previous  = (unsigned long) health_service_sum(HealthMetricStepCount, start, end);
         DOT4 = (float) (steps_today % (2*steps_previous)) / (float) steps_previous;
-        if (DOT4 > 1.0) 
+        if (DOT4 > 1.0)
             DOT4 = -1 * (DOT4 - 1.0);
-        } 
-    else 
+        }
+    else
         {
         // No data recorded yet today
         APP_LOG(APP_LOG_LEVEL_ERROR, "Data unavailable!");
         }
     #endif
-    
-    
-    
+
+
+
     app_message_outbox_begin(&iter);
 
     if (iter == NULL)
@@ -621,6 +627,25 @@ void fetch_msg(void) //{{{
     layer_mark_dirty(window_get_root_layer(window));
 
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Message sent");
+}
+//}}}
+
+/**
+ * Splash screen timer callback - Triggers initial data fetch after 3 seconds
+ * This performs the same operations as the cadence timer to ensure data is fetched and displayed
+ */
+void splash_timer_callback(void *data) //{{{
+{
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Splash timer fired - triggering initial fetch");
+
+    // Perform the fetch operation (same as cadence timer)
+    fetch_msg();
+
+    // Mark layers dirty to force redraw
+    layer_mark_dirty(window_get_root_layer(window));
+
+    // Clear the timer reference
+    splash_timer = NULL;
 }
 //}}}
 //}}}
@@ -1863,9 +1888,10 @@ void init(void) //{{{
     bluetooth_connection_service_subscribe( &bluetooth_handler );
     battery_state_service_subscribe( & battery_handler );
 
-    // Fetch weather immediately on startup
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Fetching weather on startup...");
-    fetch_msg();
+    // Schedule initial data fetch after 3 seconds
+    // This allows the splash screen to be visible before data replaces it
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Scheduling initial fetch in 3 seconds...");
+    splash_timer = app_timer_register(3000, splash_timer_callback, NULL);
 
     // GRAPH DEBUG
     //for (int i=0; i<X_SIZE; i++) push_point(X_SIZE-i, X_SIZE/4, X_SIZE/2);
@@ -1897,6 +1923,12 @@ void init(void) //{{{
 //}}}
 void deinit(void) //{{{
 {
+    // Cancel splash timer if still active
+    if (splash_timer != NULL) {
+        app_timer_cancel(splash_timer);
+        splash_timer = NULL;
+    }
+
     gpath_destroy(bgraph);
 
     text_layer_destroy(time_layer);
