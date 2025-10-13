@@ -79,7 +79,7 @@
 #define GRECT_GRAPH_LAYER_1     GRect(140-X_SIZE, BTC_OFFSET+1, X_SIZE, Y_SIZE)
 #define GRECT_GRAPH_LAYER_2     GRect(135-X_SIZE, BTC_OFFSET+1, X_SIZE, Y_SIZE)
 
-#define GRECT_TOP_LAYER         GRect(0,   0, 144, 93)
+#define GRECT_TOP_LAYER         GRect(0,   0, 144, 95)
 #define GRECT_MIDDLE_LAYER      GRect(0,  95, 144, 7)
 #define GRECT_BOTTOM_LAYER      GRect(0, 102, 144, 67)
 
@@ -197,6 +197,9 @@ static Layer *top_layer;
 static Layer *mid_layer;
 static Layer *bot_layer;
 
+// Forward declarations
+void update_trotteuse_layout();
+
 //{{{  WeatherLayer struct
 typedef struct
 {
@@ -267,13 +270,13 @@ char geoArea1[5];
 // Configuration
 int trotteuse = 0;
 int trotteuse_draw_scale = 1;
-bool cnfTrotteuse = true;
+bool cnfTrotteuse = false;
 bool cnfCelsius = true;
-bool cnfHealth = true;
+bool cnfHealth = false;
 char cnfExchange[20];
 char cnfLocation[32];
 char cnfService[32];
-int cnfCadence = 30;  // Update interval in minutes (default: 30 minutes)
+int cnfCadence = 3;  // Update interval in minutes (default: 3 minutes)
 int last_fetch_minute = -1;  // Track last fetch minute to prevent duplicate fetches
 
 int errorInWeather = 0;
@@ -658,7 +661,9 @@ void splash_timer_callback(void *data) //{{{
 void handle_second_tick(struct tm* tick_time) //{{{
 {
     trotteuse = tick_time->tm_sec;
-    layer_mark_dirty(trotteuse_layer);
+    if (trotteuse_layer != NULL) {
+        layer_mark_dirty(trotteuse_layer);
+    }
 }
 //}}}
 
@@ -763,18 +768,59 @@ void handle_config_trotteuse(Tuple *tuple) //{{{
     if (cnfTrotteuse) {
         APP_LOG(APP_LOG_LEVEL_INFO, "CONFIG_C: Enabling trotteuse (seconds hand) - subscribing to SECOND_UNIT");
         tick_timer_service_subscribe(SECOND_UNIT | MINUTE_UNIT, &handle_minute_tick);
+
+        // Create trotteuse layers if they don't exist
+        if (trotteuse_layer == NULL) {
+            trotteuse_layer = layer_create( GRECT_TROTTEUSE );
+            layer_add_child(mid_layer, trotteuse_layer);
+            layer_set_update_proc(trotteuse_layer, trotteuse_update_proc);
+            APP_LOG(APP_LOG_LEVEL_INFO,"CONFIG_C: Created trotteuse_layer");
+        }
+        if (trotteuse_scale_layer == NULL) {
+            trotteuse_scale_layer = layer_create( GRECT_TROTTEUSE );
+            layer_add_child(mid_layer, trotteuse_scale_layer);
+            layer_set_update_proc(trotteuse_scale_layer, trotteuse_scale_update_proc);
+            APP_LOG(APP_LOG_LEVEL_INFO,"CONFIG_C: Created trotteuse_scale_layer");
+        }
+        update_trotteuse_layout();
     } else {
         APP_LOG(APP_LOG_LEVEL_INFO, "CONFIG_C: Disabling trotteuse (seconds hand) - unsubscribing from SECOND_UNIT");
         tick_timer_service_subscribe(MINUTE_UNIT, &handle_minute_tick);
+
+        // Destroy trotteuse layers if they exist
+        if (trotteuse_layer != NULL) {
+            layer_destroy(trotteuse_layer);
+            trotteuse_layer = NULL;
+            APP_LOG(APP_LOG_LEVEL_INFO,"CONFIG_C: Destroyed trotteuse_layer");
+        }
+        if (trotteuse_scale_layer != NULL) {
+            layer_destroy(trotteuse_scale_layer);
+            trotteuse_scale_layer = NULL;
+            APP_LOG(APP_LOG_LEVEL_INFO,"CONFIG_C: Destroyed trotteuse_scale_layer");
+        }
     }
 
     persist_write_bool(KEY_CNF_TROTTEUSE, cnfTrotteuse);
     APP_LOG(APP_LOG_LEVEL_INFO,"CONFIG_C: Persisted cnfTrotteuse value: %d", cnfTrotteuse ? 1:0);
 
+    // Adjust time layer vertical position based on trotteuse visibility
+    int time_y_pos = cnfTrotteuse ? 37 : 40;
+#ifdef PBL_COLOR
+    GRect new_frame = GRect((144-134)/2-1, time_y_pos, 134, 55);
+#else
+    GRect new_frame = GRect((144-134)/2, time_y_pos, 134, 55);
+#endif
+    layer_set_frame(text_layer_get_layer(time_layer), new_frame);
+    APP_LOG(APP_LOG_LEVEL_INFO,"CONFIG_C: Repositioned time layer to Y=%d", time_y_pos);
+
     trotteuse = 0;
-    layer_mark_dirty(trotteuse_scale_layer);
-    layer_mark_dirty(trotteuse_layer);
-    APP_LOG(APP_LOG_LEVEL_INFO,"CONFIG_C: Marked layers dirty and reset trotteuse to 0");
+    if (trotteuse_scale_layer != NULL) {
+        layer_mark_dirty(trotteuse_scale_layer);
+    }
+    if (trotteuse_layer != NULL) {
+        layer_mark_dirty(trotteuse_layer);
+    }
+    APP_LOG(APP_LOG_LEVEL_INFO,"CONFIG_C: Reset trotteuse to 0");
 }
 //}}}
 
@@ -783,6 +829,11 @@ void handle_config_trotteuse(Tuple *tuple) //{{{
  */
 void update_trotteuse_layout() //{{{
 {
+    // Only update if layers exist
+    if (trotteuse_layer == NULL || trotteuse_scale_layer == NULL) {
+        return;
+    }
+
     // Always use the centered layout now
     GRect bounds = GRECT_TROTTEUSE;
     layer_set_frame(trotteuse_layer, bounds);
@@ -894,7 +945,7 @@ void handle_config_cadence(Tuple *tuple) //{{{
         APP_LOG(APP_LOG_LEVEL_DEBUG, "* IN cnfCadence (int): %d", cnfCadence);
     } else {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "* IN cnfCadence (empty) - using default");
-        cnfCadence = 30;
+        cnfCadence = 3;
     }
 
     APP_LOG(APP_LOG_LEVEL_DEBUG, "cnfCadence set to: %d minutes", cnfCadence);
@@ -1282,7 +1333,9 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
         // Force immediate redraw of graph and ticker by setting trotteuse to 0
         trotteuse = 0;
         layer_mark_dirty(graph_layer);
-        layer_mark_dirty(trotteuse_scale_layer);
+        if (trotteuse_scale_layer != NULL) {
+            layer_mark_dirty(trotteuse_scale_layer);
+        }
 
         // Update weather display
         update_weather_display();
@@ -1762,7 +1815,14 @@ void init(void) //{{{
     //layer_insert_below_sibling(graph_layer, text_layer_get_layer(time_layer));
 
 
-    time_layer = text_layer_create(GRECT_TIME_LAYER);
+    // Adjust time layer vertical position based on trotteuse visibility
+    // When trotteuse is hidden, lower the time display to center it better
+    int time_y_pos = cnfTrotteuse ? 37 : 42;
+#ifdef PBL_COLOR
+    time_layer = text_layer_create(GRect((144-134)/2-1, time_y_pos, 134, 55));
+#else
+    time_layer = text_layer_create(GRect((144-134)/2, time_y_pos, 134, 55));
+#endif
     text_layer_set_text_color(time_layer, cTimeF);
     text_layer_set_background_color(time_layer, cTimeB);
     text_layer_set_font(time_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FUTURA_CONDENSED_53)));
@@ -1818,22 +1878,28 @@ void init(void) //{{{
     layer_add_child(bot_layer, weather_layer.layer);
 
 
+    // Only create trotteuse layers if trotteuse is enabled
+    if (cnfTrotteuse) {
+        // Add a trotteuse layer
+        trotteuse_layer = layer_create( GRECT_TROTTEUSE );
+        layer_add_child(mid_layer, trotteuse_layer);
+        layer_set_update_proc(trotteuse_layer, trotteuse_update_proc);
+        //layer_insert_above_sibling(trotteuse_layer, mid_layer);
 
-    // Add a trotteuse layer
-    trotteuse_layer = layer_create( GRECT_TROTTEUSE );
-    layer_add_child(mid_layer, trotteuse_layer);
-    layer_set_update_proc(trotteuse_layer, trotteuse_update_proc);
-    //layer_insert_above_sibling(trotteuse_layer, mid_layer);
+        // Add a trotteuse scale layer
+        trotteuse_scale_layer = layer_create( GRECT_TROTTEUSE );
+        //layer_add_child(window_get_root_layer(window), trotteuse_scale_layer);
+        layer_add_child(mid_layer, trotteuse_scale_layer);
+        layer_set_update_proc(trotteuse_scale_layer, trotteuse_scale_update_proc);
+        //layer_insert_above_sibling(trotteuse_scale_layer, trotteuse_layer);
 
-    // Add a trotteuse scale layer
-    trotteuse_scale_layer = layer_create( GRECT_TROTTEUSE );
-    //layer_add_child(window_get_root_layer(window), trotteuse_scale_layer);
-    layer_add_child(mid_layer, trotteuse_scale_layer);
-    layer_set_update_proc(trotteuse_scale_layer, trotteuse_scale_update_proc);
-    //layer_insert_above_sibling(trotteuse_scale_layer, trotteuse_layer);
-
-    // Adjust trotteuse layout based on health setting
-    update_trotteuse_layout();
+        // Adjust trotteuse layout based on health setting
+        update_trotteuse_layout();
+    } else {
+        // Initialize as NULL when disabled
+        trotteuse_layer = NULL;
+        trotteuse_scale_layer = NULL;
+    }
 
     // Upper right DOT layer
     //#ifdef PBL_COLOR
@@ -1918,17 +1984,16 @@ void init(void) //{{{
     if (persist_exists(KEY_CNF_CADENCE))
         {
         cnfCadence = persist_read_int(KEY_CNF_CADENCE);
-        // Validate cadence value - must be one of: 1, 5, 30, 60, 180, 360
-        if (cnfCadence != 1 && cnfCadence != 5 && cnfCadence != 30 &&
-            cnfCadence != 60 && cnfCadence != 180 && cnfCadence != 360) {
-            APP_LOG(APP_LOG_LEVEL_WARNING, "** Invalid cadence value %d, resetting to 30", cnfCadence);
-            cnfCadence = 30;
+        // Validate cadence value - must be one of: 1, 3
+        if (cnfCadence != 1 && cnfCadence != 3) {
+            APP_LOG(APP_LOG_LEVEL_WARNING, "** Invalid cadence value %d, resetting to 3", cnfCadence);
+            cnfCadence = 3;
             persist_write_int(KEY_CNF_CADENCE, cnfCadence);
         }
         APP_LOG(APP_LOG_LEVEL_DEBUG, "** Read back Cadence: %d minutes", cnfCadence);
         }
     else
-        cnfCadence = 30;  // Default: 30 minutes
+        cnfCadence = 3;  // Default: 3 minutes
 
     // Ensures time is displayed immediately (will break if NULL tick event accessed).
     // (This is why it's a good idea to have a separate routine to do the update itself.)
@@ -2004,8 +2069,12 @@ void deinit(void) //{{{
     layer_destroy(graph_layer);
     layer_destroy(DOT_layer);
 
-    layer_destroy(trotteuse_layer);
-    layer_destroy(trotteuse_scale_layer);
+    if (trotteuse_layer != NULL) {
+        layer_destroy(trotteuse_layer);
+    }
+    if (trotteuse_scale_layer != NULL) {
+        layer_destroy(trotteuse_scale_layer);
+    }
 
     weather_layer_deinit(&weather_layer);
 
