@@ -1216,8 +1216,8 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
     handle_config_service(cnfService_tuple);
     handle_config_cadence(cnfCadence_tuple);
 
-    // Refetch weather if exchange or location changed
-    if (cnfExchange_tuple || cnfLocation_tuple) {
+    // Refetch weather if exchange, location, or service changed
+    if (cnfExchange_tuple || cnfLocation_tuple || cnfService_tuple) {
         fetch_msg();
     }
     //}}}
