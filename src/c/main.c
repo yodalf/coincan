@@ -936,6 +936,9 @@ void handle_bitcoin_data(Tuple *btcV_tuple, Tuple *btcL_tuple, Tuple *btcH_tuple
 
         APP_LOG(APP_LOG_LEVEL_DEBUG, "BTC: raw=%s formatted=%s value=%d", btcV_raw, btcV, (int)btcV_value);
 
+        // Set the current price text
+        text_layer_set_text(bc_layer, btcV);
+
         if (cnfExchange[0] == 'B' && cnfExchange[1] == 'i' && cnfExchange[2] == 't' && cnfExchange[3] == 'p') {
             text_layer_set_text(bcH_layer, "");
             text_layer_set_text(bcL_layer, "");
@@ -1316,6 +1319,7 @@ void bluetooth_handler(bool connected) //{{{
         if (BuzzEnable) vibes_enqueue_custom_pattern(myLongVibes);
 
         // Clear all Bitcoin data
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "BT OFF: Clearing Bitcoin data, setting btcV_value=0");
         strcpy(btcV, "");
         strcpy(btcL, "");
         strcpy(btcH, "");
@@ -1347,7 +1351,23 @@ void bluetooth_handler(bool connected) //{{{
         bitmap_layer_set_compositing_mode(weather_layer.icon1_layer, GCompOpClear);
         bitmap_layer_set_compositing_mode(weather_layer.icon2_layer, GCompOpClear);
 
-        // Mark graph layer dirty to clear it
+        // Clear the Bitcoin graph data by setting points off-screen
+        for (int i = 0; i < 2 * X_SIZE; i++) {
+            bgraph_data[i].y = -100;  // Move points off-screen
+        }
+
+        // Clear persistent graph data so it doesn't reload on restart
+        int dsize = sizeof(bgraph_data);
+        persist_delete(0);
+        persist_delete(1);
+        persist_write_data(0, bgraph_data, 250);
+        persist_write_data(1, ((char *) bgraph_data)+250, dsize-250+1);
+
+        // Force trotteuse to 0 so graph_update_proc can draw the black background
+        trotteuse = 0;
+
+        // Mark graph layer dirty to redraw with black background
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "BT OFF: Setting trotteuse=0 and marking graph_layer dirty to clear display");
         layer_mark_dirty(graph_layer);
         }
 
@@ -1463,19 +1483,18 @@ void graph_update_proc(struct Layer *layer, GContext *ctx) //{{{
     if (0 != trotteuse)
         return;
 
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "************* GRAPH ************");
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "************* GRAPH ************ btcV_value=%d", (int)btcV_value);
 
-
-    if (btcV_value != 0.0)
-        graphics_context_set_stroke_color(ctx, cGraphF);
-    else
-        graphics_context_set_stroke_color(ctx, cWindowB);
-    
-    graphics_context_set_stroke_color(ctx, GColorWhite);
+    // Fill background
     graphics_context_set_fill_color(ctx, GColorBlack);
     graphics_fill_rect(ctx, FULL_FRAME, 0, GCornerNone);
 
-    gpath_draw_outline(ctx, bgraph);
+    // Only draw graph if we have Bitcoin data
+    if (btcV_value != 0.0) {
+        graphics_context_set_stroke_color(ctx, GColorWhite);
+        gpath_draw_outline(ctx, bgraph);
+    }
+    // When btcV_value is 0, don't draw anything - background is already black
 }
 //}}}
 void trotteuse_update_proc(struct Layer *layer, GContext *ctx) //{{{
