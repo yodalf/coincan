@@ -1314,6 +1314,41 @@ void bluetooth_handler(bool connected) //{{{
         text_layer_set_background_color(weather_layer.bluetooth_layer, cInfoBlueAlarmB);
         text_layer_set_text_color(weather_layer.bluetooth_layer, cInfoBlueAlarmF );
         if (BuzzEnable) vibes_enqueue_custom_pattern(myLongVibes);
+
+        // Clear all Bitcoin data
+        strcpy(btcV, "");
+        strcpy(btcL, "");
+        strcpy(btcH, "");
+        btcV_value = 0.0;
+        btcL_value = 0.0;
+        btcH_value = 0.0;
+        text_layer_set_text(bc_layer, "");
+        text_layer_set_text(bcH_layer, "");
+        text_layer_set_text(bcL_layer, "");
+
+        // Clear all weather data
+        strcpy(obTemperature, "");
+        strcpy(obWindDir, "");
+        strcpy(obWindDir_bkp, "");
+        strcpy(obWindSpeed, "");
+        strcpy(obWindGust, "");
+        strcpy(obWindChill, "");
+        strcpy(obHumidex, "");
+        strcpy(forecastHigh, "");
+        strcpy(forecastLow, "");
+        text_layer_set_text(weather_layer.temp1_layer, "");
+        text_layer_set_text(weather_layer.temp2_layer, "");
+        text_layer_set_text(weather_layer.temp3_layer, "");
+        text_layer_set_text(weather_layer.temp4_layer, "");
+        text_layer_set_text(weather_layer.temp5_layer, "");
+        text_layer_set_text(weather_layer.wind_layer, "");
+
+        // Clear weather icons
+        bitmap_layer_set_compositing_mode(weather_layer.icon1_layer, GCompOpClear);
+        bitmap_layer_set_compositing_mode(weather_layer.icon2_layer, GCompOpClear);
+
+        // Mark graph layer dirty to clear it
+        layer_mark_dirty(graph_layer);
         }
 
     layer_mark_dirty(window_get_root_layer(window));
