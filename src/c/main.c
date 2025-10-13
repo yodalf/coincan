@@ -1053,6 +1053,9 @@ void update_weather_display(void) //{{{
         strncpy(obWindDir, "NO WIND!", 16);
     }
 
+    // Update wind display
+    text_layer_set_text(weather_layer.wind_layer, obWindDir);
+
     // Update temperature displays based on available data
     if ((obWindChill[0] == '!') && (obHumidex[0] == '!')) {
         text_layer_set_text(weather_layer.temp1_layer, "");
@@ -1275,6 +1278,11 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
 
         // Update Bitcoin graph
         push_point(btcV_value, btcL_value, btcH_value);
+
+        // Force immediate redraw of graph and ticker by setting trotteuse to 0
+        trotteuse = 0;
+        layer_mark_dirty(graph_layer);
+        layer_mark_dirty(trotteuse_scale_layer);
 
         // Update weather display
         update_weather_display();
