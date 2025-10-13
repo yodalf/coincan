@@ -1809,7 +1809,7 @@
 	        "type": "toggle",
 	        "messageKey": "trotteuse",
 	        "label": "Display seconds ticker",
-	        "defaultValue": true
+	        "defaultValue": false
 	      }
 	    ]
 	  },
@@ -1859,7 +1859,7 @@
 	      {
 	        "type": "select",
 	        "messageKey": "cadence",
-	        "defaultValue": 30,
+	        "defaultValue": 3,
 	        "label": "Update Interval",
 	        "options": [
 	          {
@@ -1867,24 +1867,8 @@
 	            "value": 1
 	          },
 	          {
-	            "label": "5 minutes",
-	            "value": 5
-	          },
-	          {
-	            "label": "30 minutes",
-	            "value": 30
-	          },
-	          {
-	            "label": "1 hour",
-	            "value": 60
-	          },
-	          {
-	            "label": "3 hours",
-	            "value": 180
-	          },
-	          {
-	            "label": "6 hours",
-	            "value": 360
+	            "label": "3 minutes",
+	            "value": 3
 	          }
 	        ]
 	      }

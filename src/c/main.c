@@ -804,7 +804,7 @@ void handle_config_trotteuse(Tuple *tuple) //{{{
     APP_LOG(APP_LOG_LEVEL_INFO,"CONFIG_C: Persisted cnfTrotteuse value: %d", cnfTrotteuse ? 1:0);
 
     // Adjust time layer vertical position based on trotteuse visibility
-    int time_y_pos = cnfTrotteuse ? 37 : 40;
+    int time_y_pos = cnfTrotteuse ? 37 : 42;
 #ifdef PBL_COLOR
     GRect new_frame = GRect((144-134)/2-1, time_y_pos, 134, 55);
 #else
@@ -812,6 +812,22 @@ void handle_config_trotteuse(Tuple *tuple) //{{{
 #endif
     layer_set_frame(text_layer_get_layer(time_layer), new_frame);
     APP_LOG(APP_LOG_LEVEL_INFO,"CONFIG_C: Repositioned time layer to Y=%d", time_y_pos);
+
+    // Adjust BTC layers vertical position based on trotteuse visibility
+    int btc_y_offset = cnfTrotteuse ? 0 : 3;
+    int btc_offset = cnfTrotteuse ? BTC_OFFSET : (BTC_OFFSET + 3);
+
+    layer_set_frame(text_layer_get_layer(bc_layer), GRect(21, 16-6+btc_y_offset, 56, 24));
+    layer_set_frame(text_layer_get_layer(bcL_layer), GRect(0, 30-6+btc_y_offset, 31, 14));
+    layer_set_frame(text_layer_get_layer(bcH_layer), GRect(0, 17-6+btc_y_offset, 31, 14));
+
+    #ifdef PBL_COLOR
+        layer_set_frame(graph_layer, GRect(140-X_SIZE, btc_offset+1, X_SIZE, Y_SIZE));
+    #else
+        layer_set_frame(graph_layer, GRect(135-X_SIZE, btc_offset+1, X_SIZE, Y_SIZE));
+    #endif
+
+    APP_LOG(APP_LOG_LEVEL_INFO,"CONFIG_C: Repositioned BTC layers with offset: %d", btc_y_offset);
 
     trotteuse = 0;
     if (trotteuse_scale_layer != NULL) {
@@ -990,23 +1006,26 @@ void handle_bitcoin_data(Tuple *btcV_tuple, Tuple *btcL_tuple, Tuple *btcH_tuple
         // Set the current price text
         text_layer_set_text(bc_layer, btcV);
 
+        // Calculate dynamic Y offset based on trotteuse visibility
+        int btc_y_offset = cnfTrotteuse ? 0 : 3;
+
         if (cnfExchange[0] == 'B' && cnfExchange[1] == 'i' && cnfExchange[2] == 't' && cnfExchange[3] == 'p') {
             text_layer_set_text(bcH_layer, "");
             text_layer_set_text(bcL_layer, "");
-            layer_set_frame(text_layer_get_layer(bc_layer), GRECT_BCV5_LAYER);
-            layer_set_frame(text_layer_get_layer(bcH_layer), GRECT_BCH5_LAYER);
-            layer_set_frame(text_layer_get_layer(bcL_layer), GRECT_BCL5_LAYER);
+            layer_set_frame(text_layer_get_layer(bc_layer), GRect( 5, 16-6+btc_y_offset, 66, 24));
+            layer_set_frame(text_layer_get_layer(bcH_layer), GRect( 0, 17-6+btc_y_offset,  5, 16));
+            layer_set_frame(text_layer_get_layer(bcL_layer), GRect( 0, 30-6+btc_y_offset,  5, 16));
         } else {
             text_layer_set_text(bcH_layer, btcH);
             text_layer_set_text(bcL_layer, btcL);
             if (cnfExchange[0] == 'B' && cnfExchange[1] == 'T' && cnfExchange[2] == 'C' && cnfExchange[3] == 'C') {
-                layer_set_frame(text_layer_get_layer(bc_layer),  GRECT_BCV4_LAYER);
-                layer_set_frame(text_layer_get_layer(bcH_layer), GRECT_BCH4_LAYER);
-                layer_set_frame(text_layer_get_layer(bcL_layer), GRECT_BCL4_LAYER);
+                layer_set_frame(text_layer_get_layer(bc_layer),  GRect(23, 16-6+btc_y_offset, 56, 24));
+                layer_set_frame(text_layer_get_layer(bcH_layer), GRect( 0, 17-6+btc_y_offset, 31, 14));
+                layer_set_frame(text_layer_get_layer(bcL_layer), GRect( 0, 30-6+btc_y_offset, 31, 14));
             } else {
-                layer_set_frame(text_layer_get_layer(bc_layer),  GRECT_BCV3_LAYER);
-                layer_set_frame(text_layer_get_layer(bcH_layer), GRECT_BCH3_LAYER);
-                layer_set_frame(text_layer_get_layer(bcL_layer), GRECT_BCL3_LAYER);
+                layer_set_frame(text_layer_get_layer(bc_layer),  GRect(21, 16-6+btc_y_offset, 56, 24));
+                layer_set_frame(text_layer_get_layer(bcH_layer), GRect( 0, 17-6+btc_y_offset, 31, 14));
+                layer_set_frame(text_layer_get_layer(bcL_layer), GRect( 0, 30-6+btc_y_offset, 31, 14));
             }
         }
     }
@@ -1783,6 +1802,52 @@ void init(void) //{{{
 {
     app_message_init();
 
+    // Read configuration from persistent storage BEFORE creating layers
+    // so that layer positioning uses the correct configuration values
+    if (persist_exists(KEY_CNF_HEALTH))
+        cnfHealth = persist_read_bool(KEY_CNF_HEALTH);
+    else
+        cnfHealth = false;
+
+    if (persist_exists(KEY_CNF_CELSIUS))
+        cnfCelsius = persist_read_bool(KEY_CNF_CELSIUS);
+    else
+        cnfCelsius = true;
+
+    if (persist_exists(KEY_CNF_TROTTEUSE)) {
+        cnfTrotteuse = persist_read_bool(KEY_CNF_TROTTEUSE);
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "** Read cnfTrotteuse from storage: %d", cnfTrotteuse ? 1 : 0);
+    } else {
+        cnfTrotteuse = false;
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "** No stored cnfTrotteuse, defaulting to: false");
+    }
+
+    if (persist_exists(KEY_CNF_EXCHANGE))
+        {
+        persist_read_string(KEY_CNF_EXCHANGE, cnfExchange, 20);
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "** Read back Exchange: %s", cnfExchange);
+        }
+    else
+        strcpy(cnfExchange, "Kraken-USD");
+
+    if (persist_exists(KEY_CNF_LOCATION))
+        {
+        persist_read_string(KEY_CNF_LOCATION, cnfLocation, 32);
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "** Read back Location: %s", cnfLocation);
+        }
+    else
+        strcpy(cnfLocation, "GPS automatic");
+
+    if (persist_exists(KEY_CNF_SERVICE))
+        {
+        persist_read_string(KEY_CNF_SERVICE, cnfService, 32);
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "** Read back Service: %s", cnfService);
+        }
+    else
+        strcpy(cnfService, "Environnement Canada");
+
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "ON cnfTrotteuse: %d", cnfTrotteuse);
+
     window = window_create();
     window_stack_push(window, true);
     window_set_background_color(window, cWindowB);
@@ -1800,11 +1865,13 @@ void init(void) //{{{
     //layer_add_child(mid_layer, bot_layer);
     layer_add_child(window_get_root_layer(window), bot_layer);
 
-    // Add graph layer
+    // Add graph layer with dynamic Y offset based on trotteuse visibility
+    int btc_offset = cnfTrotteuse ? BTC_OFFSET : (BTC_OFFSET + 3);
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "** Creating graph_layer with btc_offset=%d (cnfTrotteuse=%d)", btc_offset, cnfTrotteuse ? 1 : 0);
     #ifdef PBL_COLOR
-        graph_layer = layer_create( GRECT_GRAPH_LAYER_1 );
+        graph_layer = layer_create( GRect(140-X_SIZE, btc_offset+1, X_SIZE, Y_SIZE) );
     #else
-        graph_layer = layer_create( GRECT_GRAPH_LAYER_2 );
+        graph_layer = layer_create( GRect(135-X_SIZE, btc_offset+1, X_SIZE, Y_SIZE) );
     #endif
     //layer_add_child(window_get_root_layer(window), graph_layer);
     //layer_insert_below_sibling(window_get_root_layer(window), graph_layer);
@@ -1841,7 +1908,10 @@ void init(void) //{{{
     text_layer_set_text(date_layer, date_text);
     layer_add_child(top_layer, text_layer_get_layer(date_layer));
 
-    bc_layer = text_layer_create(GRECT_BCV3_LAYER);
+    // Create BTC layers with dynamic Y offset based on trotteuse visibility
+    int btc_y_offset = cnfTrotteuse ? 0 : 3;
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "** Creating BTC layers with btc_y_offset=%d (cnfTrotteuse=%d)", btc_y_offset, cnfTrotteuse ? 1 : 0);
+    bc_layer = text_layer_create(GRect(21, 16-6+btc_y_offset, 56, 24));
     text_layer_set_text_color(bc_layer, cBtcF);
     text_layer_set_background_color(bc_layer, cBtcB);
     text_layer_set_font(bc_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD) );
@@ -1850,7 +1920,7 @@ void init(void) //{{{
     //layer_add_child(window_get_root_layer(window), text_layer_get_layer(bc_layer));
     layer_add_child(top_layer, text_layer_get_layer(bc_layer));
 
-    bcL_layer = text_layer_create(GRECT_BCL3_LAYER);
+    bcL_layer = text_layer_create(GRect(0, 30-6+btc_y_offset, 31, 14));
     text_layer_set_text_color(bcL_layer, cBtclF);
     text_layer_set_background_color(bcL_layer, cBtclB);
     text_layer_set_font(bcL_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
@@ -1858,8 +1928,8 @@ void init(void) //{{{
     text_layer_set_text(bcL_layer, btcL);
     //layer_add_child(text_layer_get_layer(bc_layer), text_layer_get_layer(bcL_layer));
     layer_add_child(top_layer, text_layer_get_layer(bcL_layer));
-    
-    bcH_layer = text_layer_create(GRECT_BCH3_LAYER);
+
+    bcH_layer = text_layer_create(GRect(0, 17-6+btc_y_offset, 31, 14));
     text_layer_set_text_color(bcH_layer, cBtchF);
     text_layer_set_background_color(bcH_layer, cBtchB);
     text_layer_set_font(bcH_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
@@ -1939,47 +2009,6 @@ void init(void) //{{{
             };
 
         }
-
-    if (persist_exists(KEY_CNF_HEALTH))
-        cnfHealth = persist_read_bool(KEY_CNF_HEALTH);
-    else
-        cnfHealth= true;
-    
-    if (persist_exists(KEY_CNF_CELSIUS))
-        cnfCelsius = persist_read_bool(KEY_CNF_CELSIUS);
-    else
-        cnfCelsius = true;
-
-    if (persist_exists(KEY_CNF_TROTTEUSE))
-        cnfTrotteuse = persist_read_bool(KEY_CNF_TROTTEUSE);
-    else
-        cnfTrotteuse = true;
-
-    if (persist_exists(KEY_CNF_EXCHANGE))
-        {
-        persist_read_string(KEY_CNF_EXCHANGE, cnfExchange, 20);
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "** Read back Exchange: %s", cnfExchange);
-        }
-    else
-        strcpy(cnfExchange, "Bitstamp");
-
-    if (persist_exists(KEY_CNF_LOCATION))
-        {
-        persist_read_string(KEY_CNF_LOCATION, cnfLocation, 32);
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "** Read back Location: %s", cnfLocation);
-        }
-    else
-        strcpy(cnfLocation, "GPS automatic");
-
-
-
-    if (persist_exists(KEY_CNF_SERVICE))
-        {
-        persist_read_string(KEY_CNF_SERVICE, cnfService, 32);
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "** Read back Service: %s", cnfService);
-        }
-    else
-        strcpy(cnfService, "Environnement Canada");
 
     if (persist_exists(KEY_CNF_CADENCE))
         {
