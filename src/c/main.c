@@ -1947,12 +1947,10 @@ void init(void) //{{{
     battery_state = battery_state_service_peek();
     battery_handler(battery_state);
 
-    if (bluetooth_connection_service_peek())
-        {
-        strcpy(bluetooth_text," ok");
-        }
-    else
-        strcpy(bluetooth_text," LOST!");
+    // Check initial Bluetooth state and trigger handler
+    // This ensures data is cleared if starting without Bluetooth
+    bool bt_connected = bluetooth_connection_service_peek();
+    bluetooth_handler(bt_connected);
 
 }
 //}}}
