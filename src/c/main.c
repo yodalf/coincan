@@ -24,7 +24,13 @@
 
 #define GRECT_DATE_LAYER (GRect((144-100)/2, -4, 100, 19))
 
-#define BTC_OFFSET       19
+// BTC positioning - centralized constants
+#define BTC_BASE_Y       15  // Base Y position for BTC text (was 16-6+5 = 15)
+#define BTC_VALUE_Y      BTC_BASE_Y
+#define BTC_HIGH_Y       (BTC_BASE_Y + 1)  // BTC high price Y position (was 17-6+5 = 16)
+#define BTC_LOW_Y        (BTC_BASE_Y + 14) // BTC low price Y position (was 30-6+5 = 29)
+#define BTC_GRAPH_Y      19  // Graph Y offset to align with BTC text
+
 #define X_SIZE 60
 #define Y_SIZE 22
 
@@ -76,8 +82,8 @@
 #define GRECT_BCL5_LAYER        GRect( 0, 30-6,  5, 16)
 #endif
 
-#define GRECT_GRAPH_LAYER_1     GRect(140-X_SIZE, BTC_OFFSET+1, X_SIZE, Y_SIZE)
-#define GRECT_GRAPH_LAYER_2     GRect(135-X_SIZE, BTC_OFFSET+1, X_SIZE, Y_SIZE)
+#define GRECT_GRAPH_LAYER_1     GRect(140-X_SIZE, BTC_GRAPH_Y+1, X_SIZE, Y_SIZE)
+#define GRECT_GRAPH_LAYER_2     GRect(135-X_SIZE, BTC_GRAPH_Y+1, X_SIZE, Y_SIZE)
 
 #define GRECT_TOP_LAYER         GRect(0,   0, 144, 95)
 #define GRECT_MIDDLE_LAYER      GRect(0,  95, 144, 7)
@@ -421,6 +427,9 @@ void handle_weather_observation(Tuple *iconCode, Tuple *temp, Tuple *windDir, Tu
 void update_weather_display(void);
 void handle_js_event(Tuple *tuple);
 
+// BTC positioning helpers
+void update_btc_layer_positions(void);
+
 //}}}
 
 //}}}
@@ -737,6 +746,45 @@ void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) //{{{
 //{{{  Message Handler Helpers
 
 /**
+ * Update BTC layer positions based on current configuration
+ * Centralizes all BTC positioning logic to avoid code duplication
+ */
+void update_btc_layer_positions(void) //{{{
+{
+    // Calculate Y offset based on trotteuse visibility
+    int btc_y_offset = cnfTrotteuse ? 0 : 3;
+    int graph_y_offset = cnfTrotteuse ? BTC_GRAPH_Y : (BTC_GRAPH_Y + 3);
+
+    // Position BTC layers based on exchange type
+    if (cnfExchange[0] == 'B' && cnfExchange[1] == 'i' && cnfExchange[2] == 't' && cnfExchange[3] == 'p') {
+        // Bitpay exchange - wider center display, hide high/low
+        layer_set_frame(text_layer_get_layer(bc_layer), GRect( 5, BTC_VALUE_Y+btc_y_offset, 66, 24));
+        layer_set_frame(text_layer_get_layer(bcH_layer), GRect( 0, BTC_HIGH_Y+btc_y_offset,  5, 16));
+        layer_set_frame(text_layer_get_layer(bcL_layer), GRect( 0, BTC_LOW_Y+btc_y_offset,  5, 16));
+    } else if (cnfExchange[0] == 'B' && cnfExchange[1] == 'T' && cnfExchange[2] == 'C' && cnfExchange[3] == 'C') {
+        // BTCC exchange - slightly offset center
+        layer_set_frame(text_layer_get_layer(bc_layer),  GRect(23, BTC_VALUE_Y+btc_y_offset, 56, 24));
+        layer_set_frame(text_layer_get_layer(bcH_layer), GRect( 0, BTC_HIGH_Y+btc_y_offset, 31, 14));
+        layer_set_frame(text_layer_get_layer(bcL_layer), GRect( 0, BTC_LOW_Y+btc_y_offset, 31, 14));
+    } else {
+        // Default exchange (Kraken, etc) - standard layout
+        layer_set_frame(text_layer_get_layer(bc_layer),  GRect(21, BTC_VALUE_Y+btc_y_offset, 56, 24));
+        layer_set_frame(text_layer_get_layer(bcH_layer), GRect( 0, BTC_HIGH_Y+btc_y_offset, 31, 14));
+        layer_set_frame(text_layer_get_layer(bcL_layer), GRect( 0, BTC_LOW_Y+btc_y_offset, 31, 14));
+    }
+
+    // Position graph layer
+    #ifdef PBL_COLOR
+        layer_set_frame(graph_layer, GRect(140-X_SIZE, graph_y_offset+1, X_SIZE, Y_SIZE));
+    #else
+        layer_set_frame(graph_layer, GRect(135-X_SIZE, graph_y_offset+1, X_SIZE, Y_SIZE));
+    #endif
+
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Updated BTC layer positions: y_offset=%d, graph_y=%d", btc_y_offset, graph_y_offset);
+}
+//}}}
+
+/**
  * Handle configuration tuple for trotteuse (second hand)
  */
 void handle_config_trotteuse(Tuple *tuple) //{{{
@@ -814,20 +862,7 @@ void handle_config_trotteuse(Tuple *tuple) //{{{
     APP_LOG(APP_LOG_LEVEL_INFO,"CONFIG_C: Repositioned time layer to Y=%d", time_y_pos);
 
     // Adjust BTC layers vertical position based on trotteuse visibility
-    int btc_y_offset = cnfTrotteuse ? 0 : 3;
-    int btc_offset = cnfTrotteuse ? BTC_OFFSET : (BTC_OFFSET + 3);
-
-    layer_set_frame(text_layer_get_layer(bc_layer), GRect(21, 16-6+btc_y_offset+5, 56, 24));
-    layer_set_frame(text_layer_get_layer(bcL_layer), GRect(0, 30-6+btc_y_offset+5, 31, 14));
-    layer_set_frame(text_layer_get_layer(bcH_layer), GRect(0, 17-6+btc_y_offset+5, 31, 14));
-
-    #ifdef PBL_COLOR
-        layer_set_frame(graph_layer, GRect(140-X_SIZE, btc_offset+1, X_SIZE, Y_SIZE));
-    #else
-        layer_set_frame(graph_layer, GRect(135-X_SIZE, btc_offset+1, X_SIZE, Y_SIZE));
-    #endif
-
-    APP_LOG(APP_LOG_LEVEL_INFO,"CONFIG_C: Repositioned BTC layers with offset: %d", btc_y_offset);
+    update_btc_layer_positions();
 
     trotteuse = 0;
     if (trotteuse_scale_layer != NULL) {
@@ -1006,28 +1041,17 @@ void handle_bitcoin_data(Tuple *btcV_tuple, Tuple *btcL_tuple, Tuple *btcH_tuple
         // Set the current price text
         text_layer_set_text(bc_layer, btcV);
 
-        // Calculate dynamic Y offset based on trotteuse visibility
-        int btc_y_offset = cnfTrotteuse ? 0 : 3;
-
+        // Update text visibility based on exchange type
         if (cnfExchange[0] == 'B' && cnfExchange[1] == 'i' && cnfExchange[2] == 't' && cnfExchange[3] == 'p') {
             text_layer_set_text(bcH_layer, "");
             text_layer_set_text(bcL_layer, "");
-            layer_set_frame(text_layer_get_layer(bc_layer), GRect( 5, 16-6+btc_y_offset+5, 66, 24));
-            layer_set_frame(text_layer_get_layer(bcH_layer), GRect( 0, 17-6+btc_y_offset+5,  5, 16));
-            layer_set_frame(text_layer_get_layer(bcL_layer), GRect( 0, 30-6+btc_y_offset+5,  5, 16));
         } else {
             text_layer_set_text(bcH_layer, btcH);
             text_layer_set_text(bcL_layer, btcL);
-            if (cnfExchange[0] == 'B' && cnfExchange[1] == 'T' && cnfExchange[2] == 'C' && cnfExchange[3] == 'C') {
-                layer_set_frame(text_layer_get_layer(bc_layer),  GRect(23, 16-6+btc_y_offset+5, 56, 24));
-                layer_set_frame(text_layer_get_layer(bcH_layer), GRect( 0, 17-6+btc_y_offset+5, 31, 14));
-                layer_set_frame(text_layer_get_layer(bcL_layer), GRect( 0, 30-6+btc_y_offset+5, 31, 14));
-            } else {
-                layer_set_frame(text_layer_get_layer(bc_layer),  GRect(21, 16-6+btc_y_offset+5, 56, 24));
-                layer_set_frame(text_layer_get_layer(bcH_layer), GRect( 0, 17-6+btc_y_offset+5, 31, 14));
-                layer_set_frame(text_layer_get_layer(bcL_layer), GRect( 0, 30-6+btc_y_offset+5, 31, 14));
-            }
         }
+
+        // Update layer positions
+        update_btc_layer_positions();
     }
 
     if (btcL_tuple) {
@@ -1866,7 +1890,7 @@ void init(void) //{{{
     layer_add_child(window_get_root_layer(window), bot_layer);
 
     // Add graph layer with dynamic Y offset based on trotteuse visibility
-    int btc_offset = cnfTrotteuse ? BTC_OFFSET : (BTC_OFFSET + 3);
+    int btc_offset = cnfTrotteuse ? BTC_GRAPH_Y : (BTC_GRAPH_Y + 3);
     APP_LOG(APP_LOG_LEVEL_DEBUG, "** Creating graph_layer with btc_offset=%d (cnfTrotteuse=%d)", btc_offset, cnfTrotteuse ? 1 : 0);
     #ifdef PBL_COLOR
         graph_layer = layer_create( GRect(140-X_SIZE, btc_offset+1, X_SIZE, Y_SIZE) );
@@ -1908,28 +1932,26 @@ void init(void) //{{{
     text_layer_set_text(date_layer, date_text);
     layer_add_child(top_layer, text_layer_get_layer(date_layer));
 
-    // Create BTC layers with dynamic Y offset based on trotteuse visibility
+    // Create BTC layers - position will be set by update_btc_layer_positions()
     int btc_y_offset = cnfTrotteuse ? 0 : 3;
     APP_LOG(APP_LOG_LEVEL_DEBUG, "** Creating BTC layers with btc_y_offset=%d (cnfTrotteuse=%d)", btc_y_offset, cnfTrotteuse ? 1 : 0);
-    bc_layer = text_layer_create(GRect(21, 16-6+btc_y_offset+5, 56, 24));
+    bc_layer = text_layer_create(GRect(21, BTC_VALUE_Y+btc_y_offset, 56, 24));
     text_layer_set_text_color(bc_layer, cBtcF);
     text_layer_set_background_color(bc_layer, cBtcB);
     text_layer_set_font(bc_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD) );
     text_layer_set_text_alignment(bc_layer, GTextAlignmentCenter);
     text_layer_set_text(bc_layer, btcV);
-    //layer_add_child(window_get_root_layer(window), text_layer_get_layer(bc_layer));
     layer_add_child(top_layer, text_layer_get_layer(bc_layer));
 
-    bcL_layer = text_layer_create(GRect(0, 30-6+btc_y_offset+5, 31, 14));
+    bcL_layer = text_layer_create(GRect(0, BTC_LOW_Y+btc_y_offset, 31, 14));
     text_layer_set_text_color(bcL_layer, cBtclF);
     text_layer_set_background_color(bcL_layer, cBtclB);
     text_layer_set_font(bcL_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
     text_layer_set_text_alignment(bcL_layer, GTextAlignmentCenter);
     text_layer_set_text(bcL_layer, btcL);
-    //layer_add_child(text_layer_get_layer(bc_layer), text_layer_get_layer(bcL_layer));
     layer_add_child(top_layer, text_layer_get_layer(bcL_layer));
 
-    bcH_layer = text_layer_create(GRect(0, 17-6+btc_y_offset+5, 31, 14));
+    bcH_layer = text_layer_create(GRect(0, BTC_HIGH_Y+btc_y_offset, 31, 14));
     text_layer_set_text_color(bcH_layer, cBtchF);
     text_layer_set_background_color(bcH_layer, cBtchB);
     text_layer_set_font(bcH_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
