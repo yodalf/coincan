@@ -24,7 +24,7 @@
 
 #define GRECT_DATE_LAYER (GRect((144-100)/2, -4, 100, 19))
 
-#define BTC_OFFSET       14
+#define BTC_OFFSET       19
 #define X_SIZE 60
 #define Y_SIZE 22
 
@@ -817,9 +817,9 @@ void handle_config_trotteuse(Tuple *tuple) //{{{
     int btc_y_offset = cnfTrotteuse ? 0 : 3;
     int btc_offset = cnfTrotteuse ? BTC_OFFSET : (BTC_OFFSET + 3);
 
-    layer_set_frame(text_layer_get_layer(bc_layer), GRect(21, 16-6+btc_y_offset, 56, 24));
-    layer_set_frame(text_layer_get_layer(bcL_layer), GRect(0, 30-6+btc_y_offset, 31, 14));
-    layer_set_frame(text_layer_get_layer(bcH_layer), GRect(0, 17-6+btc_y_offset, 31, 14));
+    layer_set_frame(text_layer_get_layer(bc_layer), GRect(21, 16-6+btc_y_offset+5, 56, 24));
+    layer_set_frame(text_layer_get_layer(bcL_layer), GRect(0, 30-6+btc_y_offset+5, 31, 14));
+    layer_set_frame(text_layer_get_layer(bcH_layer), GRect(0, 17-6+btc_y_offset+5, 31, 14));
 
     #ifdef PBL_COLOR
         layer_set_frame(graph_layer, GRect(140-X_SIZE, btc_offset+1, X_SIZE, Y_SIZE));
@@ -1012,20 +1012,20 @@ void handle_bitcoin_data(Tuple *btcV_tuple, Tuple *btcL_tuple, Tuple *btcH_tuple
         if (cnfExchange[0] == 'B' && cnfExchange[1] == 'i' && cnfExchange[2] == 't' && cnfExchange[3] == 'p') {
             text_layer_set_text(bcH_layer, "");
             text_layer_set_text(bcL_layer, "");
-            layer_set_frame(text_layer_get_layer(bc_layer), GRect( 5, 16-6+btc_y_offset, 66, 24));
-            layer_set_frame(text_layer_get_layer(bcH_layer), GRect( 0, 17-6+btc_y_offset,  5, 16));
-            layer_set_frame(text_layer_get_layer(bcL_layer), GRect( 0, 30-6+btc_y_offset,  5, 16));
+            layer_set_frame(text_layer_get_layer(bc_layer), GRect( 5, 16-6+btc_y_offset+5, 66, 24));
+            layer_set_frame(text_layer_get_layer(bcH_layer), GRect( 0, 17-6+btc_y_offset+5,  5, 16));
+            layer_set_frame(text_layer_get_layer(bcL_layer), GRect( 0, 30-6+btc_y_offset+5,  5, 16));
         } else {
             text_layer_set_text(bcH_layer, btcH);
             text_layer_set_text(bcL_layer, btcL);
             if (cnfExchange[0] == 'B' && cnfExchange[1] == 'T' && cnfExchange[2] == 'C' && cnfExchange[3] == 'C') {
-                layer_set_frame(text_layer_get_layer(bc_layer),  GRect(23, 16-6+btc_y_offset, 56, 24));
-                layer_set_frame(text_layer_get_layer(bcH_layer), GRect( 0, 17-6+btc_y_offset, 31, 14));
-                layer_set_frame(text_layer_get_layer(bcL_layer), GRect( 0, 30-6+btc_y_offset, 31, 14));
+                layer_set_frame(text_layer_get_layer(bc_layer),  GRect(23, 16-6+btc_y_offset+5, 56, 24));
+                layer_set_frame(text_layer_get_layer(bcH_layer), GRect( 0, 17-6+btc_y_offset+5, 31, 14));
+                layer_set_frame(text_layer_get_layer(bcL_layer), GRect( 0, 30-6+btc_y_offset+5, 31, 14));
             } else {
-                layer_set_frame(text_layer_get_layer(bc_layer),  GRect(21, 16-6+btc_y_offset, 56, 24));
-                layer_set_frame(text_layer_get_layer(bcH_layer), GRect( 0, 17-6+btc_y_offset, 31, 14));
-                layer_set_frame(text_layer_get_layer(bcL_layer), GRect( 0, 30-6+btc_y_offset, 31, 14));
+                layer_set_frame(text_layer_get_layer(bc_layer),  GRect(21, 16-6+btc_y_offset+5, 56, 24));
+                layer_set_frame(text_layer_get_layer(bcH_layer), GRect( 0, 17-6+btc_y_offset+5, 31, 14));
+                layer_set_frame(text_layer_get_layer(bcL_layer), GRect( 0, 30-6+btc_y_offset+5, 31, 14));
             }
         }
     }
@@ -1902,7 +1902,7 @@ void init(void) //{{{
     date_layer = text_layer_create(GRECT_DATE_LAYER);
     text_layer_set_text_color(date_layer, cDateF);
     text_layer_set_background_color(date_layer, cDateB);
-    text_layer_set_font(date_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+    text_layer_set_font(date_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
     //text_layer_set_font(date_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FUTURA_18)));
     text_layer_set_text_alignment(date_layer, GTextAlignmentCenter);
     text_layer_set_text(date_layer, date_text);
@@ -1911,7 +1911,7 @@ void init(void) //{{{
     // Create BTC layers with dynamic Y offset based on trotteuse visibility
     int btc_y_offset = cnfTrotteuse ? 0 : 3;
     APP_LOG(APP_LOG_LEVEL_DEBUG, "** Creating BTC layers with btc_y_offset=%d (cnfTrotteuse=%d)", btc_y_offset, cnfTrotteuse ? 1 : 0);
-    bc_layer = text_layer_create(GRect(21, 16-6+btc_y_offset, 56, 24));
+    bc_layer = text_layer_create(GRect(21, 16-6+btc_y_offset+5, 56, 24));
     text_layer_set_text_color(bc_layer, cBtcF);
     text_layer_set_background_color(bc_layer, cBtcB);
     text_layer_set_font(bc_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD) );
@@ -1920,7 +1920,7 @@ void init(void) //{{{
     //layer_add_child(window_get_root_layer(window), text_layer_get_layer(bc_layer));
     layer_add_child(top_layer, text_layer_get_layer(bc_layer));
 
-    bcL_layer = text_layer_create(GRect(0, 30-6+btc_y_offset, 31, 14));
+    bcL_layer = text_layer_create(GRect(0, 30-6+btc_y_offset+5, 31, 14));
     text_layer_set_text_color(bcL_layer, cBtclF);
     text_layer_set_background_color(bcL_layer, cBtclB);
     text_layer_set_font(bcL_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
@@ -1929,7 +1929,7 @@ void init(void) //{{{
     //layer_add_child(text_layer_get_layer(bc_layer), text_layer_get_layer(bcL_layer));
     layer_add_child(top_layer, text_layer_get_layer(bcL_layer));
 
-    bcH_layer = text_layer_create(GRect(0, 17-6+btc_y_offset, 31, 14));
+    bcH_layer = text_layer_create(GRect(0, 17-6+btc_y_offset+5, 31, 14));
     text_layer_set_text_color(bcH_layer, cBtchF);
     text_layer_set_background_color(bcH_layer, cBtchB);
     text_layer_set_font(bcH_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
