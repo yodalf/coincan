@@ -563,8 +563,8 @@ void push_point(float btc, float btcL, float btcH) //{{{
     if (btc > btcH) btc = btcH;
 
     for (i=0; i<X_SIZE-1; i++) bgraph_data[i].y = bgraph_data[i+1].y;
-    // Constrain graph to y=1 to y=Y_SIZE-5 to leave room for borders (top at y=0, bottom at y=Y_SIZE-4)
-    new_point =  1 + (Y_SIZE-6) - ((Y_SIZE-6) * ((btc-btcL)/(btcH-btcL)) );
+    // Constrain graph to y=1 to y=21 to fit inside 23-pixel border (top at y=0, bottom at y=22)
+    new_point =  1 + (Y_SIZE-2) - ((Y_SIZE-2) * ((btc-btcL)/(btcH-btcL)) );
     bgraph_data[X_SIZE-1].y =  new_point;
     bgraph_data[X_SIZE].y =  new_point;
     j = 2*X_SIZE;
@@ -776,9 +776,9 @@ void update_btc_layer_positions(void) //{{{
 
     // Position graph layer
     #ifdef PBL_COLOR
-        layer_set_frame(graph_layer, GRect(140-X_SIZE, graph_y_offset+1, X_SIZE, Y_SIZE));
+        layer_set_frame(graph_layer, GRect(140-X_SIZE, graph_y_offset+1, X_SIZE, Y_SIZE+5));
     #else
-        layer_set_frame(graph_layer, GRect(135-X_SIZE, graph_y_offset+1, X_SIZE, Y_SIZE));
+        layer_set_frame(graph_layer, GRect(135-X_SIZE, graph_y_offset+1, X_SIZE, Y_SIZE+5));
     #endif
 
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Updated BTC layer positions: y_offset=%d, graph_y=%d", btc_y_offset, graph_y_offset);
@@ -1601,16 +1601,12 @@ void graph_update_proc(struct Layer *layer, GContext *ctx) //{{{
         gpath_draw_outline(ctx, bgraph);
     }
 
-    // Draw white border around the graph (max drawable Y is Y_SIZE-4)
+    // Draw white border - left and right edges only (23 pixels tall, y=0 to y=22)
     graphics_context_set_stroke_color(ctx, GColorWhite);
-    // Top edge
-    graphics_draw_line(ctx, GPoint(0, 0), GPoint(X_SIZE-1, 0));
-    // Bottom edge at Y_SIZE-4
-    graphics_draw_line(ctx, GPoint(0, Y_SIZE-4), GPoint(X_SIZE-1, Y_SIZE-4));
     // Left edge
-    graphics_draw_line(ctx, GPoint(0, 0), GPoint(0, Y_SIZE-4));
+    graphics_draw_line(ctx, GPoint(0, 0), GPoint(0, Y_SIZE));
     // Right edge
-    graphics_draw_line(ctx, GPoint(X_SIZE-1, 0), GPoint(X_SIZE-1, Y_SIZE-4));
+    graphics_draw_line(ctx, GPoint(X_SIZE-1, 0), GPoint(X_SIZE-1, Y_SIZE));
 }
 //}}}
 void trotteuse_update_proc(struct Layer *layer, GContext *ctx) //{{{
@@ -1905,9 +1901,9 @@ void init(void) //{{{
     int btc_offset = cnfTrotteuse ? BTC_GRAPH_Y : (BTC_GRAPH_Y + 3);
     APP_LOG(APP_LOG_LEVEL_DEBUG, "** Creating graph_layer with btc_offset=%d (cnfTrotteuse=%d)", btc_offset, cnfTrotteuse ? 1 : 0);
     #ifdef PBL_COLOR
-        graph_layer = layer_create( GRect(140-X_SIZE, btc_offset+1, X_SIZE, Y_SIZE) );
+        graph_layer = layer_create( GRect(140-X_SIZE, btc_offset+1, X_SIZE, Y_SIZE+5) );
     #else
-        graph_layer = layer_create( GRect(135-X_SIZE, btc_offset+1, X_SIZE, Y_SIZE) );
+        graph_layer = layer_create( GRect(135-X_SIZE, btc_offset+1, X_SIZE, Y_SIZE+5) );
     #endif
     //layer_add_child(window_get_root_layer(window), graph_layer);
     //layer_insert_below_sibling(window_get_root_layer(window), graph_layer);
@@ -1927,7 +1923,7 @@ void init(void) //{{{
     time_layer = text_layer_create(GRect((144-134)/2, time_y_pos, 134, 55));
 #endif
     text_layer_set_text_color(time_layer, cTimeF);
-    text_layer_set_background_color(time_layer, cTimeB);
+    text_layer_set_background_color(time_layer, GColorClear);
     text_layer_set_font(time_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FUTURA_CONDENSED_53)));
     text_layer_set_text_alignment(time_layer, GTextAlignmentCenter);
     text_layer_set_text(time_layer, time_text);
