@@ -563,7 +563,8 @@ void push_point(float btc, float btcL, float btcH) //{{{
     if (btc > btcH) btc = btcH;
 
     for (i=0; i<X_SIZE-1; i++) bgraph_data[i].y = bgraph_data[i+1].y;
-    new_point =  (Y_SIZE-1) - ((Y_SIZE-1) * ((btc-btcL)/(btcH-btcL)) );
+    // Constrain graph to y=1 to y=Y_SIZE-5 to leave room for borders (top at y=0, bottom at y=Y_SIZE-4)
+    new_point =  1 + (Y_SIZE-6) - ((Y_SIZE-6) * ((btc-btcL)/(btcH-btcL)) );
     bgraph_data[X_SIZE-1].y =  new_point;
     bgraph_data[X_SIZE].y =  new_point;
     j = 2*X_SIZE;
@@ -1589,16 +1590,27 @@ void graph_update_proc(struct Layer *layer, GContext *ctx) //{{{
 
     APP_LOG(APP_LOG_LEVEL_DEBUG, "************* GRAPH ************ btcV_value=%d", (int)btcV_value);
 
-    // Fill background
+    // Fill background - use layer bounds instead of FULL_FRAME
+    GRect bounds = layer_get_bounds(layer);
     graphics_context_set_fill_color(ctx, GColorBlack);
-    graphics_fill_rect(ctx, FULL_FRAME, 0, GCornerNone);
+    graphics_fill_rect(ctx, bounds, 0, GCornerNone);
 
     // Only draw graph if we have Bitcoin data
     if (btcV_value != 0.0) {
         graphics_context_set_stroke_color(ctx, GColorWhite);
         gpath_draw_outline(ctx, bgraph);
     }
-    // When btcV_value is 0, don't draw anything - background is already black
+
+    // Draw white border around the graph (max drawable Y is Y_SIZE-4)
+    graphics_context_set_stroke_color(ctx, GColorWhite);
+    // Top edge
+    graphics_draw_line(ctx, GPoint(0, 0), GPoint(X_SIZE-1, 0));
+    // Bottom edge at Y_SIZE-4
+    graphics_draw_line(ctx, GPoint(0, Y_SIZE-4), GPoint(X_SIZE-1, Y_SIZE-4));
+    // Left edge
+    graphics_draw_line(ctx, GPoint(0, 0), GPoint(0, Y_SIZE-4));
+    // Right edge
+    graphics_draw_line(ctx, GPoint(X_SIZE-1, 0), GPoint(X_SIZE-1, Y_SIZE-4));
 }
 //}}}
 void trotteuse_update_proc(struct Layer *layer, GContext *ctx) //{{{
