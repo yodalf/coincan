@@ -393,6 +393,7 @@ void init(void);
 void deinit(void);
 
 // Graphics update procedures
+void top_layer_update_proc(struct Layer *, GContext *);
 void DOT_update_proc(struct Layer *, GContext *);
 void graph_update_proc(struct Layer *, GContext *);
 void trotteuse_update_proc(struct Layer *, GContext *);
@@ -695,10 +696,13 @@ void handle_minute_update(struct tm* tick_time) //{{{
 
     strftime(date_text, sizeof(date_text), "%a %d", tick_time);
 
-    // Mark layers for redraw
-    // For transparent time layer, mark the parent layer dirty to clear old pixels
+    // Update text and mark layers for redraw
+    // Set text first, then mark dirty to trigger proper redraw
+    text_layer_set_text(time_layer, time_text);
+    text_layer_set_text(date_layer, date_text);
+
+    // Mark parent layer dirty to ensure transparent time layer clears properly
     layer_mark_dirty(top_layer);
-    layer_mark_dirty(text_layer_get_layer(date_layer));
 
     // Fetch weather data based on configurable cadence aligned to clock intervals
     // For cadence of N minutes, fetch at 0, N, 2N, 3N... minutes after the hour
@@ -1578,6 +1582,18 @@ void battery_handler(BatteryChargeState charge) //{{{
 //}}}
 
 //{{{  Graphics update procs
+/**
+ * Top layer update procedure - clears the layer background
+ * This ensures transparent text layers properly clear old content
+ */
+void top_layer_update_proc(struct Layer *layer, GContext *ctx) //{{{
+{
+    GRect bounds = layer_get_bounds(layer);
+    graphics_context_set_fill_color(ctx, GColorBlack);
+    graphics_fill_rect(ctx, bounds, 0, GCornerNone);
+}
+//}}}
+
 void DOT_update_proc(struct Layer *layer, GContext *ctx) //{{{
 {
     window_set_background_color(window, GColorClear );
@@ -1927,6 +1943,7 @@ void init(void) //{{{
 
 
     top_layer = layer_create( GRECT_TOP_LAYER );
+    layer_set_update_proc(top_layer, top_layer_update_proc);
     mid_layer = layer_create( GRECT_MIDDLE_LAYER );
     bot_layer = layer_create( GRECT_BOTTOM_LAYER );
     layer_add_child(window_get_root_layer(window), top_layer);
