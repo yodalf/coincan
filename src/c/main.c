@@ -15,6 +15,7 @@
 #define KEY_CNF_CELSIUS MESSAGE_KEY_celsius
 #define KEY_CNF_HEALTH MESSAGE_KEY_health
 #define KEY_CNF_CADENCE MESSAGE_KEY_cadence
+#define KEY_CNF_CLEARBTCDATA MESSAGE_KEY_clearbtcdata
 // Legacy keys that are not in the new config
 #define KEY_JS_EVENT 18
 //}}}
@@ -1290,6 +1291,7 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
     Tuple *cnfCelsius_tuple   = dict_find(iter, KEY_CNF_CELSIUS);
     Tuple *cnfHealth_tuple   = dict_find(iter, KEY_CNF_HEALTH);
     Tuple *cnfCadence_tuple  = dict_find(iter, KEY_CNF_CADENCE);
+    Tuple *cnfClearBtcData_tuple = dict_find(iter, KEY_CNF_CLEARBTCDATA);
 
     Tuple *jsEvent_tuple = dict_find(iter, KEY_JS_EVENT);
     //}}}
@@ -1310,6 +1312,43 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
     handle_config_location(cnfLocation_tuple);
     handle_config_service(cnfService_tuple);
     handle_config_cadence(cnfCadence_tuple);
+
+    // Handle Clear BTC Data request
+    if (cnfClearBtcData_tuple) {
+        APP_LOG(APP_LOG_LEVEL_INFO,"CONFIG_C: Clear BTC Data toggle received");
+        int clearValue = cnfClearBtcData_tuple->value->int32;
+        APP_LOG(APP_LOG_LEVEL_INFO,"CONFIG_C: Clear value = %d", clearValue);
+
+        if (clearValue == 1) {
+            APP_LOG(APP_LOG_LEVEL_INFO,"CONFIG_C: Clearing Bitcoin graph data");
+
+            // Clear Bitcoin display values
+            strcpy(btcV, "");
+            strcpy(btcL, "");
+            strcpy(btcH, "");
+            btcV_value = 0.0;
+            btcL_value = 0.0;
+            btcH_value = 0.0;
+            text_layer_set_text(bc_layer, "");
+            text_layer_set_text(bcH_layer, "");
+            text_layer_set_text(bcL_layer, "");
+
+            // Clear the Bitcoin graph data completely
+            for (int i = 0; i < 2 * X_SIZE; i++) {
+                bgraph_data[i].x = i < X_SIZE ? i : (2*X_SIZE - 1 - i);
+                bgraph_data[i].y = -100;  // Move points off-screen
+            }
+
+            // Delete persistent graph data
+            persist_delete(0);
+            persist_delete(1);
+
+            // Force immediate redraw of graph
+            layer_mark_dirty(graph_layer);
+
+            APP_LOG(APP_LOG_LEVEL_INFO,"CONFIG_C: Bitcoin graph data cleared successfully");
+        }
+    }
 
     // Refetch weather if exchange, location, or service changed
     if (cnfExchange_tuple || cnfLocation_tuple || cnfService_tuple) {

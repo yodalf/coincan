@@ -36,7 +36,8 @@
       "exchange",
       "service",
       "location",
-      "cadence"
+      "cadence",
+      "clearbtcdata"
     ],
     "resources": {
       "media": [

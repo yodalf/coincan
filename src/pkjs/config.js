@@ -88,6 +88,13 @@ module.exports = [
             "value": 3
           }
         ]
+      },
+      {
+        "type": "toggle",
+        "messageKey": "clearbtcdata",
+        "label": "Clear Bitcoin Graph Data",
+        "description": "Toggle this ON and save to completely erase all stored Bitcoin price history. It will automatically turn OFF after clearing.",
+        "defaultValue": false
       }
     ]
   },
