@@ -696,7 +696,8 @@ void handle_minute_update(struct tm* tick_time) //{{{
     strftime(date_text, sizeof(date_text), "%a %d", tick_time);
 
     // Mark layers for redraw
-    layer_mark_dirty(text_layer_get_layer(time_layer));
+    // For transparent time layer, mark the parent layer dirty to clear old pixels
+    layer_mark_dirty(top_layer);
     layer_mark_dirty(text_layer_get_layer(date_layer));
 
     // Fetch weather data based on configurable cadence aligned to clock intervals
