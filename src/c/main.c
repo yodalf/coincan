@@ -291,6 +291,9 @@ int errorInWeather = 0;
 // Splash screen timer
 static AppTimer *splash_timer = NULL;
 
+// Retry timer for reconnection attempts
+static AppTimer *retry_timer = NULL;
+
 char time_text[] = "00:00"; // Needs to be static because it's used by the system later.
 char date_text[] = "........";
 
@@ -413,6 +416,9 @@ void handle_minute_tick(struct tm*, TimeUnits);
 
 // Splash screen timer
 void splash_timer_callback(void *data);
+
+// Retry timer for reconnection attempts
+void retry_timer_callback(void *data);
 
 // Configuration handlers
 void handle_config_trotteuse(Tuple *tuple);
@@ -661,6 +667,30 @@ void splash_timer_callback(void *data) //{{{
 
     // Clear the timer reference
     splash_timer = NULL;
+}
+//}}}
+
+/**
+ * Retry timer callback - Attempts to reconnect once per minute when communication is lost
+ * This ensures the app continues trying to fetch data even if initial attempts fail
+ */
+void retry_timer_callback(void *data) //{{{
+{
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Retry timer fired - attempting to fetch data");
+
+    // Clear the timer reference since it has fired
+    retry_timer = NULL;
+
+    // Only retry if Bluetooth is connected
+    if (bluetooth_connection_service_peek()) {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Bluetooth connected - sending fetch request");
+        fetch_msg();
+        // Don't reschedule - if this fetch fails, the failure handlers will schedule a new retry
+        // If it succeeds, we don't need to retry anymore
+    } else {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Bluetooth disconnected - will retry when BT reconnects");
+        // Don't reschedule - bluetooth_handler will handle retry when BT comes back
+    }
 }
 //}}}
 //}}}
@@ -1304,6 +1334,14 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
     APP_LOG(APP_LOG_LEVEL_INFO,"CONFIG_C: ===== MESSAGE RECEIVED =====");
     APP_LOG(APP_LOG_LEVEL_INFO,"CONFIG_C: Message count: %d", message_count + 1);
     message_count += 1;
+
+    // Cancel retry timer since we successfully received data
+    if (retry_timer != NULL) {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Data received - cancelling retry timer");
+        app_timer_cancel(retry_timer);
+        retry_timer = NULL;
+    }
+
     window_set_background_color(window, GColorBlack);
     trotteuse = 0;
 
@@ -1437,12 +1475,30 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
 //}}}
 void in_dropped_handler(AppMessageResult reason, void *context) //{{{
 {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Dropped!");
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Dropped! Starting retry timer.");
+
+    // Cancel any existing retry timer
+    if (retry_timer != NULL) {
+        app_timer_cancel(retry_timer);
+        retry_timer = NULL;
+    }
+
+    // Schedule a retry in 60 seconds
+    retry_timer = app_timer_register(60000, retry_timer_callback, NULL);
 }
 //}}}
 void out_failed_handler(DictionaryIterator *failed, AppMessageResult reason, void *context) //{{{
 {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Failed to Send!");
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Failed to Send! Starting retry timer.");
+
+    // Cancel any existing retry timer
+    if (retry_timer != NULL) {
+        app_timer_cancel(retry_timer);
+        retry_timer = NULL;
+    }
+
+    // Schedule a retry in 60 seconds
+    retry_timer = app_timer_register(60000, retry_timer_callback, NULL);
 }
 //}}}
 void bluetooth_handler(bool connected) //{{{
@@ -1450,6 +1506,14 @@ void bluetooth_handler(bool connected) //{{{
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "Bluetooth event!");
     if (connected)
         {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Bluetooth connected - cancelling retry timer and fetching data");
+
+        // Cancel any existing retry timer since we're connected
+        if (retry_timer != NULL) {
+            app_timer_cancel(retry_timer);
+            retry_timer = NULL;
+        }
+
         strcpy(bluetooth_text," ");
         strcat(bluetooth_text, geoArea1);
 
@@ -1457,6 +1521,9 @@ void bluetooth_handler(bool connected) //{{{
         text_layer_set_text_alignment(weather_layer.bluetooth_layer, GTextAlignmentLeft);
         text_layer_set_background_color(weather_layer.bluetooth_layer, cInfoBlueB);
         text_layer_set_text_color(weather_layer.bluetooth_layer, cInfoBlueF );
+
+        // Immediately fetch data when reconnected
+        fetch_msg();
         }
     else
         {
@@ -1518,6 +1585,14 @@ void bluetooth_handler(bool connected) //{{{
         // Mark graph layer dirty to redraw with black background
         APP_LOG(APP_LOG_LEVEL_DEBUG, "BT OFF: Setting trotteuse=0 and marking graph_layer dirty to clear display");
         layer_mark_dirty(graph_layer);
+
+        // Start retry timer to attempt reconnection every 60 seconds
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Bluetooth disconnected - starting retry timer");
+        if (retry_timer != NULL) {
+            app_timer_cancel(retry_timer);
+            retry_timer = NULL;
+        }
+        retry_timer = app_timer_register(60000, retry_timer_callback, NULL);
         }
 
     layer_mark_dirty(window_get_root_layer(window));
@@ -2172,6 +2247,12 @@ void deinit(void) //{{{
     if (splash_timer != NULL) {
         app_timer_cancel(splash_timer);
         splash_timer = NULL;
+    }
+
+    // Cancel retry timer if still active
+    if (retry_timer != NULL) {
+        app_timer_cancel(retry_timer);
+        retry_timer = NULL;
     }
 
     gpath_destroy(bgraph);
