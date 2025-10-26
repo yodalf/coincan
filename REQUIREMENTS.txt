@@ -1,0 +1,463 @@
+================================================================================
+BITCOIN AND WEATHER WATCHFACE - SOFTWARE REQUIREMENTS SPECIFICATION
+================================================================================
+
+Project: Bitcoin and Weather Watchface for Pebble Smartwatch
+Version: 5.1.0
+Date: October 19, 2025
+Author: Real Ouellet
+
+
+1. FUNCTIONAL REQUIREMENTS
+================================================================================
+
+1.1 Time Display
+--------------------------------------------------------------------------------
+1.1.1  The system SHALL display the current time in 12-hour or 24-hour format
+       based on user's watch settings.
+
+1.1.2  The system SHALL display the current date showing day of week and day
+       of month (e.g., "Mon 19").
+
+1.1.3  The system SHALL update the time display every minute.
+
+1.1.4  The system SHALL support an optional seconds ticker (trotteuse) that
+       updates every second when enabled.
+
+1.1.5  The time layer SHALL be rendered with transparency to prevent
+       overwriting underlying graphics.
+
+
+1.2 Bitcoin Price Display
+--------------------------------------------------------------------------------
+1.2.1  The system SHALL display the current Bitcoin price from Kraken exchange.
+
+1.2.2  The system SHALL display the 24-hour high Bitcoin price.
+
+1.2.3  The system SHALL display the 24-hour low Bitcoin price.
+
+1.2.4  The system SHALL support Bitcoin prices in CAD, USD, and EUR currencies.
+
+1.2.5  The system SHALL allow users to select their preferred currency exchange
+       (Kraken-CAD, Kraken-USD, Kraken-EUR).
+
+1.2.6  The system SHALL round Bitcoin prices to the nearest whole number for
+       display purposes.
+
+
+1.3 Bitcoin Price Graph
+--------------------------------------------------------------------------------
+1.3.1  The system SHALL display a historical graph of Bitcoin prices.
+
+1.3.2  The system SHALL maintain 60 data points in the Bitcoin price graph.
+
+1.3.3  The graph SHALL use a sliding window, removing the oldest point when
+       adding a new point.
+
+1.3.4  The graph SHALL normalize Y-coordinates between the 24-hour low and
+       24-hour high values.
+
+1.3.5  The graph SHALL constrain rendering to Y=1 to Y=21 to fit within a
+       23-pixel tall border.
+
+1.3.6  The graph SHALL use a closed GPath structure for efficient rendering.
+
+1.3.7  The system SHALL allow users to clear all Bitcoin graph data on demand.
+
+
+1.4 Weather Display
+--------------------------------------------------------------------------------
+1.4.1  The system SHALL display current temperature.
+
+1.4.2  The system SHALL display current weather conditions using icon graphics.
+
+1.4.3  The system SHALL display wind speed and direction.
+
+1.4.4  The system SHALL display wind gust information when available.
+
+1.4.5  The system SHALL display wind chill when current temperature is 0°C
+       or below.
+
+1.4.6  The system SHALL display humidex when provided by the weather service.
+
+1.4.7  The system SHALL display forecast high and low temperatures.
+
+1.4.8  The system SHALL display forecast weather conditions using icon graphics.
+
+1.4.9  The system SHALL display forecast period name (e.g., "Today", "Tonight").
+
+1.4.10 The system SHALL support both metric (Celsius, km/h) and imperial
+       (Fahrenheit, mph) units.
+
+1.4.11 The system SHALL allow users to toggle between metric and imperial units.
+
+
+1.5 Weather Data Sources
+--------------------------------------------------------------------------------
+1.5.1  The system SHALL support Environment Canada GeoMet API as a weather
+       data source.
+
+1.5.2  The system SHALL support Open-Meteo API as an alternative weather
+       data source.
+
+1.5.3  The system SHALL allow users to select their preferred weather service.
+
+1.5.4  When using Environment Canada API, the system SHALL select the closest
+       weather station to the user's GPS coordinates.
+
+1.5.5  When using Open-Meteo API, the system SHALL map WMO weather codes to
+       Environment Canada icon codes for consistent display.
+
+
+1.6 Location Services
+--------------------------------------------------------------------------------
+1.6.1  The system SHALL use GPS to determine the user's current location.
+
+1.6.2  The system SHALL perform reverse geocoding to determine locality,
+       county, and state/province names.
+
+1.6.3  The system SHALL use OpenStreetMap Nominatim for reverse geocoding.
+
+1.6.4  The system SHALL fall back to Quebec City coordinates (47.0, -71.2)
+       when GPS acquisition fails.
+
+1.6.5  The system SHALL display a 3-character locality code on the watchface.
+
+
+1.7 Status Indicators
+--------------------------------------------------------------------------------
+1.7.1  The system SHALL display current battery charge level.
+
+1.7.2  The system SHALL display Bluetooth connection status.
+
+1.7.3  The system SHALL indicate data staleness by appending an asterisk (*)
+       to the date when displaying cached data.
+
+
+1.8 Health Tracking
+--------------------------------------------------------------------------------
+1.8.1  The system SHALL support optional health data display.
+
+1.8.2  When health tracking is enabled, the system SHALL access step count data.
+
+1.8.3  The system SHALL calculate and visualize step count relative to previous
+       day's steps.
+
+1.8.4  The system SHALL allow users to enable or disable health display.
+
+
+1.9 User Configuration
+--------------------------------------------------------------------------------
+1.9.1  The system SHALL provide a web-based configuration interface using
+       Pebble Clay.
+
+1.9.2  The system SHALL allow configuration of: health display, temperature
+       units, seconds ticker, Bitcoin exchange, weather service, and update
+       interval.
+
+1.9.3  The system SHALL persist all user configuration settings.
+
+1.9.4  The system SHALL load persisted settings on app launch.
+
+1.9.5  The system SHALL apply configuration changes immediately without
+       requiring app restart.
+
+
+1.10 Data Update Mechanism
+--------------------------------------------------------------------------------
+1.10.1 The system SHALL support configurable update intervals of 1 or 3 minutes.
+
+1.10.2 The system SHALL align updates to clock intervals (0, N, 2N, 3N minutes
+       after the hour) where N is the configured cadence.
+
+1.10.3 The system SHALL prevent duplicate fetches within the same minute.
+
+1.10.4 The system SHALL trigger an initial data fetch 3 seconds after app launch.
+
+1.10.5 The system SHALL fetch Bitcoin and weather data in a single request cycle.
+
+
+2. NON-FUNCTIONAL REQUIREMENTS
+================================================================================
+
+2.1 Platform Support
+--------------------------------------------------------------------------------
+2.1.1  The system SHALL support Pebble Aplite (Pebble Classic) hardware.
+
+2.1.2  The system SHALL support Pebble Basalt (Pebble Time) hardware.
+
+2.1.3  The system SHALL support Pebble Chalk (Pebble Time Round) hardware.
+
+2.1.4  The system SHALL support Pebble Diorite (Pebble 2) hardware.
+
+2.1.5  The system SHALL support Pebble Emery (Pebble Time 2) hardware.
+
+2.1.6  The system SHALL compile for both color and monochrome displays.
+
+2.1.7  The system SHALL adjust graphics and colors based on platform capabilities.
+
+
+2.2 Performance
+--------------------------------------------------------------------------------
+2.2.1  The system SHALL update the time display within 100ms of a minute change.
+
+2.2.2  The system SHALL complete data fetch operations within 30 seconds.
+
+2.2.3  The system SHALL render the watchface within 500ms of app launch.
+
+2.2.4  The graph update operation SHALL complete within 50ms.
+
+2.2.5  The system SHALL minimize battery consumption by limiting background
+       operations.
+
+
+2.3 Reliability
+--------------------------------------------------------------------------------
+2.3.1  The system SHALL handle network timeouts gracefully without crashing.
+
+2.3.2  The system SHALL display cached data when network requests fail.
+
+2.3.3  The system SHALL validate all incoming data before processing.
+
+2.3.4  The system SHALL sanitize float values to prevent out-of-bounds rendering.
+
+2.3.5  The system SHALL recover from GPS acquisition failures.
+
+
+2.4 Memory Management
+--------------------------------------------------------------------------------
+2.4.1  The system SHALL use static string buffers to avoid dynamic allocation.
+
+2.4.2  The system SHALL reuse graphics paths for efficient rendering.
+
+2.4.3  The system SHALL create conditional layers only when features are enabled.
+
+2.4.4  The system SHALL properly clean up bitmap resources on deinitialization.
+
+
+2.5 User Experience
+--------------------------------------------------------------------------------
+2.5.1  The system SHALL provide vibration feedback on Bluetooth disconnection.
+
+2.5.2  The system SHALL suppress vibration alerts during night hours (10pm-5am).
+
+2.5.3  The system SHALL use distinct vibration patterns for different alert types.
+
+2.5.4  The system SHALL provide visual feedback during data loading.
+
+2.5.5  The watchface SHALL be readable at a glance without user interaction.
+
+
+2.6 API Integration
+--------------------------------------------------------------------------------
+2.6.1  All API requests SHALL implement timeout protection (3-10 seconds).
+
+2.6.2  The system SHALL use HTTPS for all external API communications.
+
+2.6.3  The system SHALL handle HTTP status codes appropriately (200, 404, 500).
+
+2.6.4  The system SHALL retry failed requests using exponential backoff.
+
+2.6.5  The system SHALL respect API rate limits.
+
+
+2.7 Data Persistence
+--------------------------------------------------------------------------------
+2.7.1  The system SHALL persist user preferences across app restarts.
+
+2.7.2  The system SHALL persist Bitcoin price history across app restarts.
+
+2.7.3  The system SHALL persist weather data for offline viewing.
+
+2.7.4  The system SHALL persist location information.
+
+2.7.5  The system SHALL use Pebble's persist API for all storage operations.
+
+
+3. EXTERNAL INTERFACE REQUIREMENTS
+================================================================================
+
+3.1 Kraken API Interface
+--------------------------------------------------------------------------------
+3.1.1  The system SHALL use Kraken API endpoint:
+       https://api.kraken.com/0/public/Ticker
+
+3.1.2  The system SHALL request data for pairs: XBTCAD, XBTUSD, XBTEUR.
+
+3.1.3  The system SHALL extract high, low, and close price from the response.
+
+3.1.4  The system SHALL set a 3-second timeout for Kraken API requests.
+
+
+3.2 Environment Canada API Interface
+--------------------------------------------------------------------------------
+3.2.1  The system SHALL use Environment Canada GeoMet API endpoint:
+       https://api.weather.gc.ca/collections/citypageweather-realtime/items
+
+3.2.2  The system SHALL query using bounding box around GPS coordinates
+       (±0.1 degrees).
+
+3.2.3  The system SHALL parse JSON responses containing current conditions
+       and forecasts.
+
+3.2.4  The system SHALL set a 10-second timeout for Environment Canada requests.
+
+
+3.3 Open-Meteo API Interface
+--------------------------------------------------------------------------------
+3.3.1  The system SHALL use Open-Meteo API endpoint:
+       https://api.open-meteo.com/v1/forecast
+
+3.3.2  The system SHALL request current weather, hourly forecast (12h), and
+       daily forecast.
+
+3.3.3  The system SHALL convert WMO weather codes to Environment Canada icon codes.
+
+3.3.4  The system SHALL set a 10-second timeout for Open-Meteo requests.
+
+
+3.4 Nominatim API Interface
+--------------------------------------------------------------------------------
+3.4.1  The system SHALL use OpenStreetMap Nominatim endpoint:
+       https://nominatim.openstreetmap.org/reverse
+
+3.4.2  The system SHALL provide User-Agent header: "PebbleBitcoinWeatherApp/1.0"
+
+3.4.3  The system SHALL extract locality, county, and state from address data.
+
+3.4.4  The system SHALL set a 3-second timeout for Nominatim requests.
+
+
+3.5 Pebble AppMessage Protocol
+--------------------------------------------------------------------------------
+3.5.1  The system SHALL use numbered message keys (0-18) for communication
+       between C and JavaScript layers.
+
+3.5.2  The system SHALL use key 0-2 for Bitcoin data (value, low, high).
+
+3.5.3  The system SHALL use keys 3-9 for weather observation data.
+
+3.5.4  The system SHALL use keys 10-13 for forecast data.
+
+3.5.5  The system SHALL use key 14 for location data.
+
+3.5.6  The system SHALL use key 18 for JavaScript event status codes.
+
+
+4. DESIGN CONSTRAINTS
+================================================================================
+
+4.1 Technology Stack
+--------------------------------------------------------------------------------
+4.1.1  The watchface layer SHALL be implemented in C using Pebble SDK 3.
+
+4.1.2  The communication layer SHALL be implemented in JavaScript using
+       PebbleKit JS.
+
+4.1.3  The configuration interface SHALL use Pebble Clay framework.
+
+4.1.4  The build system SHALL use waf build tool.
+
+
+4.2 Display Constraints
+--------------------------------------------------------------------------------
+4.2.1  The system SHALL support 144×168 pixel display resolution.
+
+4.2.2  The layout SHALL be divided into three regions: top (0-95px),
+       middle (95-102px), bottom (102-168px).
+
+4.2.3  Color platforms SHALL use yellow time display on black background.
+
+4.2.4  Monochrome platforms SHALL use white on black display.
+
+
+4.3 Resource Constraints
+--------------------------------------------------------------------------------
+4.3.1  The system SHALL limit weather icon resources to 46 unique icons.
+
+4.3.2  The system SHALL use two custom fonts: FUTURA_CONDENSED_53 and FUTURA_18.
+
+4.3.3  The system SHALL maintain total resource count under 256 items.
+
+
+5. QUALITY ATTRIBUTES
+================================================================================
+
+5.1 Maintainability
+--------------------------------------------------------------------------------
+5.1.1  Code SHALL be organized using folding markers for logical sections.
+
+5.1.2  Function documentation SHALL include purpose and parameter descriptions.
+
+5.1.3  Magic numbers SHALL be replaced with named constants in #define sections.
+
+5.1.4  Complex algorithms SHALL include inline comments explaining logic.
+
+
+5.2 Testability
+--------------------------------------------------------------------------------
+5.2.1  The system SHALL support testing on all platform emulators.
+
+5.2.2  The system SHALL provide logging output for debugging.
+
+5.2.3  The system SHALL support screenshot capture for visual verification.
+
+
+5.3 Portability
+--------------------------------------------------------------------------------
+5.3.1  Platform-specific code SHALL be isolated using #ifdef directives.
+
+5.3.2  The system SHALL compile without warnings on all target platforms.
+
+5.3.3  The system SHALL use portable C constructs (no platform-specific extensions).
+
+
+6. SECURITY REQUIREMENTS
+================================================================================
+
+6.1 Data Privacy
+--------------------------------------------------------------------------------
+6.1.1  The system SHALL NOT store sensitive user credentials.
+
+6.1.2  The system SHALL NOT transmit personally identifiable information
+       except GPS coordinates required for weather data.
+
+6.1.3  All API communications SHALL use HTTPS encryption.
+
+
+6.2 Input Validation
+--------------------------------------------------------------------------------
+6.2.1  The system SHALL validate all data received from external APIs.
+
+6.2.2  The system SHALL validate all configuration input from users.
+
+6.2.3  The system SHALL prevent buffer overflows using bounded string operations.
+
+
+7. COMPLIANCE REQUIREMENTS
+================================================================================
+
+7.1 API Terms of Service
+--------------------------------------------------------------------------------
+7.1.1  The system SHALL comply with Kraken API terms of service.
+
+7.1.2  The system SHALL comply with Environment Canada Open Data License.
+
+7.1.3  The system SHALL comply with Open-Meteo API terms of service.
+
+7.1.4  The system SHALL comply with OpenStreetMap Nominatim Usage Policy.
+
+
+7.2 Platform Requirements
+--------------------------------------------------------------------------------
+7.2.1  The application SHALL be classified as a watchface in Pebble app store.
+
+7.2.2  The application SHALL declare required capabilities: location,
+       configurable, health.
+
+7.2.3  The application SHALL use SDK version 3.
+
+
+================================================================================
+END OF REQUIREMENTS SPECIFICATION
+================================================================================
