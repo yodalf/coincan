@@ -71,7 +71,7 @@
 #define GRECT_BCH5_LAYER        GRect( 0, 17-6,  5, 16)
 #define GRECT_BCL5_LAYER        GRect( 0, 30-6,  5, 16)
 #else
-#define GRECT_TIME_LAYER (GRect((144-134)/2, 37, 134, 55))
+#define GRECT_TIME_LAYER (GRect((144-134)/2-1, 37, 134, 55))
 #define GRECT_BCV3_LAYER        GRect(21, 16-6, 56, 24)
 #define GRECT_BCH3_LAYER        GRect( 0, 17-6, 31, 14)
 #define GRECT_BCL3_LAYER        GRect( 0, 30-6, 31, 14)
@@ -810,12 +810,8 @@ void update_btc_layer_positions(void) //{{{
         layer_set_frame(text_layer_get_layer(bcL_layer), GRect( 0, BTC_LOW_Y+btc_y_offset, 31, 14));
     }
 
-    // Position graph layer
-    #ifdef PBL_COLOR
-        layer_set_frame(graph_layer, GRect(140-X_SIZE, graph_y_offset+1, X_SIZE, Y_SIZE+5));
-    #else
-        layer_set_frame(graph_layer, GRect(135-X_SIZE, graph_y_offset+1, X_SIZE, Y_SIZE+5));
-    #endif
+    // Position graph layer (same for all platforms)
+    layer_set_frame(graph_layer, GRect(140-X_SIZE, graph_y_offset+1, X_SIZE, Y_SIZE+5));
 
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Updated BTC layer positions: y_offset=%d, graph_y=%d", btc_y_offset, graph_y_offset);
 }
@@ -890,11 +886,8 @@ void handle_config_trotteuse(Tuple *tuple) //{{{
 
     // Adjust time layer vertical position based on trotteuse visibility
     int time_y_pos = cnfTrotteuse ? 37 : 42;
-#ifdef PBL_COLOR
+    // Same position for all platforms
     GRect new_frame = GRect((144-134)/2-1, time_y_pos, 134, 55);
-#else
-    GRect new_frame = GRect((144-134)/2, time_y_pos, 134, 55);
-#endif
     layer_set_frame(text_layer_get_layer(time_layer), new_frame);
     APP_LOG(APP_LOG_LEVEL_INFO,"CONFIG_C: Repositioned time layer to Y=%d", time_y_pos);
 
@@ -1716,9 +1709,7 @@ void DOT_update_proc(struct Layer *layer, GContext *ctx) //{{{
 //}}}
 void graph_update_proc(struct Layer *layer, GContext *ctx) //{{{
 {
-    if (0 != trotteuse)
-        return;
-
+    // Graph is always visible
     APP_LOG(APP_LOG_LEVEL_DEBUG, "************* GRAPH ************ btcV_value=%d", (int)btcV_value);
 
     // Fill background - use layer bounds instead of FULL_FRAME
@@ -2032,11 +2023,8 @@ void init(void) //{{{
     // Add graph layer with dynamic Y offset based on trotteuse visibility
     int btc_offset = cnfTrotteuse ? BTC_GRAPH_Y : (BTC_GRAPH_Y + 3);
     APP_LOG(APP_LOG_LEVEL_DEBUG, "** Creating graph_layer with btc_offset=%d (cnfTrotteuse=%d)", btc_offset, cnfTrotteuse ? 1 : 0);
-    #ifdef PBL_COLOR
-        graph_layer = layer_create( GRect(140-X_SIZE, btc_offset+1, X_SIZE, Y_SIZE+5) );
-    #else
-        graph_layer = layer_create( GRect(135-X_SIZE, btc_offset+1, X_SIZE, Y_SIZE+5) );
-    #endif
+    // Same position for all platforms
+    graph_layer = layer_create( GRect(140-X_SIZE, btc_offset+1, X_SIZE, Y_SIZE+5) );
     //layer_add_child(window_get_root_layer(window), graph_layer);
     //layer_insert_below_sibling(window_get_root_layer(window), graph_layer);
     layer_add_child(top_layer, graph_layer);
@@ -2049,11 +2037,8 @@ void init(void) //{{{
     // Adjust time layer vertical position based on trotteuse visibility
     // When trotteuse is hidden, lower the time display to center it better
     int time_y_pos = cnfTrotteuse ? 37 : 42;
-#ifdef PBL_COLOR
+    // Same position for all platforms
     time_layer = text_layer_create(GRect((144-134)/2-1, time_y_pos, 134, 55));
-#else
-    time_layer = text_layer_create(GRect((144-134)/2, time_y_pos, 134, 55));
-#endif
     text_layer_set_text_color(time_layer, cTimeF);
     text_layer_set_background_color(time_layer, GColorClear);
     text_layer_set_font(time_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FUTURA_CONDENSED_53)));

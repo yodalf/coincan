@@ -12,15 +12,12 @@
   },
   "pebble": {
     "displayName": "Bitcoin and Weather",
-    "uuid": "6f32143a-2bb9-4009-bc98-af2406b3c1AA",
+    "uuid": "8f4c32f4-a5ad-4a26-87ef-1b4f623f0ebc",
     "sdkVersion": "3",
     "enableMultiJS": true,
     "targetPlatforms": [
-      "aplite",
       "basalt",
-      "chalk",
-      "diorite",
-      "emery"
+      "diorite"
     ],
     "watchapp": {
       "watchface": true
