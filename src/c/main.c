@@ -21,76 +21,113 @@
 //}}}
 
 //{{{  Geometries
-#define FULL_FRAME       (GRect(0, 0, 144, 168))
+// Reference design dimensions (everything below was authored against 144x168).
+// The SX()/SY() macros scale those reference values to the actual platform.
+// PBL_DISPLAY_WIDTH/HEIGHT are -D defines from the SDK, so all of this
+// resolves at compile time and stays valid for array sizes.
+#define REF_W 144
+#define REF_H 168
+#define SCREEN_W PBL_DISPLAY_WIDTH
+#define SCREEN_H PBL_DISPLAY_HEIGHT
+#define SX(v) ((v) * SCREEN_W / REF_W)
+#define SY(v) ((v) * SCREEN_H / REF_H)
 
-#define GRECT_DATE_LAYER (GRect((144-100)/2, -4, 100, 19))
+#define FULL_FRAME       (GRect(0, 0, SCREEN_W, SCREEN_H))
 
-// BTC positioning - centralized constants
-#define BTC_BASE_Y       15  // Base Y position for BTC text (was 16-6+5 = 15)
+#define GRECT_DATE_LAYER (GRect((SCREEN_W-SX(100))/2, SY(-4), SX(100), SY(19)))
+
+// BTC positioning - centralized constants (Y values, scaled at use site)
+#define BTC_BASE_Y       15
 #define BTC_VALUE_Y      BTC_BASE_Y
-#define BTC_HIGH_Y       (BTC_BASE_Y + 1)  // BTC high price Y position (was 17-6+5 = 16)
-#define BTC_LOW_Y        (BTC_BASE_Y + 14) // BTC low price Y position (was 30-6+5 = 29)
-#define BTC_GRAPH_Y      19  // Graph Y offset to align with BTC text
+#define BTC_HIGH_Y       (BTC_BASE_Y + 1)
+#define BTC_LOW_Y        (BTC_BASE_Y + 14)
+#define BTC_GRAPH_Y      19
 
-#define X_SIZE 60
-#define Y_SIZE 22
+#define X_SIZE SX(60)
+#define Y_SIZE SY(22)
 
-#define X_FRAME 144
-#define Y_FRAME 168
+#define X_FRAME SCREEN_W
+#define Y_FRAME SCREEN_H
 
-//#define GRECT_TROTTEUSE GRect(10, 95, 134, 6)
-#define GRECT_TROTTEUSE GRect(36, 0, 73, 6)
-#define GRECT_TROTTEUSE_WITH_HEALTH GRect(0, 0, 121, 6)
+#define GRECT_TROTTEUSE GRect(SX(36), 0, SX(73), SY(6))
+#define GRECT_TROTTEUSE_WITH_HEALTH GRect(0, 0, SX(121), SY(6))
 
 
-#define GRECT_DOT4 GRect(X_FRAME-10,91,10,10)
-#define GRECT_WEATHER_LAYER_1  GRect(pos.x, pos.y, 144, 80)
-#define GRECT_WEATHER_LAYER_2  GRect(0, 0, 144, 80)
-#define GRECT_WEATHER_LAYER_3  GRect(0, -7, 144, 80)
-#define GRECT_WEATHER_LAYER_5  GRect(0, 14, 144, 80)
-#define GRECT_WEATHER_LAYER_7  GRect(0, 30, 144, 80)
-#define GRECT_WEATHER_LAYER_9  GRect(0, -2, 144, 80)
-#define GRECT_WEATHER_LAYER_10 GRect(0, 23, 144, 80)
-#define GRECT_WEATHER_LAYER_11 GRect(0, 19, 144, 80)
-#define GRECT_WEATHER_LAYER_12 GRect(0, 48, 144, 80)
-#define GRECT_BATTERY_LAYER    GRect(105, 51, 39, 16)
-#define GRECT_BLUETOOTH_LAYER  GRect(0, 51, 30, 16)
+#define GRECT_DOT4 GRect(X_FRAME-SX(10),SY(91),SX(10),SY(10))
+#define GRECT_WEATHER_LAYER_1  GRect(pos.x, pos.y, SCREEN_W, SY(80))
+#define GRECT_WEATHER_LAYER_2  GRect(0, 0, SCREEN_W, SY(80))
+#define GRECT_WEATHER_LAYER_3  GRect(0, SY(-7), SCREEN_W, SY(80))
+#define GRECT_WEATHER_LAYER_5  GRect(0, SY(14), SCREEN_W, SY(80))
+#define GRECT_WEATHER_LAYER_7  GRect(0, SY(30), SCREEN_W, SY(80))
+#define GRECT_WEATHER_LAYER_9  GRect(0, SY(-2), SCREEN_W, SY(80))
+#define GRECT_WEATHER_LAYER_10 GRect(0, SY(23), SCREEN_W, SY(80))
+#define GRECT_WEATHER_LAYER_11 GRect(0, SY(19), SCREEN_W, SY(80))
+#define GRECT_WEATHER_LAYER_12 GRect(0, SY(48), SCREEN_W, SY(80))
+#define GRECT_BATTERY_LAYER    GRect(SCREEN_W-SX(39), SY(51), SX(39), SY(16))
+#define GRECT_BLUETOOTH_LAYER  GRect(0, SY(51), SX(30), SY(16))
 
-#define GRECT_ICON1_LAYER      GRect(0, -3, 60, 60)
-#define GRECT_ICON2_LAYER      GRect(145-60, -3, 60, 60)
+#define GRECT_ICON1_LAYER      GRect(0, SY(-3), SX(60), SY(60))
+#define GRECT_ICON2_LAYER      GRect(SCREEN_W-SX(60), SY(-3), SX(60), SY(60))
 
 #ifdef PBL_COLOR
-#define GRECT_TIME_LAYER (GRect((144-134)/2-1, 37, 134, 55))
-#define GRECT_BCV3_LAYER        GRect(21, 16-6, 56, 24)
-#define GRECT_BCH3_LAYER        GRect( 0, 17-6, 31, 14)
-#define GRECT_BCL3_LAYER        GRect( 0, 30-6, 31, 14)
-#define GRECT_BCV4_LAYER        GRect(23, 16-6, 56, 24)
-#define GRECT_BCH4_LAYER        GRect( 0, 17-6, 31, 14)
-#define GRECT_BCL4_LAYER        GRect( 0, 30-6, 31, 14)
-#define GRECT_BCV5_LAYER        GRect( 5, 16-6, 66, 24)
-#define GRECT_BCH5_LAYER        GRect( 0, 17-6,  5, 16)
-#define GRECT_BCL5_LAYER        GRect( 0, 30-6,  5, 16)
+#define GRECT_TIME_LAYER (GRect((SCREEN_W-SX(134))/2-1, SY(37), SX(134), SY(55)))
+#define GRECT_BCV3_LAYER        GRect(SX(21), SY(16-6), SX(56), SY(24))
+#define GRECT_BCH3_LAYER        GRect( 0, SY(17-6), SX(31), SY(14))
+#define GRECT_BCL3_LAYER        GRect( 0, SY(30-6), SX(31), SY(14))
+#define GRECT_BCV4_LAYER        GRect(SX(23), SY(16-6), SX(56), SY(24))
+#define GRECT_BCH4_LAYER        GRect( 0, SY(17-6), SX(31), SY(14))
+#define GRECT_BCL4_LAYER        GRect( 0, SY(30-6), SX(31), SY(14))
+#define GRECT_BCV5_LAYER        GRect(SX(5), SY(16-6), SX(66), SY(24))
+#define GRECT_BCH5_LAYER        GRect( 0, SY(17-6),  SX(5), SY(16))
+#define GRECT_BCL5_LAYER        GRect( 0, SY(30-6),  SX(5), SY(16))
 #else
-#define GRECT_TIME_LAYER (GRect((144-134)/2-1, 37, 134, 55))
-#define GRECT_BCV3_LAYER        GRect(21, 16-6, 56, 24)
-#define GRECT_BCH3_LAYER        GRect( 0, 17-6, 31, 14)
-#define GRECT_BCL3_LAYER        GRect( 0, 30-6, 31, 14)
-#define GRECT_BCV4_LAYER        GRect(23, 16-6, 56, 24)
-#define GRECT_BCH4_LAYER        GRect( 0, 17-6, 31, 14)
-#define GRECT_BCL4_LAYER        GRect( 0, 30-6, 31, 14)
-#define GRECT_BCV5_LAYER        GRect( 5, 16-6, 66, 24)
-#define GRECT_BCH5_LAYER        GRect( 0, 17-6,  5, 16)
-#define GRECT_BCL5_LAYER        GRect( 0, 30-6,  5, 16)
+#define GRECT_TIME_LAYER (GRect((SCREEN_W-SX(134))/2-1, SY(37), SX(134), SY(55)))
+#define GRECT_BCV3_LAYER        GRect(SX(21), SY(16-6), SX(56), SY(24))
+#define GRECT_BCH3_LAYER        GRect( 0, SY(17-6), SX(31), SY(14))
+#define GRECT_BCL3_LAYER        GRect( 0, SY(30-6), SX(31), SY(14))
+#define GRECT_BCV4_LAYER        GRect(SX(23), SY(16-6), SX(56), SY(24))
+#define GRECT_BCH4_LAYER        GRect( 0, SY(17-6), SX(31), SY(14))
+#define GRECT_BCL4_LAYER        GRect( 0, SY(30-6), SX(31), SY(14))
+#define GRECT_BCV5_LAYER        GRect(SX(5), SY(16-6), SX(66), SY(24))
+#define GRECT_BCH5_LAYER        GRect( 0, SY(17-6),  SX(5), SY(16))
+#define GRECT_BCL5_LAYER        GRect( 0, SY(30-6),  SX(5), SY(16))
 #endif
 
-#define GRECT_GRAPH_LAYER_1     GRect(140-X_SIZE, BTC_GRAPH_Y+1, X_SIZE, Y_SIZE)
-#define GRECT_GRAPH_LAYER_2     GRect(135-X_SIZE, BTC_GRAPH_Y+1, X_SIZE, Y_SIZE)
+#define GRECT_GRAPH_LAYER_1     GRect(SX(140)-X_SIZE, SY(BTC_GRAPH_Y+1), X_SIZE, Y_SIZE)
+#define GRECT_GRAPH_LAYER_2     GRect(SX(135)-X_SIZE, SY(BTC_GRAPH_Y+1), X_SIZE, Y_SIZE)
 
-#define GRECT_TOP_LAYER         GRect(0,   0, 144, 95)
-#define GRECT_MIDDLE_LAYER      GRect(0,  95, 144, 7)
-#define GRECT_BOTTOM_LAYER      GRect(0, 102, 144, 67)
+#define GRECT_TOP_LAYER         GRect(0,        0, SCREEN_W, SY(95))
+#define GRECT_MIDDLE_LAYER      GRect(0,  SY(95), SCREEN_W, SY(7))
+#define GRECT_BOTTOM_LAYER      GRect(0, SY(102), SCREEN_W, SY(67))
 
 
+// Per-platform font picks. On emery (200x228) bump everything up one Pebble
+// system-font step (~×1.39) and use a 72px custom font for the time.
+#ifdef PBL_PLATFORM_EMERY
+  #define RESOURCE_ID_TIME_FONT RESOURCE_ID_FUTURA_CONDENSED_72
+  #define FONT_DATE             FONT_KEY_GOTHIC_24_BOLD
+  #define FONT_BTC              FONT_KEY_GOTHIC_28_BOLD
+  #define FONT_BTC_SMALL        FONT_KEY_GOTHIC_18
+  #define FONT_WEATHER_LARGE    FONT_KEY_GOTHIC_28_BOLD
+  #define FONT_WEATHER_MED      FONT_KEY_GOTHIC_24_BOLD
+  #define FONT_WIND             FONT_KEY_GOTHIC_24_BOLD
+  #define FONT_BATT_SMALL       FONT_KEY_GOTHIC_18
+  #define FONT_BATT_BOLD        FONT_KEY_GOTHIC_18_BOLD
+  #define FONT_BT_SMALL         FONT_KEY_GOTHIC_18
+  #define FONT_BT_BOLD          FONT_KEY_GOTHIC_18_BOLD
+#else
+  #define RESOURCE_ID_TIME_FONT RESOURCE_ID_FUTURA_CONDENSED_53
+  #define FONT_DATE             FONT_KEY_GOTHIC_18_BOLD
+  #define FONT_BTC              FONT_KEY_GOTHIC_24_BOLD
+  #define FONT_BTC_SMALL        FONT_KEY_GOTHIC_14
+  #define FONT_WEATHER_LARGE    FONT_KEY_GOTHIC_24_BOLD
+  #define FONT_WEATHER_MED      FONT_KEY_GOTHIC_18_BOLD
+  #define FONT_WIND             FONT_KEY_GOTHIC_18_BOLD
+  #define FONT_BATT_SMALL       FONT_KEY_GOTHIC_14
+  #define FONT_BATT_BOLD        FONT_KEY_GOTHIC_14_BOLD
+  #define FONT_BT_SMALL         FONT_KEY_GOTHIC_14
+  #define FONT_BT_BOLD          FONT_KEY_GOTHIC_14_BOLD
+#endif
 
 
 //}}}
@@ -795,23 +832,23 @@ void update_btc_layer_positions(void) //{{{
     // Position BTC layers based on exchange type
     if (cnfExchange[0] == 'B' && cnfExchange[1] == 'i' && cnfExchange[2] == 't' && cnfExchange[3] == 'p') {
         // Bitpay exchange - wider center display, hide high/low
-        layer_set_frame(text_layer_get_layer(bc_layer), GRect( 5, BTC_VALUE_Y+btc_y_offset, 66, 24));
-        layer_set_frame(text_layer_get_layer(bcH_layer), GRect( 0, BTC_HIGH_Y+btc_y_offset,  5, 16));
-        layer_set_frame(text_layer_get_layer(bcL_layer), GRect( 0, BTC_LOW_Y+btc_y_offset,  5, 16));
+        layer_set_frame(text_layer_get_layer(bc_layer), GRect( SX(5), SY(BTC_VALUE_Y+btc_y_offset), SX(66), SY(24)));
+        layer_set_frame(text_layer_get_layer(bcH_layer), GRect( 0, SY(BTC_HIGH_Y+btc_y_offset),  SX(5), SY(16)));
+        layer_set_frame(text_layer_get_layer(bcL_layer), GRect( 0, SY(BTC_LOW_Y+btc_y_offset),  SX(5), SY(16)));
     } else if (cnfExchange[0] == 'B' && cnfExchange[1] == 'T' && cnfExchange[2] == 'C' && cnfExchange[3] == 'C') {
         // BTCC exchange - slightly offset center
-        layer_set_frame(text_layer_get_layer(bc_layer),  GRect(23, BTC_VALUE_Y+btc_y_offset, 56, 24));
-        layer_set_frame(text_layer_get_layer(bcH_layer), GRect( 0, BTC_HIGH_Y+btc_y_offset, 31, 14));
-        layer_set_frame(text_layer_get_layer(bcL_layer), GRect( 0, BTC_LOW_Y+btc_y_offset, 31, 14));
+        layer_set_frame(text_layer_get_layer(bc_layer),  GRect(SX(23), SY(BTC_VALUE_Y+btc_y_offset), SX(56), SY(24)));
+        layer_set_frame(text_layer_get_layer(bcH_layer), GRect( 0, SY(BTC_HIGH_Y+btc_y_offset), SX(31), SY(14)));
+        layer_set_frame(text_layer_get_layer(bcL_layer), GRect( 0, SY(BTC_LOW_Y+btc_y_offset), SX(31), SY(14)));
     } else {
         // Default exchange (Kraken, etc) - standard layout
-        layer_set_frame(text_layer_get_layer(bc_layer),  GRect(21, BTC_VALUE_Y+btc_y_offset, 56, 24));
-        layer_set_frame(text_layer_get_layer(bcH_layer), GRect( 0, BTC_HIGH_Y+btc_y_offset, 31, 14));
-        layer_set_frame(text_layer_get_layer(bcL_layer), GRect( 0, BTC_LOW_Y+btc_y_offset, 31, 14));
+        layer_set_frame(text_layer_get_layer(bc_layer),  GRect(SX(21), SY(BTC_VALUE_Y+btc_y_offset), SX(56), SY(24)));
+        layer_set_frame(text_layer_get_layer(bcH_layer), GRect( 0, SY(BTC_HIGH_Y+btc_y_offset), SX(31), SY(14)));
+        layer_set_frame(text_layer_get_layer(bcL_layer), GRect( 0, SY(BTC_LOW_Y+btc_y_offset), SX(31), SY(14)));
     }
 
     // Position graph layer (same for all platforms)
-    layer_set_frame(graph_layer, GRect(140-X_SIZE, graph_y_offset+1, X_SIZE, Y_SIZE+5));
+    layer_set_frame(graph_layer, GRect(SX(140)-X_SIZE, SY(graph_y_offset+1), X_SIZE, Y_SIZE+SY(5)));
 
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Updated BTC layer positions: y_offset=%d, graph_y=%d", btc_y_offset, graph_y_offset);
 }
@@ -887,7 +924,7 @@ void handle_config_trotteuse(Tuple *tuple) //{{{
     // Adjust time layer vertical position based on trotteuse visibility
     int time_y_pos = cnfTrotteuse ? 37 : 42;
     // Same position for all platforms
-    GRect new_frame = GRect((144-134)/2-1, time_y_pos, 134, 55);
+    GRect new_frame = GRect((SCREEN_W-SX(134))/2-1, SY(time_y_pos), SX(134), SY(55));
     layer_set_frame(text_layer_get_layer(time_layer), new_frame);
     APP_LOG(APP_LOG_LEVEL_INFO,"CONFIG_C: Repositioned time layer to Y=%d", time_y_pos);
 
@@ -1507,7 +1544,7 @@ void bluetooth_handler(bool connected) //{{{
         strcpy(bluetooth_text," ");
         strcat(bluetooth_text, geoArea1);
 
-        text_layer_set_font(weather_layer.bluetooth_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
+        text_layer_set_font(weather_layer.bluetooth_layer, fonts_get_system_font(FONT_BT_SMALL) );
         text_layer_set_text_alignment(weather_layer.bluetooth_layer, GTextAlignmentLeft);
         text_layer_set_background_color(weather_layer.bluetooth_layer, cInfoBlueB);
         text_layer_set_text_color(weather_layer.bluetooth_layer, cInfoBlueF );
@@ -1518,7 +1555,7 @@ void bluetooth_handler(bool connected) //{{{
     else
         {
         strcpy(bluetooth_text, "B");  // B for Bluetooth disconnected
-        text_layer_set_font(weather_layer.bluetooth_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD) );
+        text_layer_set_font(weather_layer.bluetooth_layer, fonts_get_system_font(FONT_BT_BOLD) );
         text_layer_set_text_alignment(weather_layer.bluetooth_layer, GTextAlignmentCenter);
         text_layer_set_background_color(weather_layer.bluetooth_layer, cInfoBlueAlarmB);
         text_layer_set_text_color(weather_layer.bluetooth_layer, cInfoBlueAlarmF );
@@ -1618,11 +1655,11 @@ void battery_handler(BatteryChargeState charge) //{{{
 
     if (battery_state.is_plugged)
         {
-        text_layer_set_font(weather_layer.battery_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD) );
+        text_layer_set_font(weather_layer.battery_layer, fonts_get_system_font(FONT_BATT_BOLD) );
         }
     else
         {
-        text_layer_set_font(weather_layer.battery_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
+        text_layer_set_font(weather_layer.battery_layer, fonts_get_system_font(FONT_BATT_SMALL) );
         }
 
     layer_mark_dirty(window_get_root_layer(window));
@@ -1804,7 +1841,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     weather_layer->temp1_layer = text_layer_create(GRECT_WEATHER_LAYER_3);
     text_layer_set_background_color(weather_layer->temp1_layer, cTempB);
     text_layer_set_text_color(weather_layer->temp1_layer, cTempF );
-    text_layer_set_font(weather_layer->temp1_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
+    text_layer_set_font(weather_layer->temp1_layer, fonts_get_system_font(FONT_WEATHER_LARGE));
     text_layer_set_text_alignment(weather_layer->temp1_layer, GTextAlignmentCenter);
     text_layer_set_text(weather_layer->temp1_layer, obTemperature);
     layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp1_layer));
@@ -1813,7 +1850,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     weather_layer->temp2_layer = text_layer_create(GRECT_WEATHER_LAYER_5);
     text_layer_set_background_color(weather_layer->temp2_layer, cTempB);
     text_layer_set_text_color(weather_layer->temp2_layer, cTempF);
-    text_layer_set_font(weather_layer->temp2_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+    text_layer_set_font(weather_layer->temp2_layer, fonts_get_system_font(FONT_WEATHER_MED));
     text_layer_set_text_alignment(weather_layer->temp2_layer, GTextAlignmentCenter);
     text_layer_set_text(weather_layer->temp2_layer, forecastTemp);
     layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp2_layer));
@@ -1822,7 +1859,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     weather_layer->temp3_layer = text_layer_create(GRECT_WEATHER_LAYER_7);
     text_layer_set_background_color(weather_layer->temp3_layer, cTempB);
     text_layer_set_text_color(weather_layer->temp3_layer, cTempF);
-    text_layer_set_font(weather_layer->temp3_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+    text_layer_set_font(weather_layer->temp3_layer, fonts_get_system_font(FONT_WEATHER_MED));
     text_layer_set_text_alignment(weather_layer->temp3_layer, GTextAlignmentCenter);
     text_layer_set_text(weather_layer->temp3_layer, "x");
     layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp3_layer));
@@ -1836,7 +1873,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
 
     text_layer_set_background_color(weather_layer->temp4_layer, cTempB);
     text_layer_set_text_color(weather_layer->temp4_layer, cTempF);
-    text_layer_set_font(weather_layer->temp4_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
+    text_layer_set_font(weather_layer->temp4_layer, fonts_get_system_font(FONT_WEATHER_LARGE));
     text_layer_set_text_alignment(weather_layer->temp4_layer, GTextAlignmentCenter);
     text_layer_set_text(weather_layer->temp4_layer, "y");
     layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp4_layer));
@@ -1850,7 +1887,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
 
     text_layer_set_background_color(weather_layer->temp5_layer, cTempB);
     text_layer_set_text_color(weather_layer->temp5_layer, cTempF);
-    text_layer_set_font(weather_layer->temp5_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+    text_layer_set_font(weather_layer->temp5_layer, fonts_get_system_font(FONT_WEATHER_MED));
     text_layer_set_text_alignment(weather_layer->temp5_layer, GTextAlignmentCenter);
     text_layer_set_text(weather_layer->temp5_layer, "z");
     layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->temp5_layer));
@@ -1859,7 +1896,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     weather_layer->wind_layer = text_layer_create(GRECT_WEATHER_LAYER_12);
     text_layer_set_background_color(weather_layer->wind_layer, cInfoB);
     text_layer_set_text_alignment(weather_layer->wind_layer, GTextAlignmentCenter);
-    text_layer_set_font(weather_layer->wind_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD) );
+    text_layer_set_font(weather_layer->wind_layer, fonts_get_system_font(FONT_WIND) );
     text_layer_set_text_color(weather_layer->wind_layer, cInfoF);
     text_layer_set_text(weather_layer->wind_layer, obWindDir);
     layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->wind_layer));
@@ -1867,7 +1904,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     // Add Battery layer
     weather_layer->battery_layer = text_layer_create(GRECT_BATTERY_LAYER);
     text_layer_set_text_alignment(weather_layer->battery_layer, GTextAlignmentRight);
-    text_layer_set_font(weather_layer->battery_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
+    text_layer_set_font(weather_layer->battery_layer, fonts_get_system_font(FONT_BATT_SMALL) );
     text_layer_set_background_color(weather_layer->battery_layer, cInfoBatB);
     text_layer_set_text_color(weather_layer->battery_layer, cInfoBatF);
     text_layer_set_text(weather_layer->battery_layer, battery_text);
@@ -1877,7 +1914,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     weather_layer->bluetooth_layer = text_layer_create(GRECT_BLUETOOTH_LAYER);
     text_layer_set_background_color(weather_layer->bluetooth_layer, cInfoBlueB);
     text_layer_set_text_alignment(weather_layer->bluetooth_layer, GTextAlignmentLeft);
-    text_layer_set_font(weather_layer->bluetooth_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
+    text_layer_set_font(weather_layer->bluetooth_layer, fonts_get_system_font(FONT_BT_SMALL) );
     text_layer_set_text_color(weather_layer->bluetooth_layer, cInfoBlueF);
     text_layer_set_text(weather_layer->bluetooth_layer, bluetooth_text);
     layer_add_child(weather_layer->layer, text_layer_get_layer(weather_layer->bluetooth_layer));
@@ -2003,7 +2040,7 @@ void init(void) //{{{
     int btc_offset = cnfTrotteuse ? BTC_GRAPH_Y : (BTC_GRAPH_Y + 3);
     APP_LOG(APP_LOG_LEVEL_DEBUG, "** Creating graph_layer with btc_offset=%d (cnfTrotteuse=%d)", btc_offset, cnfTrotteuse ? 1 : 0);
     // Same position for all platforms
-    graph_layer = layer_create( GRect(140-X_SIZE, btc_offset+1, X_SIZE, Y_SIZE+5) );
+    graph_layer = layer_create( GRect(SX(140)-X_SIZE, SY(btc_offset+1), X_SIZE, Y_SIZE+SY(5)) );
     //layer_add_child(window_get_root_layer(window), graph_layer);
     //layer_insert_below_sibling(window_get_root_layer(window), graph_layer);
     layer_add_child(top_layer, graph_layer);
@@ -2017,10 +2054,10 @@ void init(void) //{{{
     // When trotteuse is hidden, lower the time display to center it better
     int time_y_pos = cnfTrotteuse ? 37 : 42;
     // Same position for all platforms
-    time_layer = text_layer_create(GRect((144-134)/2-1, time_y_pos, 134, 55));
+    time_layer = text_layer_create(GRect((SCREEN_W-SX(134))/2-1, SY(time_y_pos), SX(134), SY(55)));
     text_layer_set_text_color(time_layer, cTimeF);
     text_layer_set_background_color(time_layer, GColorClear);
-    text_layer_set_font(time_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FUTURA_CONDENSED_53)));
+    text_layer_set_font(time_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_TIME_FONT)));
     text_layer_set_text_alignment(time_layer, GTextAlignmentCenter);
     text_layer_set_text(time_layer, time_text);
     //layer_add_child(window_get_root_layer(window), text_layer_get_layer(time_layer));
@@ -2030,7 +2067,7 @@ void init(void) //{{{
     date_layer = text_layer_create(GRECT_DATE_LAYER);
     text_layer_set_text_color(date_layer, cDateF);
     text_layer_set_background_color(date_layer, cDateB);
-    text_layer_set_font(date_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+    text_layer_set_font(date_layer, fonts_get_system_font(FONT_DATE));
     //text_layer_set_font(date_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FUTURA_18)));
     text_layer_set_text_alignment(date_layer, GTextAlignmentCenter);
     text_layer_set_text(date_layer, date_text);
@@ -2039,26 +2076,26 @@ void init(void) //{{{
     // Create BTC layers - position will be set by update_btc_layer_positions()
     int btc_y_offset = cnfTrotteuse ? 0 : 3;
     APP_LOG(APP_LOG_LEVEL_DEBUG, "** Creating BTC layers with btc_y_offset=%d (cnfTrotteuse=%d)", btc_y_offset, cnfTrotteuse ? 1 : 0);
-    bc_layer = text_layer_create(GRect(21, BTC_VALUE_Y+btc_y_offset, 56, 24));
+    bc_layer = text_layer_create(GRect(SX(21), SY(BTC_VALUE_Y+btc_y_offset), SX(56), SY(24)));
     text_layer_set_text_color(bc_layer, cBtcF);
     text_layer_set_background_color(bc_layer, cBtcB);
-    text_layer_set_font(bc_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD) );
+    text_layer_set_font(bc_layer, fonts_get_system_font(FONT_BTC) );
     text_layer_set_text_alignment(bc_layer, GTextAlignmentCenter);
     text_layer_set_text(bc_layer, btcV);
     layer_add_child(top_layer, text_layer_get_layer(bc_layer));
 
-    bcL_layer = text_layer_create(GRect(0, BTC_LOW_Y+btc_y_offset, 31, 14));
+    bcL_layer = text_layer_create(GRect(0, SY(BTC_LOW_Y+btc_y_offset), SX(31), SY(14)));
     text_layer_set_text_color(bcL_layer, cBtclF);
     text_layer_set_background_color(bcL_layer, cBtclB);
-    text_layer_set_font(bcL_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
+    text_layer_set_font(bcL_layer, fonts_get_system_font(FONT_BTC_SMALL) );
     text_layer_set_text_alignment(bcL_layer, GTextAlignmentCenter);
     text_layer_set_text(bcL_layer, btcL);
     layer_add_child(top_layer, text_layer_get_layer(bcL_layer));
 
-    bcH_layer = text_layer_create(GRect(0, BTC_HIGH_Y+btc_y_offset, 31, 14));
+    bcH_layer = text_layer_create(GRect(0, SY(BTC_HIGH_Y+btc_y_offset), SX(31), SY(14)));
     text_layer_set_text_color(bcH_layer, cBtchF);
     text_layer_set_background_color(bcH_layer, cBtchB);
-    text_layer_set_font(bcH_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14) );
+    text_layer_set_font(bcH_layer, fonts_get_system_font(FONT_BTC_SMALL) );
     text_layer_set_text_alignment(bcH_layer, GTextAlignmentCenter);
     text_layer_set_text(bcH_layer, btcH);
     //layer_add_child(text_layer_get_layer(bcL_layer), text_layer_get_layer(bcH_layer));

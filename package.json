@@ -28,6 +28,14 @@
                     "compatibility": "2.7",
                     "file": "fonts/futura_condensed_bold-webfont.ttf",
                     "name": "FUTURA_CONDENSED_53",
+                    "targetPlatforms": ["aplite", "basalt"],
+                    "type": "font"
+                },
+                {
+                    "compatibility": "2.7",
+                    "file": "fonts/futura_condensed_bold-webfont.ttf",
+                    "name": "FUTURA_CONDENSED_72",
+                    "targetPlatforms": ["emery"],
                     "type": "font"
                 },
                 {
