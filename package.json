@@ -1,6 +1,8 @@
 {
     "author": "Real Ouellet",
-    "dependencies": {},
+    "dependencies": {
+        "pebble-clay": "^1.0.4"
+    },
     "keywords": [],
     "name": "coincan",
     "pebble": {
