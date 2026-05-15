@@ -1900,7 +1900,7 @@ void weather_layer_init(WeatherLayer* weather_layer, GPoint pos) //{{{
     text_layer_set_text(weather_layer->temp1_layer, "");
     text_layer_set_text(weather_layer->temp2_layer, "");
     text_layer_set_text(weather_layer->temp3_layer, "");
-    text_layer_set_text(weather_layer->temp4_layer, "COINCAN 5.1d");
+    text_layer_set_text(weather_layer->temp4_layer, "COINCAN 5.1e");
     text_layer_set_text(weather_layer->temp5_layer, "");
 }
 //}}}
@@ -2201,7 +2201,7 @@ void init(void) //{{{
 
     // Set splash screen text after bluetooth handler
     // This ensures splash appears even if Bluetooth is disconnected
-    text_layer_set_text(weather_layer.temp4_layer, "COINCAN 5.1d");
+    text_layer_set_text(weather_layer.temp4_layer, "COINCAN 5.1e");
 
 }
 //}}}
