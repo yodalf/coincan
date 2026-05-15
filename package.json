@@ -10,7 +10,7 @@
             "health"
         ],
         "displayName": "Bitcoin and Weather",
-        "enableMultiJS": false,
+        "enableMultiJS": true,
         "messageKeys": [
             "trotteuse",
             "celsius",
