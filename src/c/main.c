@@ -1699,18 +1699,15 @@ void graph_update_proc(struct Layer *layer, GContext *ctx) //{{{
     graphics_context_set_fill_color(ctx, GColorBlack);
     graphics_fill_rect(ctx, bounds, 0, GCornerNone);
 
-    // Only draw graph if we have Bitcoin data
+    // Only draw graph and border if we have Bitcoin data
     if (btcV_value != 0.0) {
         graphics_context_set_stroke_color(ctx, GColorWhite);
         gpath_draw_outline(ctx, bgraph);
+        // Left edge
+        graphics_draw_line(ctx, GPoint(0, 0), GPoint(0, Y_SIZE));
+        // Right edge
+        graphics_draw_line(ctx, GPoint(X_SIZE-1, 0), GPoint(X_SIZE-1, Y_SIZE));
     }
-
-    // Draw white border - left and right edges only (23 pixels tall, y=0 to y=22)
-    graphics_context_set_stroke_color(ctx, GColorWhite);
-    // Left edge
-    graphics_draw_line(ctx, GPoint(0, 0), GPoint(0, Y_SIZE));
-    // Right edge
-    graphics_draw_line(ctx, GPoint(X_SIZE-1, 0), GPoint(X_SIZE-1, Y_SIZE));
 }
 //}}}
 void trotteuse_update_proc(struct Layer *layer, GContext *ctx) //{{{
