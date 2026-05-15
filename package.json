@@ -11,16 +11,16 @@
         ],
         "displayName": "Bitcoin and Weather",
         "enableMultiJS": true,
-        "messageKeys": {
-            "cadence": 6,
-            "celsius": 1,
-            "clearbtcdata": 7,
-            "exchange": 3,
-            "health": 2,
-            "location": 5,
-            "service": 4,
-            "trotteuse": 0
-        },
+        "messageKeys": [
+            "trotteuse",
+            "celsius",
+            "health",
+            "exchange",
+            "service",
+            "location",
+            "cadence",
+            "clearbtcdata"
+        ],
         "projectType": "native",
         "resources": {
             "media": [

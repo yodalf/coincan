@@ -43,8 +43,14 @@
 #define BTC_LOW_Y        (BTC_BASE_Y + 14)
 #define BTC_GRAPH_Y      19
 
+// X_SIZE = on-screen graph width (scales per platform).
+// BGRAPH_POINTS = number of stored history samples (FIXED across platforms so
+// persisted data stays the same size everywhere — the 250-byte chunked
+// persist write below assumes bgraph_data fits in two persist keys).
+// Sample x-coords are stretched to X_SIZE at draw-init time.
 #define X_SIZE SX(60)
 #define Y_SIZE SY(22)
+#define BGRAPH_POINTS 60
 
 #define X_FRAME SCREEN_W
 #define Y_FRAME SCREEN_H
@@ -406,10 +412,10 @@ VibePattern myShortVibes =
 
 //{{{  Graphic
 GPath *bgraph;
-GPoint bgraph_data[2*X_SIZE];
+GPoint bgraph_data[2*BGRAPH_POINTS];
 const GPathInfo bgraph_info =
 {
-    .num_points = 2*X_SIZE,
+    .num_points = 2*BGRAPH_POINTS,
     .points = bgraph_data
 };
 //}}}
@@ -607,13 +613,13 @@ void push_point(float btc, float btcL, float btcH) //{{{
     if (btc < btcL) btc = btcL;
     if (btc > btcH) btc = btcH;
 
-    for (i=0; i<X_SIZE-1; i++) bgraph_data[i].y = bgraph_data[i+1].y;
-    // Constrain graph to y=1 to y=21 to fit inside 23-pixel border (top at y=0, bottom at y=22)
+    for (i=0; i<BGRAPH_POINTS-1; i++) bgraph_data[i].y = bgraph_data[i+1].y;
+    // Constrain graph to y=1 to y=Y_SIZE-1 to fit inside the layer border
     new_point =  1 + (Y_SIZE-2) - ((Y_SIZE-2) * ((btc-btcL)/(btcH-btcL)) );
-    bgraph_data[X_SIZE-1].y =  new_point;
-    bgraph_data[X_SIZE].y =  new_point;
-    j = 2*X_SIZE;
-    for (i=X_SIZE+1; i<2*X_SIZE; i++) bgraph_data[i].y = bgraph_data[j-i-1].y;
+    bgraph_data[BGRAPH_POINTS-1].y =  new_point;
+    bgraph_data[BGRAPH_POINTS].y =  new_point;
+    j = 2*BGRAPH_POINTS;
+    for (i=BGRAPH_POINTS+1; i<2*BGRAPH_POINTS; i++) bgraph_data[i].y = bgraph_data[j-i-1].y;
 }
 //}}}
 void fetch_msg(void) //{{{
@@ -1403,9 +1409,10 @@ void in_received_handler(DictionaryIterator *iter, void *context) //{{{
             text_layer_set_text(bcH_layer, "");
             text_layer_set_text(bcL_layer, "");
 
-            // Clear the Bitcoin graph data completely
-            for (int i = 0; i < 2 * X_SIZE; i++) {
-                bgraph_data[i].x = i < X_SIZE ? i : (2*X_SIZE - 1 - i);
+            // Clear the Bitcoin graph data completely. X spreads samples across X_SIZE.
+            for (int i = 0; i < 2 * BGRAPH_POINTS; i++) {
+                int sample_idx = i < BGRAPH_POINTS ? i : (2*BGRAPH_POINTS - 1 - i);
+                bgraph_data[i].x = sample_idx * (X_SIZE-1) / (BGRAPH_POINTS-1);
                 bgraph_data[i].y = -100;  // Move points off-screen
             }
 
@@ -1595,7 +1602,7 @@ void bluetooth_handler(bool connected) //{{{
         bitmap_layer_set_compositing_mode(weather_layer.icon2_layer, GCompOpClear);
 
         // Clear the Bitcoin graph data by setting points off-screen
-        for (int i = 0; i < 2 * X_SIZE; i++) {
+        for (int i = 0; i < 2 * BGRAPH_POINTS; i++) {
             bgraph_data[i].y = -100;  // Move points off-screen
         }
 
@@ -2159,16 +2166,26 @@ void init(void) //{{{
         int dsize = sizeof(bgraph_data);
         persist_read_data(0, bgraph_data, 250);
         persist_read_data(1, ((char *) bgraph_data) + 250, dsize-250);
+        // Persisted X values are tied to whatever X_SIZE wrote them. Re-stretch
+        // them across the current platform's X_SIZE so the graph fills the layer.
+        for (int i=0; i<BGRAPH_POINTS; i++) {
+            bgraph_data[i].x = i * (X_SIZE-1) / (BGRAPH_POINTS-1);
+        }
+        for (int i=BGRAPH_POINTS; i<2*BGRAPH_POINTS; i++) {
+            bgraph_data[i].x = ((2*BGRAPH_POINTS)-i-1) * (X_SIZE-1) / (BGRAPH_POINTS-1);
+        }
         }
     else
         {
-        for (int i=0; i<X_SIZE; i++) bgraph_data[i] = (GPoint)
+        // Initialize a flat path: top edge L→R then bottom edge R→L. X spreads
+        // BGRAPH_POINTS samples across the (possibly larger) X_SIZE layer width.
+        for (int i=0; i<BGRAPH_POINTS; i++) bgraph_data[i] = (GPoint)
             {
-            i,Y_SIZE/2
+            i * (X_SIZE-1) / (BGRAPH_POINTS-1), Y_SIZE/2
             };
-        for (int i=X_SIZE; i<2*X_SIZE; i++) bgraph_data[i] = (GPoint)
+        for (int i=BGRAPH_POINTS; i<2*BGRAPH_POINTS; i++) bgraph_data[i] = (GPoint)
             {
-            (2*X_SIZE)-i-1,Y_SIZE/2
+            ((2*BGRAPH_POINTS)-i-1) * (X_SIZE-1) / (BGRAPH_POINTS-1), Y_SIZE/2
             };
 
         }
