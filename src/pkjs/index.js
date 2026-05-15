@@ -1651,7 +1651,7 @@ Pebble.addEventListener("appmessage", function(e) //{{{
 });
 //}}}
 // Initialize Clay configuration
-var Clay = require('pebble-clay');
+var Clay = require('./pebble-clay');
 var clayConfig = require('./config');
 var clay = new Clay(clayConfig);
 //}}}
