@@ -1,8 +1,13 @@
 {
     "appKeys": {
-      "confTrotteuse": 0,
-      "confExchange": 0,
-      "confLocation": 0
+      "trotteuse": 0,
+      "celsius": 1,
+      "health": 2,
+      "exchange": 3,
+      "service": 4,
+      "location": 5,
+      "cadence": 6,
+      "clearbtcdata": 7
     },
     "capabilities": [
         "location",
