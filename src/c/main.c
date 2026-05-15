@@ -1164,17 +1164,14 @@ void handle_weather_observation(Tuple *iconCode, Tuple *temp, Tuple *windDir, Tu
 void update_weather_display(void) //{{{
 {
     // Build wind string
-    strncpy(obWindDir, obWindDir_bkp, 16);
     if (obWindSpeed[0] != '!') {
-        strncat(obWindDir, " ", 16);
-        strncat(obWindDir, obWindSpeed, 16);
-
         if (obWindGust[0] != '!') {
-            strncat(obWindDir, "/", 16);
-            strncat(obWindDir, obWindGust, 16);
+            snprintf(obWindDir, sizeof(obWindDir), "%s %s/%s", obWindDir_bkp, obWindSpeed, obWindGust);
+        } else {
+            snprintf(obWindDir, sizeof(obWindDir), "%s %s", obWindDir_bkp, obWindSpeed);
         }
     } else {
-        strncpy(obWindDir, "NO WIND!", 16);
+        strncpy(obWindDir, "NO WIND!", sizeof(obWindDir));
     }
 
     // Update wind display
@@ -1593,8 +1590,6 @@ void bluetooth_handler(bool connected) //{{{
 //}}}
 void battery_handler(BatteryChargeState charge) //{{{
 {
-    char Buffer[INT_DIGITS+2];
-
     if ((charge.charge_percent <= 50) && (charge.charge_percent < battery_state.charge_percent) )
         {
         if (BuzzEnable) vibes_enqueue_custom_pattern(myShortVibes);
@@ -1603,8 +1598,6 @@ void battery_handler(BatteryChargeState charge) //{{{
     battery_state.charge_percent  = charge.charge_percent;
     battery_state.is_charging  = charge.is_charging;
     battery_state.is_plugged  = charge.is_plugged;
-
-    strncpy(battery_text, "", 8);
 
     if (battery_state.charge_percent <= 30)
         {
@@ -1617,22 +1610,11 @@ void battery_handler(BatteryChargeState charge) //{{{
         text_layer_set_text_color(weather_layer.battery_layer, cInfoBatF);
         }
 
-
-
-    strncat(battery_text, " ", 8);
-
+    char charge_sym = battery_state.is_charging ? '*' : ' ';
     if (battery_state.charge_percent > 99)
-        strncat(battery_text, "FL", 8);
+        snprintf(battery_text, sizeof(battery_text), " FL%c", charge_sym);
     else
-        {
-        strncat(battery_text,  _itoa(battery_state.charge_percent, Buffer), 8);
-        strncat(battery_text, "%", 8);
-        }
-
-    if (battery_state.is_charging)
-        strncat(battery_text, "*", 8);
-    else
-        strncat(battery_text, " ", 8);
+        snprintf(battery_text, sizeof(battery_text), " %d%%%c", battery_state.charge_percent, charge_sym);
 
     if (battery_state.is_plugged)
         {
@@ -2266,7 +2248,7 @@ void deinit(void) //{{{
     int dsize = sizeof(bgraph_data);
     persist_delete(0);
     persist_delete(1);
-    int ret = persist_write_data(0, bgraph_data, 250);
+    persist_write_data(0, bgraph_data, 250);
     persist_write_data(1, ((char *) bgraph_data)+250, dsize-250+1);
 
 }
