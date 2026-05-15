@@ -1,2 +1,9 @@
 screenshot*.png
 build/
+node_modules/
+package-lock.json
+.DS_Store
+*.swp
+*.backup
+.lock-waf_darwin_build
+pebble_screenshot_*.png
