@@ -28,7 +28,7 @@
                     "compatibility": "2.7",
                     "file": "fonts/futura_condensed_bold-webfont.ttf",
                     "name": "FUTURA_CONDENSED_53",
-                    "targetPlatforms": ["aplite", "basalt"],
+                    "targetPlatforms": ["aplite", "basalt", "diorite"],
                     "type": "font"
                 },
                 {
@@ -282,6 +282,7 @@
         "targetPlatforms": [
             "aplite",
             "basalt",
+            "diorite",
             "emery"
         ],
         "uuid": "7130ff37-9f45-4f7f-afb6-b9ad518cfdcf",
@@ -289,5 +290,5 @@
             "watchface": true
         }
     },
-    "version": "5.2.0"
+    "version": "5.2.3"
 }
